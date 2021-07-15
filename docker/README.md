@@ -5,12 +5,12 @@ Docker is a software tool that allows one to deploy an application in a portable
 ### 1. Build a new Docker image
 We can build a docker image for the IPGlasmaFramework package using the following command,
 
-    docker build -t IPGlasmaFramework .
+    docker build -t ipglasmaframework .
 
 ### 2. Run iEBE-MUSIC
 The docker container has ready compiled all the software packages for IPGlasmaFramework.
 
-	docker run -it --rm --name myIPGlasma chunshen1987/IPGlasmaFramework:latest
+	docker run -it --rm --name myIPGlasma chunshen1987/ipglasmaframework:latest
 
 ### 3. To delete all the Docker images in your laptop
 
@@ -21,6 +21,6 @@ The docker container has ready compiled all the software packages for IPGlasmaFr
 Use the following command to create a singularity image (sif) from the
 docker image,
 
-    singularity pull  docker://chunshen1987/IPGlasmaFramework:latest
+    singularity pull  docker://chunshen1987/ipglasmaframework:latest
 
-To run the singularity image, `singularity run IPGlasmaFramework_lastest.sif`
+To run the singularity image, `singularity run ipglasmaframework_lastest.sif`
