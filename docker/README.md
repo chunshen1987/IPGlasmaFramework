@@ -1,4 +1,4 @@
-## Using iEBE-MUSIC via Docker
+## Using IPGlasmaFramework via Docker
 
 Docker is a software tool that allows one to deploy an application in a portable environment. A docker "image" can be created for the application, allowing any user to run a docker "container" from this image.
 
