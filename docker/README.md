@@ -1,0 +1,26 @@
+## Using iEBE-MUSIC via Docker
+
+Docker is a software tool that allows one to deploy an application in a portable environment. A docker "image" can be created for the application, allowing any user to run a docker "container" from this image.
+
+### 1. Build a new Docker image
+We can build a docker image for the iEBE-MUSIC package using the following command,
+
+    docker build -t IPGlasmaFramework .
+
+### 2. Run iEBE-MUSIC
+The docker container has ready compiled all the software packages for IPGlasmaFramework.
+
+	docker run -it --rm --name myIPGlasma chunshen1987/IPGlasmaFramework:latest
+
+### 3. To delete all the Docker images in your laptop
+
+	docker system prune -a
+
+## Using IPGlasmaFramework via Singularity
+
+Use the following command to create a singularity image (sif) from the
+docker image,
+
+    singularity pull  docker://chunshen1987/IPGlasmaFramework:latest
+
+To run the singularity image, `singularity run IPGlasmaFramework_lastest.sif`
