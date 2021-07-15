@@ -7,7 +7,7 @@ We can build a docker image for the IPGlasmaFramework package using the followin
 
     docker build -t ipglasmaframework .
 
-### 2. Run iEBE-MUSIC
+### 2. Run IPGlasmaFramework
 The docker container has ready compiled all the software packages for IPGlasmaFramework.
 
 	docker run -it --rm --name myIPGlasma chunshen1987/ipglasmaframework:latest
