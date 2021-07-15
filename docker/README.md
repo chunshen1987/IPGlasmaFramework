@@ -3,7 +3,7 @@
 Docker is a software tool that allows one to deploy an application in a portable environment. A docker "image" can be created for the application, allowing any user to run a docker "container" from this image.
 
 ### 1. Build a new Docker image
-We can build a docker image for the iEBE-MUSIC package using the following command,
+We can build a docker image for the IPGlasmaFramework package using the following command,
 
     docker build -t IPGlasmaFramework .
 
