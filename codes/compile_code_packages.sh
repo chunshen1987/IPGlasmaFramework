@@ -17,6 +17,10 @@ echo -e "${Green}compile IPGlasma ... ${NC}"
     cd ipglasma_code
     ./compile_IPGlasma.sh
 )
+status=$?
+if [ $status -ne 0 ]; then
+    exit $status
+fi
 mkdir -p ipglasma
 cp ipglasma_code/input ipglasma/
 
@@ -29,6 +33,10 @@ echo -e "${Green}compile amplitudelib ... ${NC}"
     cmake ..
     make -j$number_of_cores_to_compile
 )
+status=$?
+if [ $status -ne 0 ]; then
+    exit $status
+fi
 
 # compile subnucleondiffraction
 echo -e "${Green}compile subnucleondiffraction ... ${NC}"
@@ -39,3 +47,7 @@ echo -e "${Green}compile subnucleondiffraction ... ${NC}"
     cmake ..
     make -j$number_of_cores_to_compile
 )
+status=$?
+if [ $status -ne 0 ]; then
+    exit $status
+fi
