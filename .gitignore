@@ -36,3 +36,8 @@ docs/_build/
 # pyenv
 .python-version
 
+.DS_Store
+
+codes/amplitudelib_v2
+codes/ipglasma*
+codes/subnucleondiffraction*

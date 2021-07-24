@@ -21,8 +21,6 @@ status=$?
 if [ $status -ne 0 ]; then
     exit $status
 fi
-mkdir -p ipglasma
-cp ipglasma_code/input ipglasma/
 
 # compile amplitudelib
 echo -e "${Green}compile amplitudelib ... ${NC}"
