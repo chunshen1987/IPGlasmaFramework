@@ -158,14 +158,13 @@ def generate_full_job_script(cluster_name, folder_name, initial_type,
     script = open(path.join(working_folder, "submit_job.pbs"), "w")
     write_script_header(cluster_name, script, n_threads, event_id, walltime,
                         working_folder)
-    script.write("\nseed_add=${1:-0}\n")
     if cluster_name != "OSG":
         script.write("""
-python3 simulation_driver.py {0:s} {1:d} {2:d} {3} $seed_add > run.log
+python3 simulation_driver.py {0:s} {1:d} {2:d} {3} > run.log
 """.format(initial_type, ev0_id, n_threads, ipglasma_flag))
     else:
         script.write("""
-python3 simulation_driver.py {0:s} {1:d} {2:d} {3} $seed_add
+python3 simulation_driver.py {0:s} {1:d} {2:d} {3}
 """.format(initial_type, ev0_id, n_threads, ipglasma_flag))
     script.close()
 
@@ -213,9 +212,43 @@ do
     cat ${ifile} | sed 's$N/A$0.0$g' | sed 's/Q_s/#Q_s/' > $results_folder/${filename}
     rm -fr ${ifile}
 done
+mv V-* $results_folder/
 mv run.log $results_folder/
 mv run.err $results_folder/
 )
+""")
+    script.close()
+
+
+def generate_script_subnucleondiffraction(folder_name, cluster_name, event_id):
+    """This function generates script for computing subnucleon diffraction"""
+    working_folder = folder_name
+
+    script = open(path.join(working_folder, "run_subnucleondiffraction.sh"),
+                  "w")
+
+    results_folder = 'subnucleondiffraction_results'
+    script.write("""#!/bin/bash
+
+results_folder={0:s}
+evid=$1
+fileid=$2
+WilsonLineFile=$3
+
+
+cd subnucleondiffraction
+
+mkdir -p $results_folder
+
+""".format(results_folder))
+
+    script.write("""
+# run subnucleon diffraction
+((Randum_number=$RANDOM))
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -imag -Q2 0 -W 75 -mcintpoints 1e6 > $results_folder/imag_${evid}_${fileid}
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -real -Q2 0 -W 75 -mcintpoints 1e6 > $results_folder/real_${evid}_${fileid}
+
+cd ..
 """)
     script.close()
 
@@ -246,6 +279,20 @@ def generate_event_folders(initial_condition_type, package_root_path,
                 path.abspath(path.join(code_path,
                                        'ipglasma_code/{}'.format(link_i))),
                 path.join(event_folder, "ipglasma/{}".format(link_i))),
+                shell=True)
+
+        # subnucleondiffraction
+        mkdir(path.join(event_folder, 'subnucleondiffraction'))
+        generate_script_subnucleondiffraction(event_folder, cluster_name,
+                                              event_id)
+        link_list = ['build/bin/subnucleondiffraction', 'gauss-boosted.dat']
+        for link_i in link_list:
+            subprocess.call("ln -s {0:s} {1:s}".format(
+                path.abspath(path.join(
+                    code_path, 'subnucleondiffraction_code/{}'.format(link_i))),
+                path.join(event_folder,
+                          "subnucleondiffraction/{}".format(
+                                                    link_i.split("/")[-1]))),
                 shell=True)
 
     generate_full_job_script(cluster_name, event_folder,
