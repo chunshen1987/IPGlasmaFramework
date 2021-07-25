@@ -50,8 +50,6 @@ except IndexError:
 
 hf = h5py.File(data_path, "r")
 event_list = list(hf.keys())
-nev = len(event_list)
-print("total number of events: {}".format(nev))
 
 
 realpart = []
@@ -76,6 +74,8 @@ hf.close()
 t_arr = array(t_arr)
 realpart = array(realpart)
 imagpart = array(imagpart)
+nev = len(realpart[:, 0])
+print("total number of events: {}".format(nev))
 
 real_mean = mean(realpart, axis=0)
 imag_mean = mean(imagpart, axis=0)
@@ -98,6 +98,11 @@ incoherent = (real_sq_mean + imag_sq_mean
 incoherent_err = (real_sq_std + imag_sq_std
                   - 2.*(abs(real_mean)*real_std + abs(imag_mean)*imag_std)
                  )*prefactor/sqrt(nev)
+output = array([t_arr, coherent, coherent_err, incoherent, incoherent_err])
+savetxt(path.join(avg_folder_header, "Diffraction.txt"),
+        output.transpose(), fmt="%.6e", delimiter="  ",
+        header="t  coh.  coh_err  incoh.  incoh_err")
+
 
 # interpolate the coherent/incoherent cross section to the exp. data points
 f_coh = interpolate.interp1d(t_arr, log(coherent + 1e-30), kind="cubic")
@@ -116,7 +121,7 @@ incoh_data_err = exp(f_incoh_err(TT))
 
 model_result = concatenate((incoh_data, coh_data))
 model_err = concatenate((incoh_data_err, coh_data_err))
-savetxt(path.join(avg_folder_header, "output.txt"),
+savetxt(path.join(avg_folder_header, "Bayesian_output.txt"),
         array([model_result, model_err]).transpose(),
         fmt="%.6e", delimiter="  ",
         header="results  stat. err")
