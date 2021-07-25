@@ -475,6 +475,9 @@ def main():
     sys.stdout.flush()
 
     pwd = path.abspath(".")
+    script_path = path.join(code_package_path, "utilities")
+    shutil.copy(path.join(script_path, 'collect_events.sh'), pwd)
+    shutil.copy(path.join(script_path, 'combine_multiple_hdf5.py'), pwd)
     walltime = '10:00:00'
     if "walltime" in parameter_dict.control_dict.keys():
         walltime = parameter_dict.control_dict["walltime"]
