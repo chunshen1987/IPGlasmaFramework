@@ -149,7 +149,7 @@ wait
 
 
 def generate_full_job_script(cluster_name, folder_name, initial_type,
-                             ev0_id, n_threads, ipglasma_flag):
+                             ev0_id, n_ev, n_threads, ipglasma_flag):
     """This function generates full job script"""
     working_folder = folder_name
     event_id = working_folder.split('/')[-1]
@@ -160,12 +160,12 @@ def generate_full_job_script(cluster_name, folder_name, initial_type,
                         working_folder)
     if cluster_name != "OSG":
         script.write("""
-python3 simulation_driver.py {0:s} {1:d} {2:d} {3} > run.log
-""".format(initial_type, ev0_id, n_threads, ipglasma_flag))
+python3 simulation_driver.py {0:s} {1:d} {2:d} {3:d} {4} > run.log
+""".format(initial_type, ev0_id, n_ev, n_threads, ipglasma_flag))
     else:
         script.write("""
-python3 simulation_driver.py {0:s} {1:d} {2:d} {3}
-""".format(initial_type, ev0_id, n_threads, ipglasma_flag))
+python3 simulation_driver.py {0:s} {1:d} {2:d} {3:d} {4}
+""".format(initial_type, ev0_id, n_ev, n_threads, ipglasma_flag))
     script.close()
 
 
@@ -213,10 +213,13 @@ do
     rm -fr ${ifile}
 done
 mv V-* $results_folder/
+""")
+    if cluster_name != "OSG":
+        script.write("""
 mv run.log $results_folder/
 mv run.err $results_folder/
-)
 """)
+    script.write(")")
     script.close()
 
 
@@ -255,7 +258,7 @@ cd ..
 
 def generate_event_folders(initial_condition_type, package_root_path,
                            code_path, working_folder, cluster_name,
-                           event_id, event_id_offset, n_threads,
+                           event_id, event_id_offset, n_ev, n_threads,
                            save_ipglasma_flag):
     """This function creates the event folder structure"""
     event_folder = path.join(working_folder, 'event_%d' % event_id)
@@ -297,7 +300,8 @@ def generate_event_folders(initial_condition_type, package_root_path,
 
     generate_full_job_script(cluster_name, event_folder,
                              initial_condition_type,
-                             event_id_offset, n_threads, save_ipglasma_flag)
+                             event_id_offset, n_ev, n_threads,
+                             save_ipglasma_flag)
 
 
 def create_a_working_folder(workfolder_path):
@@ -339,6 +343,12 @@ def main():
                         type=int,
                         default=1,
                         help='number of jobs')
+    parser.add_argument('-n_ev',
+                        '--n_events',
+                        metavar='',
+                        type=int,
+                        default=1,
+                        help='number of events per job')
     parser.add_argument('-n_th',
                         '--n_threads',
                         metavar='',
@@ -384,6 +394,7 @@ def main():
         working_folder_name = args.working_folder_name
         cluster_name = args.cluster_name
         n_jobs = args.n_jobs
+        n_ev = args.n_events
         n_threads = args.n_threads
         osg_job_id = args.OSG_process_id
         seed = args.random_seed
@@ -443,9 +454,9 @@ def main():
     sys.stdout.flush()
     sys.stdout.write("\b"*(toolbar_width + 1))
     event_id_offset = 0
-    for iev in range(n_jobs):
-        progress_i = (int(float(iev + 1)/n_jobs*toolbar_width)
-                      - int(float(iev)/n_jobs*toolbar_width))
+    for ijob in range(n_jobs):
+        progress_i = (int(float(ijob + 1)/n_jobs*toolbar_width)
+                      - int(float(ijob)/n_jobs*toolbar_width))
         for ii in range(progress_i):
             sys.stdout.write("#")
             sys.stdout.flush()
@@ -457,9 +468,9 @@ def main():
                     parameter_dict.control_dict['save_ipglasma_results'])
         generate_event_folders(initial_condition_type, code_package_path,
                                code_path, working_folder_name, cluster_name,
-                               iev, event_id_offset, n_threads,
+                               ijob, event_id_offset, n_ev, n_threads,
                                save_ipglasma_flag)
-        event_id_offset += 1
+        event_id_offset += n_ev
     sys.stdout.write("\n")
     sys.stdout.flush()
 

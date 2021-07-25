@@ -67,74 +67,61 @@ def collect_ipglasma_event(final_results_folder, event_id):
     return(res_path)
 
 
-def check_an_event_is_good(event_folder):
-    """This function checks the given event contains all required files"""
-    required_files_list = []
-    event_file_list = glob(path.join(event_folder, "*"))
-    for ifile in required_files_list:
-        filename = path.join(event_folder, ifile)
-        if filename not in event_file_list:
-            print("event {} is bad, missing {} ...".format(
-                event_folder, filename),
-                  flush=True)
-            return False
-    return True
-
-
 def zip_results_into_hdf5(final_results_folder, event_id, para_dict):
     """This function combines all the results into hdf5"""
-    results_name = "results_{}".format(event_id)
+    results_name = "event_{}".format(event_id)
     initial_state_filelist = [
-        'epsilon-u-Hydro-t0.1-{}.dat'.format(event_id),
-        'epsilon-u-Hydro-t0.4-{}.dat'.format(event_id),
-        'NcollList{}.dat'.format(event_id), 'NpartList{}.dat'.format(event_id),
+        'NcollList{}.dat'.format(event_id),
+        'NpartList{}.dat'.format(event_id),
         'NpartdNdy-t0.6-{}.dat'.format(event_id),
         'NgluonEstimators{}.dat'.format(event_id)
     ]
 
-    spvnfolder = path.join(final_results_folder, results_name)
+    resfolder = path.join(final_results_folder, results_name)
+    if path.exists(resfolder):
+        shutil.rmtree(resfolder)
+    mkdir(resfolder)
 
-    status = check_an_event_is_good(spvnfolder)
-    if status:
-        curr_time = time.asctime()
-        print("[{}] {} is good, converting results to hdf5".format(
-            curr_time, spvnfolder),
-              flush=True)
+    curr_time = time.asctime()
+    print("[{}] converting {} to hdf5".format(curr_time, resfolder),
+          flush=True)
 
-        if para_dict['initial_condition'] == "self":
-            # save initial conditions
-            if ("IPGlasma" in para_dict['initial_type']
-                    and para_dict['save_ipglasma']):
-                initial_folder = path.join(
-                    final_results_folder,
-                    "ipglasma_results_{}".format(event_id))
-                for inifilename in initial_state_filelist:
-                    inifile = path.join(initial_folder, inifilename)
-                    if path.isfile(inifile):
-                        shutil.move(inifile, spvnfolder)
+    if ("IPGlasma" in para_dict['initial_type']
+            and para_dict['save_ipglasma']):
+        initial_folder = path.join(
+            final_results_folder,
+            "ipglasma_results_{}".format(event_id))
+        for inifilename in initial_state_filelist:
+            inifile = path.join(initial_folder, inifilename)
+            if path.isfile(inifile):
+                shutil.move(inifile, resfolder)
+    diffraction_folder = path.join(
+            final_results_folder,
+            "subnucleondiffraction_results_{}".format(event_id))
+    diffraction_filelist = glob(path.join(diffraction_folder, "*"))
+    for file_i in diffraction_filelist:
+        shutil.move(file_i, resfolder)
 
-        hf = h5py.File("{0}.h5".format(results_name), "w")
-        gtemp = hf.create_group("{0}".format(results_name))
-        file_list = glob(path.join(spvnfolder, "*"))
-        for file_path in file_list:
-            file_name = file_path.split("/")[-1]
-            dtemp = np.loadtxt(file_path)
-            h5data = gtemp.create_dataset("{0}".format(file_name),
-                                          data=dtemp,
-                                          compression="gzip",
-                                          compression_opts=9)
-            # save header
-            ftemp = open(file_path, "r")
-            header_text = str(ftemp.readline())
-            ftemp.close()
-            if header_text.startswith("#"):
-                h5data.attrs.create("header", np.string_(header_text))
-        hf.close()
-        shutil.move("{}.h5".format(results_name), final_results_folder)
-        shutil.rmtree(spvnfolder, ignore_errors=True)
-    else:
-        print("{} is broken, skipped".format(spvnfolder), flush=True)
-    return (status)
+    hf = h5py.File("{0}.h5".format(results_name), "w")
+    gtemp = hf.create_group("{0}".format(results_name))
+    file_list = glob(path.join(resfolder, "*"))
+    for file_path in file_list:
+        file_name = file_path.split("/")[-1]
+        dtemp = np.loadtxt(file_path)
+        h5data = gtemp.create_dataset("{0}".format(file_name),
+                                      data=dtemp,
+                                      compression="gzip",
+                                      compression_opts=9)
+        # save header
+        #ftemp = open(file_path, "r")
+        #header_text = str(ftemp.readline())
+        #ftemp.close()
+        #if header_text.startswith("#"):
+        #    h5data.attrs.create("header", np.string_(header_text))
+    hf.close()
+    shutil.move("{}.h5".format(results_name), final_results_folder)
+    shutil.rmtree(resfolder, ignore_errors=True)
+    return(True)
 
 
 def remove_unwanted_outputs(final_results_folder,
@@ -161,7 +148,7 @@ def main(para_dict_):
           flush=True)
 
     idx0 = para_dict_['event_id0']
-    nev = 1
+    nev = para_dict_['n_events']
     for iev in range(idx0, idx0 + nev):
         curr_time = time.asctime()
 
@@ -174,10 +161,6 @@ def main(para_dict_):
             status = False
             if path.exists(results_file):
                 status = True
-                spvnfolder = path.join(final_results_folder,
-                                       "results_{}".format(event_id))
-                if path.exists(spvnfolder):
-                    status = check_an_event_is_good(spvnfolder)
             if status:
                 print(
                     "{} finished properly. No need to rerun.".format(event_id),
@@ -208,9 +191,10 @@ if __name__ == "__main__":
     try:
         INITIAL_CONDITION_TYPE = str(sys.argv[1])
         EVENT_ID0 = int(sys.argv[2])
-        N_THREADS = int(sys.argv[3])
-        SAVE_IPGLASMA = (sys.argv[4].lower() == "true")
-        #SEED = int(sys.argv[5])
+        N_EVENTS = int(sys.argv[3])
+        N_THREADS = int(sys.argv[4])
+        SAVE_IPGLASMA = (sys.argv[5].lower() == "true")
+        #SEED = int(sys.argv[6])
     except IndexError:
         print_usage()
         exit(0)
@@ -229,6 +213,7 @@ if __name__ == "__main__":
     para_dict = {
         'initial_type': INITIAL_CONDITION_TYPE,
         'event_id0': EVENT_ID0,
+        'n_events': N_EVENTS,
         'num_threads': N_THREADS,
         'save_ipglasma': SAVE_IPGLASMA,
         #'random_seed': SEED,
