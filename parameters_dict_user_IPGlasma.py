@@ -34,6 +34,7 @@ ipglasma_dict = {
     'Projectile': "p",
     'Target': "p",
     'maxtime': 0.0,
+    'useTimeForSeed': 1,
     'LOutput': 5.12,
     'sizeOutput': 1024,
     'writeOutputs': 0,

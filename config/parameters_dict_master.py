@@ -111,7 +111,6 @@ def update_parameters_dict(par_dict_path, ran_seed):
             ipglasma_dict['useTimeForSeed'] = 1
         else:
             ipglasma_dict['seed'] = ran_seed
-            ipglasma_dict['useTimeForSeed'] = 0
 
 
 def update_parameters_bayesian(bayes_file):
