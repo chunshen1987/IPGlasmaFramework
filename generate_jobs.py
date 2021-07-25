@@ -440,6 +440,7 @@ def main():
                             working_folder_name, path.abspath(args.par_dict),
                             args.bayes_file, seed),
                         shell=True)
+        shutil.copy(args.bayes_file, working_folder_name)
     else:
         subprocess.call(
             "(cd {}/config; ".format(code_package_path)

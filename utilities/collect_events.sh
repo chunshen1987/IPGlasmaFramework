@@ -24,7 +24,7 @@ echo "collecting events from " $fromFolder " to " $toFolder
 folderName=`echo $fromFolder | rev | cut -d "/" -f 1 | rev`
 target_folder=${toFolder}/${folderName}
 mkdir -p ${target_folder}
-cp ${fromFolder}/parameters_dict_*.py ${target_folder}/
+cp ${fromFolder}/parameter* ${target_folder}/
 cp -r ${fromFolder}/model_parameters ${target_folder}/
 target_res_folder=${target_folder}/RESULTS
 mkdir -p ${target_res_folder}
