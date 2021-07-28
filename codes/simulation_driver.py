@@ -136,7 +136,7 @@ def combine_all_hdf5_results(idx):
     """
         This functions combine all the hdf5 files into one
     """
-    RESULTS_NAME = "RESLUTS_{}".format(idx)
+    RESULTS_NAME = "RESULTS_{}".format(idx)
     EVENT_LIST = glob("EVENT_RESULTS_*/*.h5")
     exist_group_keys = []
     for ievent, event_path in enumerate(EVENT_LIST):
