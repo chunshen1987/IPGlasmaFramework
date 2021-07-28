@@ -3,7 +3,7 @@
 
 from multiprocessing import Pool
 from subprocess import call
-from os import path, mkdir, remove, makedirs
+from os import path, mkdir, remove, makedirs, system
 from glob import glob
 import sys
 import time
@@ -112,12 +112,6 @@ def zip_results_into_hdf5(final_results_folder, event_id, para_dict):
                                       data=dtemp,
                                       compression="gzip",
                                       compression_opts=9)
-        # save header
-        #ftemp = open(file_path, "r")
-        #header_text = str(ftemp.readline())
-        #ftemp.close()
-        #if header_text.startswith("#"):
-        #    h5data.attrs.create("header", np.string_(header_text))
     hf.close()
     shutil.move("{}.h5".format(results_name), final_results_folder)
     shutil.rmtree(resfolder, ignore_errors=True)
@@ -138,6 +132,39 @@ def remove_unwanted_outputs(final_results_folder,
         shutil.rmtree(ipglasmafolder, ignore_errors=True)
 
 
+def combine_all_hdf5_results(idx):
+    """
+        This functions combine all the hdf5 files into one
+    """
+    RESULTS_NAME = "RESLUTS_{}".format(idx)
+    EVENT_LIST = glob("EVENT_RESULTS_*/*.h5")
+    exist_group_keys = []
+    for ievent, event_path in enumerate(EVENT_LIST):
+        print("processing {0} ... ".format(event_path))
+        event_name = event_path.split("/")[-1]
+        hftemp = h5py.File(event_path, "r")
+        glist = list(hftemp.keys())
+        hftemp.close()
+        for igroup, gtemp in enumerate(glist):
+            gtemp2 = gtemp
+            random_string_len = 1
+            tol = 0
+            while gtemp2 in exist_group_keys:
+                randomlabel = randomString(random_string_len)
+                gtemp2 = "{0}{1}".format(gtemp, randomlabel)
+                tol += 1
+                if tol > 30:
+                    random_string_len += 1
+                    tol = 0
+            if gtemp2 != gtemp:
+                print("Conflict in mergeing {0}, use {1}".format(gtemp, gtemp2))
+            exist_group_keys.append(gtemp2)
+            system('h5copy -i {0} -o {1}.h5 -s {2} -d {3}'.format(
+                event_path, RESULTS_NAME, gtemp, gtemp2))
+
+
+
+
 def main(para_dict_):
     """This is the main function"""
     initial_type = para_dict_['initial_type']
@@ -147,8 +174,8 @@ def main(para_dict_):
                                                           num_threads),
           flush=True)
 
-    idx0 = para_dict_['event_id0']
     nev = para_dict_['n_events']
+    idx0 = para_dict_['event_id0']*nev
     for iev in range(idx0, idx0 + nev):
         curr_time = time.asctime()
 
@@ -157,7 +184,7 @@ def main(para_dict_):
         if path.exists(final_results_folder):
             print("{} exists ...".format(final_results_folder), flush=True)
             results_file = path.join(final_results_folder,
-                                     "results_{}.h5".format(event_id))
+                                     "event_{}.h5".format(event_id))
             status = False
             if path.exists(results_file):
                 status = True
@@ -185,6 +212,7 @@ def main(para_dict_):
         if status:
             remove_unwanted_outputs(final_results_folder, event_id,
                                     para_dict_['save_ipglasma'])
+    combine_all_hdf5_results(para_dict_['event_id0'])
 
 
 if __name__ == "__main__":
