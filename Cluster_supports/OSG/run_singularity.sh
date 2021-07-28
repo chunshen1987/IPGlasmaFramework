@@ -2,7 +2,7 @@
 
 parafile=$1
 processId=$2
-nthreads=$3
+nev=$3
 seed=$4
 
 # Run the singularity container
@@ -14,7 +14,8 @@ printf "Start time: `/bin/date`\n"
 printf "Job is running on node: `/bin/hostname`\n"
 printf "system kernel: `uname -r`\n"
 printf "Job running as user: `/usr/bin/id`\n"
-/home/iEBE-MUSIC/generate_jobs.py -w playground -c OSG -par ${parafile} -id ${processId} -n_th ${nthreads} -n_urqmd ${nthreads} -seed ${seed}
+
+/home/IPGlasmaFramework/generate_jobs.py -w playground -c OSG -par ${parafile} -id ${processId} -n_th 1 -n_ev ${nev} -seed ${seed}
 (
     cd playground/event_0
     bash submit_job.pbs
