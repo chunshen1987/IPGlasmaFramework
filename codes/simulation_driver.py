@@ -107,7 +107,7 @@ def zip_results_into_hdf5(final_results_folder, event_id, para_dict):
     file_list = glob(path.join(resfolder, "*"))
     for file_path in file_list:
         file_name = file_path.split("/")[-1]
-        print("Adding file: {} ...".format(file_path)
+        print("Adding file: {} ...".format(file_path))
         dtemp = np.loadtxt(file_path)
         h5data = gtemp.create_dataset("{0}".format(file_name),
                                       data=dtemp,
