@@ -8,7 +8,7 @@
 control_dict = {
     'initial_state_type': "IPGlasma",
     'walltime': "10:00:00",  # walltime to run
-    'save_ipglasma_results': True,
+    'save_ipglasma_results': False,
 }
 
 
@@ -30,7 +30,7 @@ ipglasma_dict = {
     'QsmuRatio': 0.7,
     'LOutput': 10,
     'bmin': 0.,
-    'bmax': 5.,
+    'bmax': 0.,
     'Projectile': "p",
     'Target': "p",
     'maxtime': 0.0,
