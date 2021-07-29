@@ -39,17 +39,17 @@ WhenToTransferOutput = ON_EXIT
 
 +SingularityImage = "./{1}"
 Requirements = HAS_SINGULARITY == TRUE && SINGULARITY_MODE == "privileged" && (GLIDEIN_ResourceName != "cinvestav")
-""".format(jobName, para_dict_["image"]))
+""".format(jobName, para_dict_["image_name"]))
 
     if para_dict_['bayesFlag']:
         script.write("""
-transfer_input_files = {0}, {1}, ../singularity_repos/{2}
+transfer_input_files = {0}, {1}, {2}
 """.format(para_dict_['paraFile'], para_dict_['bayesFile'],
-           para_dict_['image']))
+           para_dict_['image_with_path']))
     else:
         script.write("""
-transfer_input_files = {0}, ../singularity_repos/{1}
-""".format(para_dict_['paraFile'], para_dict_['image']))
+transfer_input_files = {0}, {1}
+""".format(para_dict_['paraFile'], para_dict_['image_with_path']))
 
     script.write("""
 transfer_output_files = playground/event_0/RESULTS_$(Process).h5
@@ -120,7 +120,8 @@ if __name__ == "__main__":
     try:
         N_JOBS = int(sys.argv[1])
         N_EVENTS_PER_JOBS = int(sys.argv[2])
-        SINGULARITY_IMAGE = sys.argv[3].split("/")[-1]
+        SINGULARITY_IMAGE_PATH = sys.argv[3]
+        SINGULARITY_IMAGE = SINGULARITY_IMAGE_PATH.split("/")[-1]
         PARAMFILE = sys.argv[4]
         JOBID = int(sys.argv[5])
         if len(sys.argv) == 7:
@@ -133,7 +134,8 @@ if __name__ == "__main__":
     para_dict = {
         'n_jobs': N_JOBS,
         'n_events_per_job': N_EVENTS_PER_JOBS,
-        'image': SINGULARITY_IMAGE,
+        'image_name': SINGULARITY_IMAGE,
+        'image_with_path': SINGULARITY_IMAGE_PATH,
         'paraFile': PARAMFILE,
         'job_id': JOBID,
         'bayesFlag': bayesFlag,
