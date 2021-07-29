@@ -29,26 +29,20 @@ cp -r ${fromFolder}/model_parameters ${target_folder}/
 target_res_folder=${target_folder}/RESULTS
 mkdir -p ${target_res_folder}
 
-event_folder_name="EVENT_RESULTS_"
-
 total_eventNum=0
 collected_eventNum=0
 for ijob in `ls --color=none $fromFolder | grep "event" `;
 do
     eventsPath=${fromFolder}/${ijob}
-    for iev in `ls --color=none $eventsPath | grep $event_folder_name`
+    for iev in `ls --color=none $eventsPath | grep RESULTS_*.h5`
     do
         echo $iev
-        event_id=`echo $iev | rev | cut -f 1 -d "_" | rev`
-        if [ -a ${eventsPath}/${iev}/event*${event_id}.h5 ]; then
-            mv ${eventsPath}/${iev}/event*${event_id}.h5 $target_res_folder
-            ((collected_eventNum++))
-        fi
-        ((total_eventNum++))
+        mv ${eventsPath}/${iev} $target_res_folder
+        ((collected_eventNum++))
     done
 done
 
-echo "Collected events number: " $collected_eventNum " out of " $total_eventNum
+echo "Collected events number: " $collected_eventNum
 
 if [ -f ${target_folder}/${folderName}.h5 ]; then
     mv ${target_folder}/${folderName}.h5 ${target_res_folder}
