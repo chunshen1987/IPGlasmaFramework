@@ -47,7 +47,7 @@ ipglasma_dict = {
     'roots': 200.,
     'usePseudoRapidity': 0,
     'Rapidity': 0.,
-    'useFluctuatingx': 1,
+    'useFluctuatingx': 0,
     'xFromThisFactorTimesQs': 1,
     'useNucleus': 1,
     'useGaussian': 0,

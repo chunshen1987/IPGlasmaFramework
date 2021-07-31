@@ -21,7 +21,7 @@ ipglasma_dict = {
     'BG': 3.,
     'BGq': 0.3,
     'useConstituentQuarkProton': 3,   # 0: round proton; 3: fluctuating proton
-    'runningCoupling': 1,
+    'shiftConstituentQuarkProtonOrigin': 1,
     'smearQs': 1,
     'smearingWidth': 0.6,
     'roots': 75.,
