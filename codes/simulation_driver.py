@@ -200,10 +200,19 @@ def main(para_dict_):
         print("[{}] Generate initial condition ... ".format(curr_time),
               flush=True)
 
+        # run IPGlasma
         WilsonLineFileList = get_initial_condition(
                             initial_type, iev, final_results_folder)
-        run_subnucleondiffraction(
-                            WilsonLineFileList, iev, final_results_folder)
+
+        if not WilsonLineFileList:
+            # the result file list is empty
+            print("The IPGlasma event {} did not finish properly,".format(iev)
+                  + " skip ... ")
+            continue
+
+        # compute diffractive cross-sections from the produced Wilson Lines
+        run_subnucleondiffraction(WilsonLineFileList, iev,
+                                  final_results_folder)
 
         # zip results into a hdf5 database
         status = zip_results_into_hdf5(final_results_folder, event_id,
