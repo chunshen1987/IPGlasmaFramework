@@ -177,7 +177,8 @@ def main(para_dict_):
 
     nev = para_dict_['n_events']
     idx0 = para_dict_['event_id0']*nev
-    for iev in range(idx0, idx0 + nev):
+    iev = idx0
+    while iev < idx0 + nev:
         curr_time = time.asctime()
 
         event_id = str(iev)
@@ -222,6 +223,7 @@ def main(para_dict_):
         if status:
             remove_unwanted_outputs(final_results_folder, event_id,
                                     para_dict_['save_ipglasma'])
+        iev += 1
     combine_all_hdf5_results(para_dict_['event_id0'])
 
 
