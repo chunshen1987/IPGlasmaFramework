@@ -178,6 +178,7 @@ def main(para_dict_):
     nev = para_dict_['n_events']
     idx0 = para_dict_['event_id0']*nev
     iev = idx0
+    Nfailed = 0
     while iev < idx0 + nev:
         curr_time = time.asctime()
 
@@ -212,6 +213,7 @@ def main(para_dict_):
                   + " skip ... ")
             if ntol > 0:
                 ntol -= 1
+                Nfailed += 1
             else:
                 # avoid too many rerun, give up if fails 5 times consecutively
                 ntol = 5
@@ -232,6 +234,8 @@ def main(para_dict_):
                                     para_dict_['save_ipglasma'])
         iev += 1
     combine_all_hdf5_results(para_dict_['event_id0'])
+    print("# of failed events: {0}, failure rate: {1:.3f}".format(
+                                Nfailed, float(Nfailed)/float(Nfailed + nev))
 
 
 if __name__ == "__main__":
