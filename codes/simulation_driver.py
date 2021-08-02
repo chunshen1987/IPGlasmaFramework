@@ -181,6 +181,7 @@ def main(para_dict_):
     while iev < idx0 + nev:
         curr_time = time.asctime()
 
+        ntol = 5
         event_id = str(iev)
         final_results_folder = "EVENT_RESULTS_{}".format(event_id)
         if path.exists(final_results_folder):
@@ -209,6 +210,12 @@ def main(para_dict_):
             # the result file list is empty
             print("The IPGlasma event {} did not finish properly,".format(iev)
                   + " skip ... ")
+            if ntol > 0:
+                ntol -= 1
+            else:
+                # avoid too many rerun, give up if fails 5 times consecutively
+                ntol = 5
+                iev += 1
             continue
 
         # compute diffractive cross-sections from the produced Wilson Lines
