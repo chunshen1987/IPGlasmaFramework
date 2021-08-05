@@ -99,7 +99,7 @@ def generate_event_folders(workingFolder, clusterName, eventId,
                         eventFolder)
     if bayesFlag:
         script.write("""
-singularity exec {0} ./{1} {2} {3} {4} {5} {6} {7}
+singularity exec {0} bash {1} {2} {3} {4} {5} {6} {7}
 
 mkdir -p temp
 ./collect_events.sh playground temp
@@ -119,6 +119,8 @@ mv temp/playground/playground.h5 RESULTS_{7}.h5
 
     # copy files
     shutil.copy(parameterFile, eventFolder)
+    if bayesFlag:
+        shutil.copy(bayesFile, eventFolder)
 
 
 def create_a_working_folder(workfolder_path):
