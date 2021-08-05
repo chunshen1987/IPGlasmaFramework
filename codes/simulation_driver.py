@@ -73,8 +73,8 @@ def zip_results_into_hdf5(final_results_folder, event_id, para_dict):
     initial_state_filelist = [
         'NcollList{}.dat'.format(event_id),
         'NpartList{}.dat'.format(event_id),
-        'NpartdNdy-t0.6-{}.dat'.format(event_id),
-        'NgluonEstimators{}.dat'.format(event_id)
+        'NgluonEstimators{}.dat'.format(event_id),
+        'usedParameters{}.dat'.format(event_id),
     ]
 
     resfolder = path.join(final_results_folder, results_name)
@@ -86,8 +86,7 @@ def zip_results_into_hdf5(final_results_folder, event_id, para_dict):
     print("[{}] converting {} to hdf5".format(curr_time, resfolder),
           flush=True)
 
-    if ("IPGlasma" in para_dict['initial_type']
-            and para_dict['save_ipglasma']):
+    if ("IPGlasma" in para_dict['initial_type']):
         initial_folder = path.join(
             final_results_folder,
             "ipglasma_results_{}".format(event_id))
@@ -106,13 +105,19 @@ def zip_results_into_hdf5(final_results_folder, event_id, para_dict):
     gtemp = hf.create_group("{0}".format(results_name))
     file_list = glob(path.join(resfolder, "*"))
     for file_path in file_list:
-        file_name = file_path.split("/")[-1]
         print("Adding file: {} ...".format(file_path))
-        dtemp = np.loadtxt(file_path, encoding='utf-8')
-        h5data = gtemp.create_dataset("{0}".format(file_name),
-                                      data=dtemp,
-                                      compression="gzip",
-                                      compression_opts=9)
+        file_name = file_path.split("/")[-1]
+        if "usedParameters" in file_name:
+            parafile = open(file_path)
+            for iline, rawline in enumerate(parafile.readlines()):
+                paraline = rawline.strip('\n')
+                gtemp.attrs.create("{0}".format(iline), np.string_(paraline))
+        else:
+            dtemp = np.loadtxt(file_path, encoding='utf-8')
+            h5data = gtemp.create_dataset("{0}".format(file_name),
+                                          data=dtemp,
+                                          compression="gzip",
+                                          compression_opts=9)
     hf.close()
     shutil.move("{}.h5".format(results_name), final_results_folder)
     shutil.rmtree(resfolder, ignore_errors=True)
