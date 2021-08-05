@@ -110,9 +110,7 @@ mv temp/playground/playground.h5 RESULTS_{8}.h5
         script.write("""
 singularity exec {0} ./{1} {2} {3} {4} {5} {6}
 
-mkdir -p temp
-./collect_events.sh playground temp
-mv temp/playground/playground.h5 RESULTS_{7}.h5
+mv playground/event_0/RESULTS_{7}.h5 ./
 """.format(singularityRepoPath, executeScriptName, parameterFileName,
            eventId0, nEvents, nThreads, randomSeed, eventId))
     script.close()
