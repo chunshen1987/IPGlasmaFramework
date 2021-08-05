@@ -85,7 +85,7 @@ printf "Job running as user: `/usr/bin/id`\\n"
 def generate_event_folders(workingFolder, clusterName, eventId,
                            singularityRepoPath, parameterFile,
                            bayesFlag, bayesFile,
-                           eventId0, nHydroEvents, nThreads, wallTime):
+                           eventId0, nEvents, nThreads, wallTime):
     """This function creates the event folder structure"""
     eventFolder = path.join(workingFolder, 'event_{}'.format(eventId))
     mkdir(eventFolder)
@@ -105,7 +105,7 @@ mkdir -p temp
 ./collect_events.sh playground temp
 mv temp/playground/playground.h5 RESULTS_{8}.h5
 """.format(singularityRepoPath, executeScriptName, parameterFileName,
-           eventId0, nHydroEvents, nThreads, randomSeed, bayesFile, eventId))
+           eventId0, nEvents, nThreads, randomSeed, bayesFile, eventId))
     else:
         script.write("""
 singularity exec {0} ./{1} {2} {3} {4} {5} {6}
@@ -114,7 +114,7 @@ mkdir -p temp
 ./collect_events.sh playground temp
 mv temp/playground/playground.h5 RESULTS_{7}.h5
 """.format(singularityRepoPath, executeScriptName, parameterFileName,
-           eventId0, nHydroEvents, nThreads, randomSeed, eventId))
+           eventId0, nEvents, nThreads, randomSeed, eventId))
     script.close()
 
     # copy files
@@ -160,8 +160,8 @@ def main():
                         type=int,
                         default=1,
                         help='number of jobs')
-    parser.add_argument('-n_hydro',
-                        '--n_hydro_per_job',
+    parser.add_argument('-n_ev',
+                        '--n_ev_per_job',
                         metavar='',
                         type=int,
                         default=1,
@@ -210,7 +210,7 @@ def main():
         working_folder_name = args.working_folder_name
         cluster_name = args.cluster_name
         n_jobs = args.n_jobs
-        n_hydro_per_job = args.n_hydro_per_job
+        n_ev_per_job = args.n_ev_per_job
         n_threads = args.n_threads
         seed = args.random_seed
         singularityRepoPath = path.abspath(args.singularity)
@@ -250,8 +250,8 @@ def main():
             sys.stdout.flush()
         generate_event_folders(working_folder_name, cluster_name, i_job,
                                singularityRepoPath, parameterFile,
-                               bayesFlag, bayesFile, i_job*n_hydro_per_job,
-                               n_hydro_per_job, n_threads, wallTime)
+                               bayesFlag, bayesFile, i_job*n_ev_per_job,
+                               n_ev_per_job, n_threads, wallTime)
     sys.stdout.write("\n")
     sys.stdout.flush()
 
