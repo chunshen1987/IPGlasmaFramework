@@ -118,6 +118,15 @@ def zip_results_into_hdf5(final_results_folder, event_id, para_dict):
                                           data=dtemp,
                                           compression="gzip",
                                           compression_opts=9)
+            ftemp = open(file_path, "r", encoding='utf-8')
+            for iline, header_text in enumerate(ftemp.readlines()):
+                if "#" in header_text:
+                    try:
+                        h5data.attrs.create("{}".format(iline),
+                                            np.string_(header_text))
+                    except UnicodeEncodeError:
+                        continue
+            ftemp.close()
     hf.close()
     shutil.move("{}.h5".format(results_name), final_results_folder)
     shutil.rmtree(resfolder, ignore_errors=True)
@@ -240,7 +249,7 @@ def main(para_dict_):
         iev += 1
     combine_all_hdf5_results(para_dict_['event_id0'])
     print("# of failed events: {0}, failure rate: {1:.3f}".format(
-                                Nfailed, float(Nfailed)/float(Nfailed + nev))
+                                Nfailed, float(Nfailed)/float(Nfailed + nev)))
 
 
 if __name__ == "__main__":
