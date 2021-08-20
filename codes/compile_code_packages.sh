@@ -15,7 +15,7 @@ number_of_cores_to_compile=$(( ${number_of_cores} > 10 ? 10 : ${number_of_cores}
 echo -e "${Green}compile IPGlasma ... ${NC}"
 (
     cd ipglasma_code
-    ./compile_IPGlasma.sh
+    ./compile_IPGlasma.sh noMPI
 )
 status=$?
 if [ $status -ne 0 ]; then
