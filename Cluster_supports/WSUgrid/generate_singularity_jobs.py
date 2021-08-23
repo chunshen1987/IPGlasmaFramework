@@ -102,7 +102,7 @@ def generate_event_folders(workingFolder, clusterName, eventId,
 singularity exec {0} bash {1} {2} {3} {4} {5} {6} {7}
 
 mkdir -p temp
-./collect_events.sh playground temp
+./collect_singularity_events.sh playground temp
 mv temp/playground/playground.h5 RESULTS_{8}.h5
 """.format(singularityRepoPath, executeScriptName, parameterFileName,
            eventId0, nEvents, nThreads, randomSeed, bayesFile, eventId))
@@ -257,8 +257,9 @@ def main():
 
     # copy script to collect final results
     pwd = path.abspath(".")
+    script_path = path.join(code_package_path, "Cluster_supports/WSUgrid")
+    shutil.copy(path.join(script_path, 'collect_singularity_events.sh'), pwd)
     script_path = path.join(code_package_path, "utilities")
-    shutil.copy(path.join(script_path, 'collect_events.sh'), pwd)
     shutil.copy(path.join(script_path, 'combine_multiple_hdf5.py'), pwd)
 
     if cluster_name == "wsugrid":
