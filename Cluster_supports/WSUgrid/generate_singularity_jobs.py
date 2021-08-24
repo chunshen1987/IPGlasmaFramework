@@ -102,7 +102,7 @@ def generate_event_folders(workingFolder, clusterName, eventId,
 singularity exec {0} bash {1} {2} {3} {4} {5} {6} {7}
 
 mkdir -p temp
-./collect_singularity_events.sh playground temp
+./collect_events.sh playground temp
 mv temp/playground/playground.h5 RESULTS_{8}.h5
 """.format(singularityRepoPath, executeScriptName, parameterFileName,
            eventId0, nEvents, nThreads, randomSeed, bayesFile, eventId))
