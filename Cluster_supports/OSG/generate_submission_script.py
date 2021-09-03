@@ -38,7 +38,7 @@ should_transfer_files = YES
 WhenToTransferOutput = ON_EXIT
 
 +SingularityImage = "./{1}"
-Requirements = HAS_SINGULARITY == TRUE && SINGULARITY_MODE == "privileged" && (GLIDEIN_ResourceName != "cinvestav")
+Requirements = HAS_SINGULARITY == TRUE && SINGULARITY_MODE == "privileged" && (GLIDEIN_ResourceName != "cinvestav") && versionGE(GWMS_SINGULARITY_VERSION, "3.7.0") && ALLOW_NONCVMFS_IMAGES == True
 """.format(jobName, para_dict_["image_name"]))
 
     if para_dict_['bayesFlag']:
