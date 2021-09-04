@@ -54,21 +54,25 @@ event_list = list(hf.keys())
 
 realpart = []
 imagpart = []
-t_arr = []
+t_arr = []; t_arrFlag = True
 for iev, event_name in enumerate(event_list):
     event_id = int(event_name.split("_")[-1])
     event_group = hf.get(event_name)
     for ifile in range(2):
         filename = "real_{}_{}".format(event_id, ifile)
-        temp_data = event_group.get(filename)
-        temp_data = nan_to_num(temp_data)
-        if iev == 0 and ifile == 0:
-            t_arr = temp_data[:, 0]
-        realpart.append(temp_data[:, 1])
+        temp_data1 = event_group.get(filename)
+        temp_data1 = nan_to_num(temp_data1)
+        if temp_data1.shape == (0,): continue
         filename = "imag_{}_{}".format(event_id, ifile)
-        temp_data = event_group.get(filename)
-        temp_data = nan_to_num(temp_data)
-        imagpart.append(temp_data[:, 1])
+        temp_data2 = event_group.get(filename)
+        temp_data2 = nan_to_num(temp_data2)
+        if temp_data2.shape == (0,): continue
+
+        realpart.append(temp_data1[:, 1])
+        imagpart.append(temp_data2[:, 1])
+        if t_arrFlag:
+            t_arr = temp_data1[:, 0]
+            t_arrFlag = False
 hf.close()
 
 t_arr = array(t_arr)
@@ -86,7 +90,6 @@ imag_sq_mean = mean(imagpart**2., axis=0)
 real_sq_std = std(realpart**2., axis=0)
 imag_sq_std = std(imagpart**2., axis=0)
 
-squaremean = (mean(realpart**2., axis=0) + mean(imagpart**2., axis=0))/(16*pi)
 prefactor = 1e7*HBARC*HBARC*1.43/(16*pi)
 
 coherent = (real_mean**2. + imag_mean**2.)*prefactor
@@ -96,7 +99,7 @@ coherent_err = 2.*(abs(real_mean)*real_std
 incoherent = (real_sq_mean + imag_sq_mean
               - real_mean**2 - imag_mean**2.)*prefactor
 incoherent_err = (real_sq_std + imag_sq_std
-                  - 2.*(abs(real_mean)*real_std + abs(imag_mean)*imag_std)
+                  + 2.*(abs(real_mean)*real_std + abs(imag_mean)*imag_std)
                  )*prefactor/sqrt(nev)
 output = array([t_arr, coherent, coherent_err, incoherent, incoherent_err])
 savetxt(path.join(avg_folder_header, "Diffraction.txt"),
@@ -119,9 +122,10 @@ TT = t_data_incoherent[0:7]  # only consider 0-2.5 GeV
 incoh_data = exp(f_incoh(TT))
 incoh_data_err = exp(f_incoh_err(TT))
 
+t_arr = concatenate((t_data_incoherent[0:7], t_data_coherent))
 model_result = concatenate((incoh_data, coh_data))
 model_err = concatenate((incoh_data_err, coh_data_err))
 savetxt(path.join(avg_folder_header, "Bayesian_output.txt"),
-        array([model_result, model_err]).transpose(),
+        array([t_arr, model_result, model_err]).transpose(),
         fmt="%.6e", delimiter="  ",
-        header="results  stat. err")
+        header="t  results  stat. err")
