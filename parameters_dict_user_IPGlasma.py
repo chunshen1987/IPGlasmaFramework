@@ -28,7 +28,6 @@ ipglasma_dict = {
     'SigmaNN': 40.,
     'Rapidity': 1.7689,
     'QsmuRatio': 0.7,
-    'LOutput': 10,
     'bmin': 0.,
     'bmax': 0.,
     'Projectile': "p",
