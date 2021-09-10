@@ -190,7 +190,7 @@ def main(para_dict_):
           flush=True)
 
     nev = para_dict_['n_events']
-    idx0 = para_dict_['event_id0']*nev
+    idx0 = para_dict_['event_id0']
     iev = idx0
     Nfailed = 0
     while iev < idx0 + nev:
