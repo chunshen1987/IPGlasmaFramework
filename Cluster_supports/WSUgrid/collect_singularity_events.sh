@@ -34,7 +34,7 @@ collected_eventNum=0
 for ijob in `ls --color=none $fromFolder | grep "event" `;
 do
     eventsPath=${fromFolder}/${ijob}
-    for iev in `ls --color=none $eventsPath | grep RESULTS_*.h5`
+    for iev in `ls --color=none $eventsPath | grep RESULTS_*`
     do
         echo $iev
         mv ${eventsPath}/${iev} $target_res_folder
