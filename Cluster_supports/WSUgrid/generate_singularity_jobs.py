@@ -67,11 +67,11 @@ printf "Job running as user: `/usr/bin/id`\\n"
     if bayesFlag:
         script.write("""bayesFile=$6
 
-/home/IPGlasmaFramework/generate_jobs.py -w playground -c OSG -par ${parafile} -id ${processId} -n_th ${nth} -n_ev ${nev} -seed ${seed} -b ${bayesFile}
+/home/IPGlasmaFramework/generate_jobs.py -w playground -c OSG -par ${parafile} -id ${processId} -n_th ${nth} -n_ev ${nev} -seed ${seed} -b ${bayesFile} --continueFlag
 """)
     else:
         script.write("""
-/home/IPGlasmaFramework/generate_jobs.py -w playground -c OSG -par ${parafile} -id ${processId} -n_th ${nth} -n_ev ${nev} -seed ${seed}
+/home/IPGlasmaFramework/generate_jobs.py -w playground -c OSG -par ${parafile} -id ${processId} -n_th ${nth} -n_ev ${nev} -seed ${seed} --continueFlag
 """)
 
     script.write("""(
