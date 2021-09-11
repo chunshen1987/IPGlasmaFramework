@@ -98,6 +98,7 @@ def generate_event_folders(workingFolder, clusterName, eventId,
     write_script_header(clusterName, script, nThreads, eventId, wallTime,
                         eventFolder)
     if bayesFlag:
+        bayesFileName = bayesFile.split("/")[-1]
         script.write("""
 singularity exec {0} bash {1} {2} {3} {4} {5} {6} {7}
 
@@ -105,7 +106,7 @@ mkdir -p temp
 ./collect_events.sh playground temp
 mv temp/playground/playground.h5 RESULTS_{8}.h5
 """.format(singularityRepoPath, executeScriptName, parameterFileName,
-           eventId0, nEvents, nThreads, randomSeed, bayesFile, eventId))
+           eventId0, nEvents, nThreads, randomSeed, bayesFileName, eventId))
     else:
         script.write("""
 singularity exec {0} ./{1} {2} {3} {4} {5} {6}
