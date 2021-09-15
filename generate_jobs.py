@@ -466,7 +466,7 @@ def main():
             sys.stdout.write("#")
             sys.stdout.flush()
         if cluster_name == "OSG":
-            event_id_offset = osg_job_id
+            event_id_offset = osg_job_id*n_ev
         save_ipglasma_flag = False
         if initial_condition_type in ("IPGlasma"):
             save_ipglasma_flag = (
