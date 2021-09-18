@@ -458,7 +458,7 @@ def main():
         n_jobs, " "*toolbar_width))
     sys.stdout.flush()
     sys.stdout.write("\b"*(toolbar_width + 1))
-    event_id_offset = 0
+    event_id_offset = osg_job_id
     for ijob in range(n_jobs):
         progress_i = (int(float(ijob + 1)/n_jobs*toolbar_width)
                       - int(float(ijob)/n_jobs*toolbar_width))
