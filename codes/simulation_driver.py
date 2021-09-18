@@ -210,6 +210,7 @@ def main(para_dict_):
                 print(
                     "{} finished properly. No need to rerun.".format(event_id),
                     flush=True)
+                iev += 1
                 continue
             print("Rerun {} ...".format(final_results_folder), flush=True)
         else:
