@@ -43,6 +43,7 @@ done
 echo "Collected events number: " $collected_eventNum
 
 if [ "$collected_eventNum" -eq "0" ]; then
+    rm -fr ${target_res_folder}
     exit 0
 fi
 
