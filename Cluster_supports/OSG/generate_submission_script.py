@@ -38,7 +38,8 @@ should_transfer_files = YES
 WhenToTransferOutput = ON_EXIT
 
 +SingularityImage = "./{1}"
-Requirements = HAS_SINGULARITY == TRUE && SINGULARITY_MODE == "privileged" && (GLIDEIN_ResourceName != "cinvestav") && versionGE(GWMS_SINGULARITY_VERSION, "3.7.0") && ALLOW_NONCVMFS_IMAGES == True
+#Requirements = HAS_SINGULARITY == TRUE && SINGULARITY_MODE == "privileged" && (GLIDEIN_ResourceName != "cinvestav") && versionGE(GWMS_SINGULARITY_VERSION, "3.7.0") && ALLOW_NONCVMFS_IMAGES == True
+Requirements = HAS_SINGULARITY == TRUE && SINGULARITY_MODE == "privileged" && (GLIDEIN_ResourceName != "cinvestav")
 """.format(jobName, para_dict_["image_name"]))
 
     if para_dict_['bayesFlag']:
@@ -64,7 +65,7 @@ on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
 # The below are good base requirements for first testing jobs on OSG,
 # if you don't have a good idea of memory and disk usage.
 request_cpus = 1
-request_memory = 4 GB
+request_memory = 2 GB
 request_disk = 1 GB
 
 # Queue one job with the above specifications.
