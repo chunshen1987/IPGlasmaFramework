@@ -38,19 +38,20 @@ should_transfer_files = YES
 WhenToTransferOutput = ON_EXIT
 
 +SingularityImage = "./{1}"
-#Requirements = HAS_SINGULARITY == TRUE && SINGULARITY_MODE == "privileged" && (GLIDEIN_ResourceName != "cinvestav") && versionGE(GWMS_SINGULARITY_VERSION, "3.7.0") && ALLOW_NONCVMFS_IMAGES == True
-Requirements = HAS_SINGULARITY == TRUE && SINGULARITY_MODE == "privileged" && (GLIDEIN_ResourceName != "cinvestav")
+Requirements = SINGULARITY_CAN_USE_SIF
 """.format(jobName, para_dict_["image_name"]))
 
+    imagePathHeader = "stash:///osgconnect"
     if para_dict_['bayesFlag']:
         script.write("""
 transfer_input_files = {0}, {1}, {2}
 """.format(para_dict_['paraFile'], para_dict_['bayesFile'],
-           para_dict_['image_with_path']))
+           imagePathHeader + para_dict_['image_with_path']))
     else:
         script.write("""
 transfer_input_files = {0}, {1}
-""".format(para_dict_['paraFile'], para_dict_['image_with_path']))
+""".format(para_dict_['paraFile'],
+           imagePathHeader + para_dict_['image_with_path']))
 
     script.write("""
 transfer_output_files = playground/event_0/RESULTS_$(Process).h5
@@ -58,6 +59,8 @@ transfer_output_files = playground/event_0/RESULTS_$(Process).h5
 error = ../log/job.$(Cluster).$(Process).error
 output = ../log/job.$(Cluster).$(Process).output
 log = ../log/job.$(Cluster).$(Process).log
+
++JobDurationCategory = "Long"
 
 # Send the job to Held state on failure.
 on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
@@ -127,11 +130,11 @@ if __name__ == "__main__":
         SINGULARITY_IMAGE_PATH = sys.argv[3]
         SINGULARITY_IMAGE = SINGULARITY_IMAGE_PATH.split("/")[-1]
         PARAMFILE = sys.argv[4]
-        JOBID = int(sys.argv[5])
+        JOBID = sys.argv[5]
         if len(sys.argv) == 7:
             bayesFile = sys.argv[6]
             bayesFlag = True
-    except IndexError:
+    except (IndexError, ValueError) as e:
         print_usage()
         exit(0)
 
