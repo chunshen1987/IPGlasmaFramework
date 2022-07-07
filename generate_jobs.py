@@ -223,7 +223,7 @@ mv run.err $results_folder/
     script.close()
 
 
-def generate_script_subnucleondiffraction(folder_name, cluster_name, event_id):
+def generate_script_subnucleondiffraction(folder_name, collisionType, event_id):
     """This function generates script for computing subnucleon diffraction"""
     working_folder = folder_name
 
@@ -248,18 +248,50 @@ mkdir -p $results_folder
     script.write("""
 # run subnucleon diffraction
 ((Randum_number=$RANDOM))
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -imag -Q2 0 -W 75 -mcintpoints 1e6 > $results_folder/imag_${evid}_${fileid}
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -real -Q2 0 -W 75 -mcintpoints 1e6 > $results_folder/real_${evid}_${fileid}
+
+""")
+
+    if collisionType == 0:
+        # e+P
+        script.write("""
+#### rho ####
+for Q2 in 3.3 6.6 11.5 17.4 33
+do
+    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -wavef_file gauss-boosted-rho.dat -imag -Q2 ${Q2} -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_imag_${evid}_${fileid}
+    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -wavef_file gauss-boosted-rho.dat -real -Q2 ${Q2} -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_real_${evid}_${fileid}
+done
+
+#### J/Psi ####
+# Q^2=0.0
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -imag -Q2 0.0 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -real -Q2 0.0 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}
+
+cd ..
+""")
+    elif collisionType == 1:
+        # e+A
+        script.write("""
+#### rho ####
+for Q2 in 3.3 6.6 11.5 17.4 33
+do
+    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.5 -wavef_file gauss-boosted-rho.dat -tstep 0.002 -imag -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_imag_${evid}_${fileid}
+    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.5 -wavef_file gauss-boosted-rho.dat -tstep 0.002 -real -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_real_${evid}_${fileid}
+done
+
+#### J/Psi ####
+# Q^2=0.0
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.5 -tstep 0.002 -imag -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.5 -tstep 0.002 -real -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}
 
 cd ..
 """)
     script.close()
 
 
-def generate_event_folders(initial_condition_type, package_root_path,
-                           code_path, working_folder, cluster_name,
-                           event_id, event_id_offset, n_ev, n_threads,
-                           save_ipglasma_flag):
+def generate_event_folders(initial_condition_type, collisionType,
+                           package_root_path, code_path, working_folder,
+                           cluster_name, event_id, event_id_offset,
+                           n_ev, n_threads, save_ipglasma_flag):
     """This function creates the event folder structure"""
     event_folder = path.join(working_folder, 'event_%d' % event_id)
     param_folder = path.join(working_folder, 'model_parameters')
@@ -286,9 +318,10 @@ def generate_event_folders(initial_condition_type, package_root_path,
 
         # subnucleondiffraction
         mkdir(path.join(event_folder, 'subnucleondiffraction'))
-        generate_script_subnucleondiffraction(event_folder, cluster_name,
+        generate_script_subnucleondiffraction(event_folder, collisionType,
                                               event_id)
-        link_list = ['build/bin/subnucleondiffraction', 'gauss-boosted.dat']
+        link_list = ['build/bin/subnucleondiffraction', 'gauss-boosted.dat',
+                     'gauss-boosted-rho.dat']
         for link_i in link_list:
             subprocess.call("ln -s {0:s} {1:s}".format(
                 path.abspath(path.join(
@@ -383,6 +416,10 @@ def main():
     parser.add_argument("--continueFlag", action="store_true")
     args = parser.parse_args()
 
+    if len(sys.argv) < 2:
+        parser.print_help()
+        exit(0)
+
     # print out all the arguments
     print("="*40)
     print("\U0000269B   Input parameters")
@@ -423,6 +460,21 @@ def main():
               + "Do not recognize the initial condition type: {}".format(
                   initial_condition_type))
         exit(1)
+
+    collisionType = 0
+    if (parameter_dict.ipglasma_dict['Projectile']
+            == parameter_dict.ipglasma_dict['Target']):
+        if parameter_dict.ipglasma_dict['Projectile'] != "p":
+            collisionType = 1
+    else:
+        print("\U0001F6AB  "
+                + "Projectile and Target species are different! Proj: "
+                + parameter_dict.ipglasma_dict['Projectile']
+                + ", target : "
+                + parameter_dict.ipglasma_dict['Target']
+        )
+        exit(1)
+
 
     working_folder_name = path.abspath(working_folder_name)
     if path.exists(working_folder_name) and args.continueFlag:
@@ -471,8 +523,9 @@ def main():
         if initial_condition_type in ("IPGlasma"):
             save_ipglasma_flag = (
                     parameter_dict.control_dict['save_ipglasma_results'])
-        generate_event_folders(initial_condition_type, code_package_path,
-                               code_path, working_folder_name, cluster_name,
+        generate_event_folders(initial_condition_type, collisionType,
+                               code_package_path, code_path,
+                               working_folder_name, cluster_name,
                                ijob, event_id_offset, n_ev, n_threads,
                                save_ipglasma_flag)
         event_id_offset += n_ev
