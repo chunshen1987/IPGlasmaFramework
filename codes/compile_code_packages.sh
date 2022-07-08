@@ -3,6 +3,20 @@
 Green='\033[0;32m'
 NC='\033[0m'
 
+CCFlag=$1
+CXXFlag=$2
+FCFlag=$3
+
+if [ -z "$CCFlag" ]; then
+    CCFlag=gcc
+fi
+if [ -z "$CXXFlag" ]; then
+    CXXFlag=g++
+fi
+if [ -z "$FCFlag" ]; then
+    FCFlag=gfortran
+fi
+
 machine="$(uname -s)"
 case "${machine}" in
     Linux*)     number_of_cores=`nproc --all`;;
@@ -15,20 +29,26 @@ number_of_cores_to_compile=$(( ${number_of_cores} > 10 ? 10 : ${number_of_cores}
 echo -e "${Green}compile IPGlasma ... ${NC}"
 (
     cd ipglasma_code
-    ./compile_IPGlasma.sh noMPI
+    mkdir -p build
+    cd build
+    rm -fr *
+    CC=${CCFlag} CXX=${CXXFlag} cmake .. -DdisableMPI=ON
+    make -j$number_of_cores_to_compile
+    make install
 )
 status=$?
 if [ $status -ne 0 ]; then
     exit $status
 fi
 
-# compile subnucleondiffraction
+# compile subnucleondiffractiop
 echo -e "${Green}compile subnucleondiffraction ... ${NC}"
 (
     cd subnucleondiffraction_code
-    mkdir build
+    mkdir -p build
     cd build
-    cmake ..
+    rm -fr *
+    CC=${CCFlag} CXX=${CXXFlag} cmake ..
     make -j$number_of_cores_to_compile
 )
 status=$?
