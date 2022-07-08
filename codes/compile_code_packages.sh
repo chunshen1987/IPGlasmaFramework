@@ -22,20 +22,6 @@ if [ $status -ne 0 ]; then
     exit $status
 fi
 
-# compile amplitudelib
-echo -e "${Green}compile amplitudelib ... ${NC}"
-(
-    cd amplitudelib_v2
-    mkdir build
-    cd build
-    cmake ..
-    make -j$number_of_cores_to_compile
-)
-status=$?
-if [ $status -ne 0 ]; then
-    exit $status
-fi
-
 # compile subnucleondiffraction
 echo -e "${Green}compile subnucleondiffraction ... ${NC}"
 (
