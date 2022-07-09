@@ -43,3 +43,7 @@ codes/ipglasma*
 codes/subnucleondiffraction*
 
 playground
+
+parameter*
+collect_events.sh
+combine_multiple_hdf5.py
