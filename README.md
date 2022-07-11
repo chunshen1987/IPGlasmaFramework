@@ -5,4 +5,4 @@ The individual code package that are included in this framework are as follows,
 
 [IP-Glasma](https://github.com/schenke/ipglasma)
 
-[subnucleondiffraction](https://github.com/hejajama/subnucleondiffraction) + [amplitudelib_v2](https://github.com/hejajama/amplitudelib)
+[subnucleondiffraction](https://github.com/hejajama/subnucleondiffraction)
