@@ -7,8 +7,10 @@
 # control parameters
 control_dict = {
     'initial_state_type': "IPGlasma",
-    'walltime': "10:00:00",  # walltime to run
-    'save_ipglasma_results': False,
+    'walltime': "10:00:00",             # walltime to run
+    'save_ipglasma_results': False,     # flag to save the Wilson lines
+    'analyzeDiffraction': 1,            # 1: JPsi only; 2: JPsi + rho
+    'saveNucleusSnapshot': False,       # flag to save the trace of Wilson Line distribution
 }
 
 
