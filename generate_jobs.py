@@ -296,6 +296,23 @@ GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $W
 
 cd ..
 """)
+        elif collisionType == 2:
+            # e+A
+            if analyzeDiffraction == 2:
+                script.write("""
+#### rho ####
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -DOUPC 1 -UPC_energy 200. -UPC_Nucleus Au -DacayToScalarmeson 1 -mint 0.00005 -maxt1 0.0036 -maxt2 0.05 -maxt3 0.1 -tstep1 0.0002 -tstep2 0.001 -tstep2 0.01 -wavef_file gauss-boosted-rho.dat -imag -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_0_imag_${evid}_${fileid}
+
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile  -DOUPC 1 -UPC_energy 200. -UPC_Nucleus Au -DacayToScalarmeson 1 -mint 0.00005 -maxt1 0.0036 -maxt2 0.05 -maxt3 0.1 -tstep1 0.0002 -tstep2 0.001 -tstep2 0.01 -wavef_file gauss-boosted-rho.dat -real -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_0_real_${evid}_${fileid}
+""")
+            script.write("""
+#### J/Psi ####
+# Q^2=0.0
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile  -DOUPC 1 -UPC_energy 200. -UPC_Nucleus Au -DacayToScalarmeson 0 -mint 0.00005 -maxt1 0.0036 -maxt2 0.05 -maxt3 0.1 -tstep1 0.0002 -tstep2 0.001 -tstep2 0.01 -imag -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}
+
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile  -DOUPC 1 -UPC_energy 200. -UPC_Nucleus Au -DacayToScalarmeson 0 -mint 0.00005 -maxt1 0.0036 -maxt2 0.05 -maxt3 0.1 -tstep1 0.0002 -tstep2 0.001 -tstep2 0.01 -real -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}
+cd ..
+""")
     script.close()
 
 
@@ -488,6 +505,8 @@ def main():
         )
         exit(1)
 
+    if (parameter_dict.ipglasma_dict['DO_UPC_DIFF'] == 1):
+        collisionType = 2
 
     working_folder_name = path.abspath(working_folder_name)
     if path.exists(working_folder_name) and args.continueFlag:
