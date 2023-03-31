@@ -82,7 +82,7 @@ RUN echo 'export GSL_ROOT_DIR="/usr/local/gsl/2.5/x86_64"' >> /root/.bashrc
 
 # download and compile the IPGlasma framework
 RUN cd ${HOME} && \
-    git clone --depth=1 https://github.com/chunshen1987/IPGlasmaFramework && \
+    git clone --depth=1 https://github.com/chunshen1987/IPGlasmaFramework -b UPC_diff && \
     cd IPGlasmaFramework/codes && \
     ./get_code_packages.sh && \
     ./compile_code_packages.sh
