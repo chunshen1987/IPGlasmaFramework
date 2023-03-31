@@ -13,7 +13,7 @@ We can build a docker image for the IPGlasmaFramework package using the followin
 The docker container has ready compiled all the software packages for IPGlasmaFramework.
 
 ```
-    docker run -it --rm --name myIPGlasma chunshen1987/ipglasmaframework:latest
+    docker run -it --rm --name myIPGlasma chunshen1987/ipglasmaframework:UPC
 ```
 
 ### 3. To delete all the Docker images in your laptop
@@ -25,7 +25,7 @@ The docker container has ready compiled all the software packages for IPGlasmaFr
 ### 4. Push the Docker image to the Docker Hub
 
 ```
-    docker push chunshen1987/ipglasmaframework:latest
+    docker push chunshen1987/ipglasmaframework:UPC
 ```
 
 ## Using IPGlasmaFramework via Singularity
@@ -34,7 +34,7 @@ Use the following command to create a singularity image (sif) from the
 docker image,
 
 ```
-    singularity pull docker://chunshen1987/ipglasmaframework:latest
+    singularity pull docker://chunshen1987/ipglasmaframework:UPC
 ```
 
 To run the singularity image, `singularity run ipglasmaframework_lastest.sif`
