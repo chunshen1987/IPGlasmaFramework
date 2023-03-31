@@ -6,7 +6,7 @@ Docker is a software tool that allows one to deploy an application in a portable
 We can build a docker image for the IPGlasmaFramework package using the following command,
 
 ```
-	docker build -t chunshen1987/ipglasmaframework:latest .
+	docker build -t chunshen1987/ipglasmaframework:UPC .
 ```
 
 ### 2. Run IPGlasmaFramework
