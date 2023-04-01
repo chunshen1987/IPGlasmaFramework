@@ -10,6 +10,8 @@ control_dict = {
     'walltime': "10:00:00",             # walltime to run
     'save_ipglasma_results': False,     # flag to save the Wilson lines
     'analyzeDiffraction': 2,            # 1: JPsi only; 2: JPsi + rho
+    'Low_cut': 0.8,                     # The low cut for the Q^2 integral
+    'High_cut': 1.2,                    # The upper cut for the Q^2 integral
     'saveNucleusSnapshot': False,       # flag to save the trace of Wilson Line distribution
 }
 

@@ -224,7 +224,7 @@ mv run.err $results_folder/
 
 
 def generate_script_subnucleondiffraction(folder_name, collisionType, event_id,
-                                          saveSnapshot, analyzeDiffraction):
+                                          saveSnapshot, analyzeDiffraction, Low_cut = 0.8, High_cut = 1.2):
     """This function generates script for computing subnucleon diffraction"""
     working_folder = folder_name
 
@@ -301,16 +301,22 @@ cd ..
             if analyzeDiffraction == 2:
                 script.write("""
 #### rho ####
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -DOUPC 1 -UPC_energy 200. -UPC_Nucleus Au -DacayToScalarmeson 1 -mint 0.00005 -maxt1 0.0036 -maxt2 0.05 -maxt3 0.1 -tstep1 0.0002 -tstep2 0.001 -tstep3 0.01 -wavef_file gauss-boosted-rho.dat -imag -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_0_imag_${evid}_${fileid}
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -DOUPC 1 -UPC_energy 200. -UPC_Nucleus Au -DacayToScalarmeson 1 -mint 0.00005 -maxt1 0.0036 -maxt2 0.05 -maxt3 0.1 -tstep1 0.0002 -tstep2 0.001 -tstep3 0.01 -Low {low} -High {high} """.format(low = Low_cut, high = High_cut)) 
+                script.write("""-wavef_file gauss-boosted-rho.dat -imag -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_0_imag_${evid}_${fileid}""")
 
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile  -DOUPC 1 -UPC_energy 200. -UPC_Nucleus Au -DacayToScalarmeson 1 -mint 0.00005 -maxt1 0.0036 -maxt2 0.05 -maxt3 0.1 -tstep1 0.0002 -tstep2 0.001 -tstep3 0.01 -wavef_file gauss-boosted-rho.dat -real -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_0_real_${evid}_${fileid}
-""")
-            script.write("""
+                script.write("""
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile  -DOUPC 1 -UPC_energy 200. -UPC_Nucleus Au -DacayToScalarmeson 1 -mint 0.00005 -maxt1 0.0036 -maxt2 0.05 -maxt3 0.1 -tstep1 0.0002 -tstep2 0.001 -tstep3 0.01 -Low {low} -High {high} """.format(low = Low_cut, high = High_cut)) 
+                script.write("""-wavef_file gauss-boosted-rho.dat -real -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_0_real_${evid}_${fileid}""")
+
+                script.write("""
 #### J/Psi ####
 # Q^2=0.0
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile  -DOUPC 1 -UPC_energy 200. -UPC_Nucleus Au -DacayToScalarmeson 0 -mint 0.00005 -maxt1 0.0036 -maxt2 0.05 -maxt3 0.1 -tstep1 0.0002 -tstep2 0.001 -tstep3 0.01 -imag -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile  -DOUPC 1 -UPC_energy 200. -UPC_Nucleus Au -DacayToScalarmeson 0 -mint 0.00005 -maxt1 0.0036 -maxt2 0.05 -maxt3 0.1 -tstep1 0.0002 -tstep2 0.001 -tstep3 0.01 -Low {low} -High {high} """.format(low = Low_cut, high = High_cut)) 
+                script.write("""-imag -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}""")
 
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile  -DOUPC 1 -UPC_energy 200. -UPC_Nucleus Au -DacayToScalarmeson 0 -mint 0.00005 -maxt1 0.0036 -maxt2 0.05 -maxt3 0.1 -tstep1 0.0002 -tstep2 0.001 -tstep3 0.01 -real -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}
+                script.write("""
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile  -DOUPC 1 -UPC_energy 200. -UPC_Nucleus Au -DacayToScalarmeson 0 -mint 0.00005 -maxt1 0.0036 -maxt2 0.05 -maxt3 0.1 -tstep1 0.0002 -tstep2 0.001 -tstep3 0.01 -Low {low} -High {high} """.format(low = Low_cut, high = High_cut)) 
+                script.write("""-real -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}
 cd ..
 """)
     script.close()
@@ -320,7 +326,7 @@ def generate_event_folders(initial_condition_type, collisionType,
                            package_root_path, code_path, working_folder,
                            cluster_name, event_id, event_id_offset,
                            n_ev, n_threads, save_ipglasma_flag, saveSnapshot,
-                           analyzeDiffraction):
+                           analyzeDiffraction, Low_cut, High_cut):
     """This function creates the event folder structure"""
     event_folder = path.join(working_folder, 'event_%d' % event_id)
     param_folder = path.join(working_folder, 'model_parameters')
@@ -349,7 +355,7 @@ def generate_event_folders(initial_condition_type, collisionType,
         mkdir(path.join(event_folder, 'subnucleondiffraction'))
         generate_script_subnucleondiffraction(event_folder, collisionType,
                                               event_id, saveSnapshot,
-                                              analyzeDiffraction)
+                                              analyzeDiffraction, Low_cut, High_cut)
         link_list = ['build/bin/subnucleondiffraction', 'gauss-boosted.dat',
                      'gauss-boosted-rho.dat']
         for link_i in link_list:
@@ -557,12 +563,14 @@ def main():
                     parameter_dict.control_dict['save_ipglasma_results'])
         saveSnapshot = parameter_dict.control_dict['saveNucleusSnapshot']
         analyzeDiffraction = parameter_dict.control_dict['analyzeDiffraction']
+        Low_cut = parameter_dict.control_dict['Low_cut']
+        High_cut = parameter_dict.control_dict['High_cut']
         generate_event_folders(initial_condition_type, collisionType,
                                code_package_path, code_path,
                                working_folder_name, cluster_name,
                                ijob, event_id_offset, n_ev, n_threads,
                                save_ipglasma_flag, saveSnapshot,
-                               analyzeDiffraction)
+                               analyzeDiffraction, Low_cut, High_cut)
         event_id_offset += n_ev
     sys.stdout.write("\n")
     sys.stdout.flush()
