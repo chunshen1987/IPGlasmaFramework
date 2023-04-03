@@ -12,6 +12,8 @@ control_dict = {
     'analyzeDiffraction': 2,            # 1: JPsi only; 2: JPsi + rho
     'Low_cut': 0.8,                     # The low cut for the Q^2 integral
     'High_cut': 1.2,                    # The upper cut for the Q^2 integral
+    'Q21': 0.0,                         # the Q^2 for the rho production
+    'Q22': 33.,                         # the Q^2 for the rho production
     'saveNucleusSnapshot': False,       # flag to save the trace of Wilson Line distribution
 }
 
