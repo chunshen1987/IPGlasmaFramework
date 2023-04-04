@@ -321,10 +321,27 @@ GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $W
                 script.write("""
 GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile  -DOUPC 1 -UPC_energy 200. -UPC_Nucleus Au -DacayToScalarmeson 0 -mint 0.00005 -maxt1 0.0036 -maxt2 0.05 -maxt3 0.1 -tstep1 0.0002 -tstep2 0.001 -tstep3 0.01 -Low {low} -High {high} """.format(low = Low_cut, high = High_cut)) 
                 script.write("""-real -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}
-cd ..
-""")
-    script.close()
+cd ..""") 
+                script.close()
+        elif collisionType == 3:
+            # e+A for soft radiation
+            if analyzeDiffraction == 2:
+                script.write("""
+#### rho ####
+for Q2 in {Q21}
+do
+    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -DOUPC 1 -UPC_energy 200. -UPC_Nucleus Au -DacayToScalarmeson 1 -DOSoftPhoton 1 -mint 0.00005 -maxt1 0.0036 -maxt2 0.05 -maxt3 0.1 -tstep1 0.0002 -tstep2 0.001 -tstep3 0.01 -Low {low} -High {high} """.format(Q21 = Q21, low = Low_cut, high = High_cut)) 
+                script.write("""-wavef_file gauss-boosted-rho.dat -read -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_imag_${evid}_${fileid}
+done""")
 
+                script.write("""
+#### J/Psi ####
+# Q^2=0.0
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile  -DOUPC 1 -UPC_energy 200. -UPC_Nucleus Au -DacayToScalarmeson 0 -DOSoftPhoton 1 -mint 0.00005 -maxt1 0.0036 -maxt2 0.05 -maxt3 0.1 -tstep1 0.0002 -tstep2 0.001 -tstep3 0.01 -Low {low} -High {high} """.format(low = Low_cut, high = High_cut)) 
+                script.write("""-real -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}
+cd ..
+""") 
+                script.close()
 
 def generate_event_folders(initial_condition_type, collisionType,
                            package_root_path, code_path, working_folder,
@@ -517,6 +534,8 @@ def main():
 
     if (parameter_dict.ipglasma_dict['DO_UPC_DIFF'] == 1):
         collisionType = 2
+
+        collisionType = int(collisionType) + int(parameter_dict.ipglasma_dict['DO_SOFT_RAD'])
 
     working_folder_name = path.abspath(working_folder_name)
     if path.exists(working_folder_name) and args.continueFlag:

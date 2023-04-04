@@ -28,6 +28,7 @@ ipglasma_dict = {
     'beta4': 0.00,
     'gamma': 0.0,  
     'DO_UPC_DIFF': 1,
+    'DO_SOFT_RAD': 1, 
     'L': 30.,               # grid size in the transverse plane
     'size': 1024,            # number of grid points of IP-Glasma computation
     'm': 0.4,
