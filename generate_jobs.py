@@ -331,7 +331,20 @@ cd ..""")
 for Q2 in {Q21}
 do
     GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -DOUPC 1 -UPC_energy 200. -UPC_Nucleus Au -DacayToScalarmeson 1 -DOSoftPhoton 1 -mint 0.00005 -maxt1 0.0036 -maxt2 0.05 -maxt3 0.1 -tstep1 0.0002 -tstep2 0.001 -tstep3 0.01 -Low {low} -High {high} """.format(Q21 = Q21, low = Low_cut, high = High_cut)) 
-                script.write("""-wavef_file gauss-boosted-rho.dat -read -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_imag_${evid}_${fileid}
+                script.write("""-wavef_file gauss-boosted-rho.dat -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_imag_${evid}_${fileid}
+done
+cd ..""")
+                script.close()
+
+        elif collisionType == 4:
+            # e+A for soft radiation
+            if analyzeDiffraction == 2:
+                script.write("""
+#### rho ####
+for Q2 in {Q21}
+do
+    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -DOUPC 1 -UPC_energy 200. -UPC_Nucleus Au -DacayToScalarmeson 1 -DOSoftPhoton 1 -mint 0.00005 -maxt1 0.0036 -maxt2 0.05 -maxt3 0.1 -tstep1 0.0002 -tstep2 0.001 -tstep3 0.01 -Low {low} -High {high} """.format(Q21 = Q21, low = Low_cut, high = High_cut)) 
+                script.write("""-wavef_file gauss-boosted-rho.dat -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_imag_${evid}_${fileid}
 done""")
 
                 script.write("""
