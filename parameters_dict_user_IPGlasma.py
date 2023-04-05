@@ -9,11 +9,12 @@ control_dict = {
     'initial_state_type': "IPGlasma",
     'walltime': "10:00:00",             # walltime to run
     'save_ipglasma_results': False,     # flag to save the Wilson lines
-    'analyzeDiffraction': 2,            # 1: JPsi only; 2: JPsi + rho
+    'analyzeDiffraction': 3,            # 1: JPsi only; 2: JPsi + rho; 3: rho only
     'Low_cut': 0.8,                     # The low cut for the Q^2 integral
     'High_cut': 1.2,                    # The upper cut for the Q^2 integral
     'Q21': 0.0,                         # the Q^2 for the rho production
     'Q22': 33.,                         # the Q^2 for the rho production
+    'maxr': 0.5,                        # the maxr for the rho production
     'saveNucleusSnapshot': False,       # flag to save the trace of Wilson Line distribution
 }
 
@@ -28,7 +29,7 @@ ipglasma_dict = {
     'beta4': 0.00,
     'gamma': 0.0,  
     'DO_UPC_DIFF': 1,
-    'DO_SOFT_RAD': 1, 
+    'DO_SOFT_RAD': 0, 
     'L': 30.,               # grid size in the transverse plane
     'size': 1024,            # number of grid points of IP-Glasma computation
     'm': 0.4,
