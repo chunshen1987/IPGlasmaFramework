@@ -225,7 +225,8 @@ mv run.err $results_folder/
 
 def generate_script_subnucleondiffraction(folder_name, collisionType, event_id,
                                           saveSnapshot, analyzeDiffraction, Low_cut = 0.8, High_cut = 1.2, 
-                                          Q21 = 0.0, Q22=33., maxr = 0.5, R_Nuclear = 6.37, with_photon_kT = 1):
+                                          Q21 = 0.0, Q22=33., maxr = 0.5, R_Nuclear = 6.37, with_photon_kT = 1,
+                                          OUTPUTAONLY = 1):
     """This function generates script for computing subnucleon diffraction"""
     working_folder = folder_name
 
@@ -247,6 +248,24 @@ mkdir -p $results_folder
 
 """.format(results_folder))
 
+    if OUTPUTAONLY == 1:
+        script.write("""
+#### rho ####
+for Q2 in {Q21}
+do
+    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -maxr {maxr} -OUTPUTAONLY 1 """.format( maxr = maxr,  Q21 = Q21 ))
+        script.write("""-wavef_file gauss-boosted-rho.dat  -real -Q2 ${Q2} -xp 0.001 -mcintpoints 1e4 > $results_folder/rho_Q2_${Q2}_real_${evid}_${fileid}
+done""")
+        script.write("""
+#### rho ####
+for Q2 in {Q21}
+do
+    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -maxr {maxr} -OUTPUTAONLY 1 """.format( maxr = maxr,  Q21 = Q21 ))
+        script.write("""-wavef_file gauss-boosted-rho.dat  -imag -Q2 ${Q2} -xp 0.001 -mcintpoints 1e4 > $results_folder/rho_Q2_${Q2}_imag_${evid}_${fileid}
+done
+cd ..""")
+        script.close()
+        return
     if saveSnapshot:
         script.write("""
 ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -print_nucleus > ${results_folder}/picture_${evid}_${fileid}
@@ -369,7 +388,8 @@ def generate_event_folders(initial_condition_type, collisionType,
                            package_root_path, code_path, working_folder,
                            cluster_name, event_id, event_id_offset,
                            n_ev, n_threads, save_ipglasma_flag, saveSnapshot,
-                           analyzeDiffraction, Low_cut, High_cut, Q21, Q22, maxr, R_Nuclear, with_photon_kT):
+                           analyzeDiffraction, Low_cut, High_cut, Q21, Q22, maxr,
+                           R_Nuclear, with_photon_kT, OUTPUTAONLY):
     """This function creates the event folder structure"""
     event_folder = path.join(working_folder, 'event_%d' % event_id)
     param_folder = path.join(working_folder, 'model_parameters')
@@ -399,7 +419,7 @@ def generate_event_folders(initial_condition_type, collisionType,
         generate_script_subnucleondiffraction(event_folder, collisionType,
                                               event_id, saveSnapshot,
                                               analyzeDiffraction, Low_cut, High_cut, Q21, Q22, 
-                                              maxr, R_Nuclear, with_photon_kT)
+                                              maxr, R_Nuclear, with_photon_kT, OUTPUTAONLY)
         link_list = ['build/bin/subnucleondiffraction', 'gauss-boosted.dat',
                      'gauss-boosted-rho.dat']
         for link_i in link_list:
@@ -616,6 +636,7 @@ def main():
         Q22 = parameter_dict.control_dict['Q22']
         maxr = parameter_dict.control_dict['maxr']
         with_photon_kT = parameter_dict.control_dict['with_photon_kT']
+        OUTPUTAONLY = parameter_dict.control_dict['OUTPUT_A_ONLY']
         R_Nuclear = parameter_dict.ipglasma_dict['R_WS']
         generate_event_folders(initial_condition_type, collisionType,
                                code_package_path, code_path,
@@ -623,7 +644,7 @@ def main():
                                ijob, event_id_offset, n_ev, n_threads,
                                save_ipglasma_flag, saveSnapshot,
                                analyzeDiffraction, Low_cut, High_cut, Q21, Q22, 
-                               maxr, R_Nuclear, with_photon_kT)
+                               maxr, R_Nuclear, with_photon_kT, OUTPUTAONLY)
         event_id_offset += n_ev
     sys.stdout.write("\n")
     sys.stdout.flush()
