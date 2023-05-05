@@ -9,22 +9,22 @@ control_dict = {
     'initial_state_type': "IPGlasma",
     'walltime': "10:00:00",             # walltime to run
     'save_ipglasma_results': False,     # flag to save the Wilson lines
-    'analyzeDiffraction': 3,            # 1: JPsi only; 2: JPsi + rho, 3 : rho only
+    'analyzeDiffraction': 3,            # 1: JPsi only; 2: JPsi + rho
     'Low_cut': 0.712599089222466,                     # The low cut for the Q^2 integral
-    'High_cut': 1.3661663012312362,                    # The upper cut for the Q^2 integral
+    'High_cut': 2.0,                    # The upper cut for the Q^2 integral
     'Q21': 0.0,                         # the Q^2 for the rho production
     'Q22': 30.,                         # the Q^2 for the rho production
+    'saveNucleusSnapshot': False,       # flag to save the trace of Wilson Line distributioni
     'maxr': 5.68,                        # the maxr for the rho production
     'OUTPUT_A_ONLY': 1,                    # Output the b and theta_b 2-d table of A
-    'with_photon_kT': 1,                        # the maxr for the rho production
-    'saveNucleusSnapshot': False,       # flag to save the trace of Wilson Line distribution
+    'with_photon_kT': 0,                        # the maxr for the rho production
 }
 
 
 # IPGlasma
 ipglasma_dict = {
     'setWSDeformParams': 1,
-    'R_WS': 6.37,
+    'R_WS': 6.38,
     'a_WS': 0.535,
     'beta2': -0.13,
     'beta3': 0.0,

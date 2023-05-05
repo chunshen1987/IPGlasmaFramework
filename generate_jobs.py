@@ -254,14 +254,14 @@ mkdir -p $results_folder
 for Q2 in {Q21}
 do
     GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -maxr {maxr} -OUTPUTAONLY 1 """.format( maxr = maxr,  Q21 = Q21 ))
-        script.write("""-wavef_file gauss-boosted-rho.dat  -real -Q2 ${Q2} -xp 0.001 -mcintpoints 1e4 > $results_folder/rho_Q2_${Q2}_real_${evid}_${fileid}
+        script.write("""-wavef_file gauss-boosted-rho.dat  -real -Q2 ${Q2} -xp 0.01 -mcintpoints 1e4 > $results_folder/rho_Q2_${Q2}_real_${evid}_${fileid}
 done""")
         script.write("""
 #### rho ####
 for Q2 in {Q21}
 do
     GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -maxr {maxr} -OUTPUTAONLY 1 """.format( maxr = maxr,  Q21 = Q21 ))
-        script.write("""-wavef_file gauss-boosted-rho.dat  -imag -Q2 ${Q2} -xp 0.001 -mcintpoints 1e4 > $results_folder/rho_Q2_${Q2}_imag_${evid}_${fileid}
+        script.write("""-wavef_file gauss-boosted-rho.dat  -imag -Q2 ${Q2} -xp 0.01 -mcintpoints 1e4 > $results_folder/rho_Q2_${Q2}_imag_${evid}_${fileid}
 done
 cd ..""")
         script.close()
