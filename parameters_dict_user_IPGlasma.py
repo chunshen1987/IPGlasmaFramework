@@ -15,7 +15,7 @@ control_dict = {
     'Q21': 0.0,                         # the Q^2 for the rho production
     'Q22': 30.,                         # the Q^2 for the rho production
     'saveNucleusSnapshot': False,       # flag to save the trace of Wilson Line distributioni
-    'maxr': 50.0,                        # the maxr for the rho production
+    'maxr': 1.0,                        # the maxr for the rho production #fm
     'epslion': 0.1,
     'OUTPUT_A_ONLY': 1,                    # Output the b and theta_b 2-d table of A
     'with_photon_kT': 0,                        # the maxr for the rho production
