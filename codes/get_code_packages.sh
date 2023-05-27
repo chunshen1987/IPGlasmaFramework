@@ -5,7 +5,7 @@
 # download IPGlasma
 rm -fr ipglasma_code
 #git clone --depth=1 https://github.com/schenke/ipglasma ipglasma_code
-git clone --depth=1 https://github.com/chunshen1987/ipglasma ipglasma_code
+git clone --depth=1 https://github.com/chunshen1987/ipglasma -b UPC_Diff ipglasma_code
 rm -fr ipglasma_code/.git
 
 # download subnucleondiffraction

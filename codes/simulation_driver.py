@@ -75,6 +75,7 @@ def zip_results_into_hdf5(final_results_folder, event_id, para_dict):
         'NpartList{}.dat'.format(event_id),
         'NgluonEstimators{}.dat'.format(event_id),
         'usedParameters{}.dat'.format(event_id),
+        'B_Ncoll.dat',
     ]
 
     resfolder = path.join(final_results_folder, results_name)
@@ -286,3 +287,4 @@ if __name__ == "__main__":
     }
 
     main(para_dict)
+
