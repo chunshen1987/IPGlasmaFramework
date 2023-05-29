@@ -15,9 +15,9 @@ control_dict = {
     'Q21': 0.0,                         # the Q^2 for the rho production
     'Q22': 30.,                         # the Q^2 for the rho production
     'saveNucleusSnapshot': False,       # flag to save the trace of Wilson Line distributioni
-    'maxr': 1.0,                        # the maxr for the rho production #fm
-    'epslion': 0.1,
+    'maxr': 1.0,                        # the maxr for the rho production
     'OUTPUT_A_ONLY': 1,                    # Output the b and theta_b 2-d table of A
+    'epslion': 0.1,
     'with_photon_kT': 0,                        # the maxr for the rho production
 }
 
@@ -25,9 +25,11 @@ control_dict = {
 # IPGlasma
 ipglasma_dict = {
     'setWSDeformParams': 1,
-    'R_WS': 6.38,
+    'R_WS': 6.9,
     'a_WS': 0.535,
     'beta2': -0.13,
+    'force_dmin_flag': 0,
+    'd_min': 0.9,
     'beta3': 0.0,
     'beta4': -0.03,
     'gamma': 0.0,  
@@ -88,7 +90,6 @@ ipglasma_dict = {
     'useSeedList': 0,
     'seed': 0,
     'lightNucleusOption': 2,
-    #'beta2': 0.28,
     'useFixedNpart': 0,
     'averageOverThisManyNuclei': 1,
     'gaussianWounding': 1,
