@@ -18,7 +18,7 @@ def print_usage():
 def write_submission_script(para_dict_):
     jobName = "IPG_Diffraction_{}".format(para_dict_["job_id"])
     random_seed = random.SystemRandom().randint(0, 10000000)
-    imagePathHeader = "osdf"
+    imagePathHeader = "osdf://"
     script = open(FILENAME, "w")
     if para_dict_["bayesFlag"]:
         script.write("""universe = vanilla
@@ -59,9 +59,15 @@ output = ../log/job.$(Cluster).$(Process).output
 log = ../log/job.$(Cluster).$(Process).log
 
 #+JobDurationCategory = "Long"
+max_idle = 1000
+
+# remove the failed jobs
+periodic_remove = (ExitCode == 73)
+
+checkpoint_exit_code = 85
 
 # Send the job to Held state on failure.
-on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
+on_exit_hold = (ExitBySignal == True) || (ExitCode != 0 && ExitCode != 73)
 
 # The below are good base requirements for first testing jobs on OSG,
 # if you don't have a good idea of memory and disk usage.
