@@ -69,7 +69,6 @@ def write_script_header(cluster, script, n_threads, event_id, walltime,
 #SBATCH -N 1
 #SBATCH -n {1:d}
 #SBATCH --mem={2:.0f}G
-#SBATCH --constraint=intel
 #SBATCH -t {3:s}
 #SBATCH -e job.err
 #SBATCH -o job.log
@@ -105,6 +104,8 @@ export OMP_PROC_BIND=true
 export OMP_PLACES=threads
 
 num_of_nodes={0:d}
+module load ooops
+set_io_param_batch $SLURM_JOBID 0 low
 # run all the job
 for (( nodeid=1; nodeid <= $num_of_nodes; nodeid++ ))
 do
