@@ -318,12 +318,24 @@ do
     GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.5 -wavef_file gauss-boosted-rho.dat -tstep 0.002 -real -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_real_${evid}_${fileid}
 done
 """)
-            script.write("""
+
+            if analyzeDiffraction == 4:
+                script.write("""
 #### J/Psi ####
 # Q^2=0.0
 GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.5 -tstep 0.002 -imag -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}
 GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.5 -tstep 0.002 -real -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}
 
+""")
+            if analyzeDiffraction == 5:
+                script.write("""
+#### J/Psi ####
+# Q^2=0.0
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 1.5 -tstep 0.02 -imag -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 1.5 -tstep 0.02 -real -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}
+
+""")
+            script.write("""
 cd ..
 """)
         elif collisionType == 2:
@@ -414,7 +426,7 @@ def generate_event_folders(initial_condition_type, collisionType,
                         path.join(event_folder, 'ipglasma/input'))
         link_list = [
             'qs2Adj_vs_Tp_vs_Y_200.in', 'utilities', 'ipglasma',
-            'nucleusConfigurations'
+            'nucleusConfigurations', 'rVr.in', 'tables'
         ]
         for link_i in link_list:
             subprocess.call("ln -s {0:s} {1:s}".format(
