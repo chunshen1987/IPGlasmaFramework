@@ -14,3 +14,9 @@ rm -fr subnucleondiffraction_code
 git clone --depth=1 https://github.com/hejajama/subnucleondiffraction subnucleondiffraction_code
 #git clone --depth=1 https://github.com/hejajama/subnucleondiffraction -b UPC_diff subnucleondiffraction_code 
 rm -fr subnucleondiffraction_code/.git
+
+# download subnucleondiffraction
+rm -fr jimwlk
+git clone --depth=1 https://github.com/hejajama/jimwlk -b bayesian jimwlk_code
+rm -fr jimwlk_code/.git
+
