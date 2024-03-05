@@ -285,8 +285,8 @@ done
 """.format(measureSteps1, measureSteps2))
         if cluster_name != "OSG":
             script.write("""
-mv run.log $results_folder/
-mv run.err $results_folder/
+mv run.log $results_folder0/
+mv run.err $results_folder0/
 """)
 
     script.write(")")
