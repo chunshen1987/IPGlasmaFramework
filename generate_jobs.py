@@ -170,14 +170,16 @@ python3 simulation_driver.py {0:s} {1:d} {2:d} {3:d} {4}
     script.close()
 
 
-def generate_script_ipglasma(folder_name, nthreads, cluster_name, event_id):
+def generate_script_ipglasma(folder_name, nthreads, cluster_name, event_id, run_ipglasma,
+                             measureSteps1, measureSteps2):
     """This function generates script for IPGlasma simulation"""
     working_folder = folder_name
 
     script = open(path.join(working_folder, "run_ipglasma.sh"), "w")
 
     results_folder = 'ipglasma_results'
-    script.write("""#!/bin/bash
+    if run_jimwlk == 0:
+        script.write("""#!/bin/bash
 
 results_folder={0:s}
 evid=$1
@@ -190,23 +192,23 @@ rm -fr $results_folder/*
 
 """.format(results_folder))
 
-    if nthreads > 0:
-        script.write("""
+        if nthreads > 0:
+            script.write("""
 export OMP_NUM_THREADS={0:d}
 """.format(nthreads))
 
-    if cluster_name != "OSG":
-        script.write("sleep {}".format(event_id))
-        script.write("""
+        if cluster_name != "OSG":
+            script.write("sleep {}".format(event_id))
+            script.write("""
 # IPGlasma evolution (run 1 event)
 ./ipglasma input 1> run.log 2> run.err
 """)
-    else:
-        script.write("""
+        else:
+            script.write("""
 # IPGlasma evolution (run 1 event)
 ./ipglasma input
 """)
-    script.write("""
+            script.write("""
 for ifile in *.dat
 do
     filename=$(echo ${ifile} | sed "s/0.dat/${evid}.dat/")
@@ -215,11 +217,78 @@ do
 done
 mv V-* $results_folder/
 """)
-    if cluster_name != "OSG":
-        script.write("""
+        if cluster_name != "OSG":
+            script.write("""
 mv run.log $results_folder/
 mv run.err $results_folder/
 """)
+    else: # run ipglasma and jimwlk
+        script.write("""#!/bin/bash
+
+results_folder0=ipglasma_results_0
+results_folder1=ipglasma_results_1
+results_folder2=ipglasma_results_2
+evid=$1
+
+(
+cd ipglasma
+
+mkdir -p $results_folder0
+rm -fr $results_folder0/*
+mkdir -p $results_folder1
+rm -fr $results_folder1/*
+mkdir -p $results_folder2
+rm -fr $results_folder2/*
+
+""")
+
+        if nthreads > 0:
+            script.write("""
+export OMP_NUM_THREADS={0:d}
+""".format(nthreads))
+
+        if cluster_name != "OSG":
+            script.write("sleep {}".format(event_id))
+            script.write("""
+# IPGlasma evolution (run 1 event)
+./ipglasma input 1> run.log 2> run.err
+""")
+        else:
+            script.write("""
+# IPGlasma evolution (run 1 event)
+./ipglasma input
+""")
+            script.write("""
+for ifile in *.dat
+do
+    filename=$(echo ${ifile} | sed "s/0.dat/${evid}.dat/")
+    cat ${ifile} | sed 's$N/A$0.0$g' | sed 's/Q_s/#Q_s/' > $results_folder0/${filename}
+    rm -fr ${ifile}
+done
+""")
+
+            script.write("""
+((jj=0))
+for ifile in V-*
+do
+    mv $ifile bin/V-NN
+    cd bin
+    ./jimwlk input
+    mv V-NN_steps_{0:d} ../$results_folder2/V-NN_steps_2_$jj
+    mv V-NN_steps_{0:d} ../$results_folder1/V-NN_steps_3_$jj
+    mv V-NN ../$results_folder0/V-NN_$jj
+    ((jj=1+$jj))
+    rm -rf V-NN*
+    cd ../
+done
+
+""".format(measureSteps1, measureSteps2))
+        if cluster_name != "OSG":
+            script.write("""
+mv run.log $results_folder/
+mv run.err $results_folder/
+""")
+
     script.write(")")
     script.close()
 
@@ -406,12 +475,41 @@ done
 cd ..""")
 
                 script.close()
+
+        elif collisionType == 10: # RUN JIMWLK 
+            # e+p for J/Psi only
+            if analyzeDiffraction == 1:
+                script.write("""
+xp=$4
+#### J/Psi ####
+# Q^2=0.0
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 1.5 -tstep 0.1 -imag -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}_${xp}
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 1.5 -tstep 0.1 -real -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}_${xp}
+
+cd ..
+""")
+
+            # e+A for J/Psi only
+            if analyzeDiffraction == 2:
+                script.write("""
+xp=$4
+#### J/Psi ####
+# Q^2=0.0
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.1 -tstep 0.002 -imag -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}_${xp}
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.1 -tstep 0.002 -real -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}_${xp}
+
+cd ..
+""")
+
+                script.close()
+                
 def generate_event_folders(initial_condition_type, collisionType,
                            package_root_path, code_path, working_folder,
                            cluster_name, event_id, event_id_offset,
                            n_ev, n_threads, save_ipglasma_flag, saveSnapshot,
                            analyzeDiffraction, Low_cut, High_cut, Q21, Q22, maxr,
-                           epslion, R_Nuclear, with_photon_kT, OUTPUTAONLY):
+                           epslion, R_Nuclear, with_photon_kT, OUTPUTAONLY, 
+                           run_jimwlk, measureSteps1, measureSteps2):
     """This function creates the event folder structure"""
     event_folder = path.join(working_folder, 'event_%d' % event_id)
     param_folder = path.join(working_folder, 'model_parameters')
@@ -420,7 +518,7 @@ def generate_event_folders(initial_condition_type, collisionType,
                 event_folder)
     if initial_condition_type in ("IPGlasma"):
         generate_script_ipglasma(event_folder, n_threads, cluster_name,
-                                 event_id)
+                                 event_id, run_jimwlk, measureSteps1, measureSteps2)
         mkdir(path.join(event_folder, 'ipglasma'))
         shutil.copyfile(path.join(param_folder, 'IPGlasma/input'),
                         path.join(event_folder, 'ipglasma/input'))
@@ -433,6 +531,20 @@ def generate_event_folders(initial_condition_type, collisionType,
                 path.abspath(path.join(code_path,
                                        'ipglasma_code/{}'.format(link_i))),
                 path.join(event_folder, "ipglasma/{}".format(link_i))),
+                shell=True)
+        # JIMWLK
+        ipglasma_folder = path.join(event_folder, 'ipglasma')
+        mkdir(path.join(ipglasma_folder, 'bin'))
+        shutil.copyfile(path.join(param_folder, 'JIMWLK/input'),
+                        path.join(ipglasma_folder, 'bin/input'))
+        link_list = [
+            'jimwlk'
+        ]
+        for link_i in link_list:
+            subprocess.call("ln -s {0:s} {1:s}".format(
+                path.abspath(path.join(code_path,
+                                       'jimwlk_code/bin/{}'.format(link_i))),
+                path.join(ipglasma_folder, "bin/{}".format(link_i))),
                 shell=True)
 
         # subnucleondiffraction
@@ -602,6 +714,9 @@ def main():
         collisionType = int(collisionType) + int(parameter_dict.ipglasma_dict['DO_SOFT_RAD'])
         if (parameter_dict.control_dict['with_photon_kT'] == 1):
             collisionType = int(collisionType) + 2
+    if (parameter_dict.control_dict['run_jimwlk'] == 1):
+        collisionType = 10
+        
     working_folder_name = path.abspath(working_folder_name)
     if path.exists(working_folder_name) and args.continueFlag:
         return
@@ -660,13 +775,17 @@ def main():
         with_photon_kT = parameter_dict.control_dict['with_photon_kT']
         OUTPUTAONLY = parameter_dict.control_dict['OUTPUT_A_ONLY']
         R_Nuclear = parameter_dict.ipglasma_dict['R_WS']
+        run_jimwlk = parameter_dict.control_dict['run_jimwlk']
+        measureSteps1 = parameter_dict.jimwlk_dict['measureSteps1']
+        measureSteps2 = parameter_dict.jimwlk_dict['measureSteps2']
         generate_event_folders(initial_condition_type, collisionType,
                                code_package_path, code_path,
                                working_folder_name, cluster_name,
                                ijob, event_id_offset, n_ev, n_threads,
                                save_ipglasma_flag, saveSnapshot,
                                analyzeDiffraction, Low_cut, High_cut, Q21, Q22, 
-                               maxr, epslion, R_Nuclear, with_photon_kT, OUTPUTAONLY)
+                               maxr, epslion, R_Nuclear, with_photon_kT, OUTPUTAONLY, 
+                               run_jimwlk, measureSteps1, measureSteps2)
         event_id_offset += n_ev
     sys.stdout.write("\n")
     sys.stdout.flush()

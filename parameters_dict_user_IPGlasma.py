@@ -18,6 +18,7 @@ control_dict = {
     'maxr': 2.0,
     'epslion': 0.1,
     'with_photon_kT': 0,  
+    'run_jimwlk': 1, # flag to run the jimwlk
     'saveNucleusSnapshot': False,       # flag to save the trace of Wilson Line distribution
 }
 
@@ -106,4 +107,13 @@ ipglasma_dict = {
     'readMultFromFile': 0,
 #    'EndOfFile',
 }
+
+# JIMWLK parameters
+jimwlk_dict = {
+    'step1': 10, 
+    'step2': 20,  
+    'LambdaQCD': 0.09,
+    'mjimwlk': 0.2,
+}
+
 

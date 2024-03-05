@@ -11,7 +11,7 @@ import shutil
 import re
 import h5py
 import numpy as np
-
+import os
 
 def print_usage():
     """This function prints out help messages"""
@@ -25,8 +25,11 @@ def get_initial_condition(initial_type, iev, final_results_folder):
     if "IPGlasma" in initial_type:
         run_ipglasma(iev)
         res_path = collect_ipglasma_event(final_results_folder, iev)
-        WilsonLineFileList = glob(path.join(res_path, "V-*"))
-        return(WilsonLineFileList)
+        WilsonLineFileLists = []
+        for ifile in range(len(res_path)):
+            WilsonLineFileList = glob(path.join(res_path[ifile], "V-*"))
+            WilsonLineFileLists.append(WilsonLineFileList)
+        return(WilsonLineFileLists)
     else:
         print("\U0001F6AB  "
               + "Do not recognize the initial condition type: {}".format(
@@ -43,10 +46,11 @@ def run_ipglasma(iev):
 def run_subnucleondiffraction(WilsonLineFileList, iev, final_results_folder):
     """This functions run subnucleon diffraction"""
     print("\U0001F3B6  Run subnucleondiffraction ... ")
-    for ifile, filename in enumerate(WilsonLineFileList):
-        call("bash ./run_subnucleondiffraction.sh {} {} {}".format(iev, ifile,
-                                                                   filename),
-             shell=True)
+    for ixp in range(len(WilsonLineFileList)):
+        for ifile, filename in enumerate(WilsonLineFileList[ixp]):
+            call("bash ./run_subnucleondiffraction.sh {} {} {} {}".format(iev, ifile,
+                                                                   filename, ixp),
+                 shell=True)
     res_folder_name = "subnucleondiffraction_results_{}".format(iev)
     res_path = path.join(path.abspath(final_results_folder),
                          res_folder_name)
@@ -58,13 +62,37 @@ def run_subnucleondiffraction(WilsonLineFileList, iev, final_results_folder):
 
 def collect_ipglasma_event(final_results_folder, event_id):
     """This function collects the ipglasma results"""
-    ipglasma_folder_name = "ipglasma_results_{}".format(event_id)
-    res_path = path.join(path.abspath(final_results_folder),
-                         ipglasma_folder_name)
-    if path.exists(res_path):
-        shutil.rmtree(res_path)
-    shutil.move("ipglasma/ipglasma_results", res_path)
-    return(res_path)
+    #ipglasma_folder_name = "ipglasma_results_{}".format(event_id)
+    #res_path = path.join(path.abspath(final_results_folder),
+    #                     ipglasma_folder_name)
+    #if path.exists(res_path):
+    #    shutil.rmtree(res_path)
+    
+    source_directory = "ipglasma/"
+    directories = [d for d in os.listdir(source_directory) if os.path.isdir(os.path.join(source_directory, d))]
+
+    target_directories = [d for d in directories if d.startswith("ipglasma_results")]
+    return_path = []
+    for ixp in range(len(target_directories)):
+        if (len(target_directories) == 1):
+            source_path = path.join(source_directory, "ipglasma_results")
+            ipglasma_folder_name = "ipglasma_results_{}".format(event_id)
+            destination_path = path.join(path.abspath(final_results_folder),
+                                         ipglasma_folder_name)
+            if path.exists(destination_path):
+                shutil.rmtree(destination_path)
+            shutil.move(source_path, destination_path)
+            return_path.append(destination_path)
+        else:
+            source_path = path.join(source_directory, "ipglasma_results_{}".format(int(ixp)))
+            ipglasma_folder_name = "ipglasma_results_{}_{}".format(event_id, int(ixp))
+            destination_path = path.join(path.abspath(final_results_folder),
+                                         ipglasma_folder_name)
+            if path.exists(destination_path):
+                shutil.rmtree(destination_path)
+            shutil.move(source_path, destination_path)
+            return_path.append(destination_path)
+    return(return_path)
 
 
 def zip_results_into_hdf5(final_results_folder, event_id, para_dict):
@@ -76,8 +104,8 @@ def zip_results_into_hdf5(final_results_folder, event_id, para_dict):
         'NgluonEstimators{}.dat'.format(event_id),
         'usedParameters{}.dat'.format(event_id),
         #'B_Ncoll.dat',
-        'position_A.dat',
-        'position_B.dat',
+        #'position_A.dat',
+        #'position_B.dat',
     ]
 
     resfolder = path.join(final_results_folder, results_name)
@@ -225,7 +253,7 @@ def main(para_dict_):
         WilsonLineFileList = get_initial_condition(
                             initial_type, iev, final_results_folder)
 
-        if not WilsonLineFileList:
+        if not WilsonLineFileList[0]:
             # the result file list is empty
             print("The IPGlasma event {} did not finish properly,".format(iev)
                   + " skip ... ")

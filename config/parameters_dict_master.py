@@ -102,13 +102,44 @@ ipglasma_dict = {
     'writeOutputsToHDF5': 0
 }
 
+# JIMWLK parameters
+jimwlk_dict = {
+    'mode': 1,
+    'Nc': 3,
+    'runningCoupling': 1,
+    'size': 700,
+    'steps': 340,
+    'ds': 0.0004,
+    'measureSteps': 20,
+    'initMethod': 11,
+    'input_wline': "V-NN",
+    'output_dir': "evolved_wilson_lines/",
+    'R': 10.,
+    'g2mua': 1.,
+    'Lambda_QCD': 0.09,
+    'kappa4Factor': 1,
+    'g': 1.,
+    'mjimwlk': 0.2,
+    'L': 5.12,
+    'Ny': 100,
+    'mu0': 0.28,
+    'seed': 0, 
+    'simpleLangevin': 1,
+    'Fixedmu0Lambdaratio': 0,
+    'Output_V_files': 3,
+    'measureSteps1': 20,
+    'measureSteps2': 40,
+    'measureSteps3': 60,
+}
 
 Parameters_list = [
     (ipglasma_dict, "input", 3),
+    (jimwlk_dict, "input", 3),
 ]
 
 path_list = [
     'model_parameters/IPGlasma/',
+    'model_parameters/JIMWLK/',
 ]
 
 
@@ -136,6 +167,8 @@ def update_parameters_bayesian(bayes_file):
         key, val = line.split()
         if key in ipglasma_dict.keys():
             ipglasma_dict[key] = float(val)
+        if key in jimwlk_dict.keys():
+            jimwlk_dict[key] = float(val)
 
 
 def output_parameters_to_files(workfolder="."):
