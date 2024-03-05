@@ -267,7 +267,7 @@ do
 done
 """)
 
-            script.write("""
+        script.write("""
 ((jj=0))
 for ifile in V-*
 do
