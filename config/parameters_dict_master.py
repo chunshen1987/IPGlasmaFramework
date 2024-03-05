@@ -115,7 +115,7 @@ jimwlk_dict = {
     'measureSteps': 20,
     'initMethod': 11,
     'input_wline': "V-NN",
-    'output_dir': "evolved_wilson_lines/",
+    'output_dir': "./",
     'R': 10.,
     'g2mua': 1.,
     'Lambda_QCD': 0.09,
@@ -131,7 +131,7 @@ jimwlk_dict = {
     'Output_V_files': 3,
     'measureSteps1': 20,
     'measureSteps2': 40,
-    'measureSteps3': 60,
+    'measureSteps3': 6000,
 }
 
 Parameters_list = [

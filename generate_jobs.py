@@ -274,15 +274,16 @@ do
     mv $ifile bin/V-NN
     cd bin
     ./jimwlk input
-    mv V-NN_steps_{0:d} ../$results_folder2/V-NN_steps_2_$jj
-    mv V-NN_steps_{0:d} ../$results_folder1/V-NN_steps_3_$jj
+    mv V-NN_steps_{} ../$results_folder1/V-NN_steps_2_$jj
+    mv V-NN_steps_{} ../$results_folder2/V-NN_steps_3_$jj
     mv V-NN ../$results_folder0/V-NN_$jj
     ((jj=1+$jj))
     rm -rf V-NN*
+    rm -rf *dat
     cd ../
 done
 
-""".format(measureSteps1, measureSteps2))
+""".format(int(measureSteps1), int(measureSteps2)))
         if cluster_name != "OSG":
             script.write("""
 mv run.log $results_folder0/
