@@ -100,6 +100,8 @@ ipglasma_dict = {
     'readInitialWilsonLines': 0,
     'writeInitialWilsonLines': 0,
     'writeOutputsToHDF5': 0
+    'jz_d': 1,
+    'DoPol': 0,
 }
 
 # JIMWLK parameters
