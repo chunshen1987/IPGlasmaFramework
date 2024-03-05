@@ -170,8 +170,8 @@ python3 simulation_driver.py {0:s} {1:d} {2:d} {3:d} {4}
     script.close()
 
 
-def generate_script_ipglasma(folder_name, nthreads, cluster_name, event_id, run_ipglasma,
-                             measureSteps1, measureSteps2):
+def generate_script_ipglasma(folder_name, nthreads, cluster_name, event_id,
+                             run_jimwlk, measureSteps1, measureSteps2):
     """This function generates script for IPGlasma simulation"""
     working_folder = folder_name
 
@@ -543,7 +543,7 @@ def generate_event_folders(initial_condition_type, collisionType,
         for link_i in link_list:
             subprocess.call("ln -s {0:s} {1:s}".format(
                 path.abspath(path.join(code_path,
-                                       'jimwlk_code/bin/{}'.format(link_i))),
+                                       'jimwlk_code/build/bin/{}'.format(link_i))),
                 path.join(ipglasma_folder, "bin/{}".format(link_i))),
                 shell=True)
 

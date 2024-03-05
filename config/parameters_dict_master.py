@@ -149,10 +149,12 @@ def update_parameters_dict(par_dict_path, ran_seed):
     sys.path.insert(0, par_diretory)
     print(par_diretory)
     parameters_dict = __import__(par_dict_path.split('.py')[0].split('/')[-1])
+    print(parameters_dict)
     initial_condition_type = (
                     parameters_dict.control_dict['initial_state_type'])
     if initial_condition_type in ("IPGlasma"):
         ipglasma_dict.update(parameters_dict.ipglasma_dict)
+        jimwlk_dict.update(parameters_dict.jimwlk_dict)
 
         # set random seed
         if ran_seed == -1:
