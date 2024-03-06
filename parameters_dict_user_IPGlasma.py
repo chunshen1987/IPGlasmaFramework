@@ -136,5 +136,9 @@ jimwlk_dict = {
     'measureSteps1': 28,
     'measureSteps2': 66,
     'measureSteps3': 6000,
+    'measureSteps4': 6000,
+    'measureSteps5': 6000,
+    'measureSteps6': 6000,
+    'measureSteps7': 6000,
 }
 

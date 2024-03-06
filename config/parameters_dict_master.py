@@ -127,11 +127,15 @@ jimwlk_dict = {
     'mu0': 0.28,
     'seed': 0, 
     'simpleLangevin': 1,
-    'Fixedmu0Lambdaratio': 0,
-    'Output_V_files': 3,
+    'Fixedmu0Lambdaratio': 1,
+    'Output_V_files': 7,
     'measureSteps1': 20,
     'measureSteps2': 40,
     'measureSteps3': 6000,
+    'measureSteps4': 6000,
+    'measureSteps5': 6000,
+    'measureSteps6': 6000,
+    'measureSteps7': 6000,
 }
 
 Parameters_list = [
