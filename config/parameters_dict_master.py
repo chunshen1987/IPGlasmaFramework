@@ -99,7 +99,7 @@ ipglasma_dict = {
     'writeEvolution': 0,
     'readInitialWilsonLines': 0,
     'writeInitialWilsonLines': 0,
-    'writeOutputsToHDF5': 0
+    'writeOutputsToHDF5': 0,
     'jz_d': 1,
     'DoPol': 0,
 }

@@ -9,7 +9,7 @@ control_dict = {
     'initial_state_type': "IPGlasma",
     'walltime': "10:00:00",             # walltime to run
     'save_ipglasma_results': False,     # flag to save the Wilson lines
-    'analyzeDiffraction': 1,            # 1: JPsi only; 2: JPsi + rho
+    'analyzeDiffraction': 2,            # 1: JPsi only; 2: JPsi + rho
     'OUTPUT_A_ONLY':0, 
     'Low_cut': 0,
     'High_cut': 1,
@@ -34,7 +34,7 @@ ipglasma_dict = {
     'beta4': 0.5,
     'gamma': 0.0,  
     'L': 30.,               # grid size in the transverse plane
-    'size': 1024,            # number of grid points of IP-Glasma computation
+    'size': 1000,            # number of grid points of IP-Glasma computation
     'm': 0.4,
     'rmax': 1000.,
     'BG': 3.,
@@ -49,13 +49,13 @@ ipglasma_dict = {
     'smearingWidth': 0.6,
     'roots': 75.,
     'SigmaNN': 40.,
-    'Rapidity': 1.7689,
+    'Rapidity': 0.03390454,
     'QsmuRatio': 0.7,
     'LOutput': 45,
     'bmin': 0.,
     'bmax': 0.,
-    'Projectile': "Ne20",
-    'Target': "Ne20",
+    'Projectile': "Pb",
+    'Target': "Pb",
     'maxtime': 0.0,
     'useTimeForSeed': 1,
     'sizeOutput': 1024,
@@ -80,7 +80,7 @@ ipglasma_dict = {
     'xFromThisFactorTimesQs': 1,
     'useNucleus': 1,
     'useGaussian': 0,
-    'nucleonPositionsFromFile': 1,
+    'nucleonPositionsFromFile': 0,
 #    'NucleusQsTableFileName': qs2Adj_vs_Tp_vs_Y_200.in,
     'samplebFromLinearDistribution': 1,
     'runWith0Min1Avg2MaxQs': 2,
@@ -110,10 +110,31 @@ ipglasma_dict = {
 
 # JIMWLK parameters
 jimwlk_dict = {
-    'step1': 10, 
-    'step2': 20,  
-    'LambdaQCD': 0.09,
+    'mode': 1,
+    'Nc': 3,
+    'runningCoupling': 1,
+    'size': 1000,
+    'steps': 67,
+    'ds': 0.01,
+    'measureSteps': 20,
+    'initMethod': 11,
+    'input_wline': "V-NN",
+    'output_dir': "./",
+    'R': 10.,
+    'g2mua': 1.,
+    'Lambda_QCD': 0.09,
+    'kappa4Factor': 1,
+    'g': 1.,
     'mjimwlk': 0.2,
+    'L': 30.,
+    'Ny': 100,
+    'mu0': 0.28,
+    'seed': 0, 
+    'simpleLangevin': 1,
+    'Fixedmu0Lambdaratio': 1,
+    'Output_V_files': 3,
+    'measureSteps1': 28,
+    'measureSteps2': 66,
+    'measureSteps3': 6000,
 }
-
 

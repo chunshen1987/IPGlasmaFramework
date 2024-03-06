@@ -486,7 +486,7 @@ xp=$4
 # Q^2=0.0
 GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 1.5 -tstep 0.1 -imag -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}_${xp}
 GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 1.5 -tstep 0.1 -real -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}_${xp}
-
+rm -rf $WilsonLineFile
 cd ..
 """)
 
