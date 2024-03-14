@@ -101,6 +101,7 @@ ipglasma_dict = {
     'writeInitialWilsonLines': 0,
     'writeOutputsToHDF5': 0,
     'jz_d': 1,
+    'Run_first_step': 1,
     'DoPol': 0,
 }
 

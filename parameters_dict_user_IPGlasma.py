@@ -9,7 +9,7 @@ control_dict = {
     'initial_state_type': "IPGlasma",
     'walltime': "10:00:00",             # walltime to run
     'save_ipglasma_results': False,     # flag to save the Wilson lines
-    'analyzeDiffraction': 2,            # 1: JPsi only; 2: JPsi + rho
+    'analyzeDiffraction': 1,            # 1: JPsi only; 2: JPsi + rho
     'OUTPUT_A_ONLY':0, 
     'Low_cut': 0,
     'High_cut': 1,
@@ -33,8 +33,8 @@ ipglasma_dict = {
     'beta3': 0.0,
     'beta4': 0.5,
     'gamma': 0.0,  
-    'L': 30.,               # grid size in the transverse plane
-    'size': 1000,            # number of grid points of IP-Glasma computation
+    'L': 8.,               # grid size in the transverse plane
+    'size': 500,            # number of grid points of IP-Glasma computation
     'm': 0.4,
     'rmax': 1000.,
     'BG': 3.,
@@ -54,8 +54,8 @@ ipglasma_dict = {
     'LOutput': 45,
     'bmin': 0.,
     'bmax': 0.,
-    'Projectile': "Pb",
-    'Target': "Pb",
+    'Projectile': "p",
+    'Target': "p",
     'maxtime': 0.0,
     'useTimeForSeed': 1,
     'sizeOutput': 1024,
@@ -113,9 +113,9 @@ jimwlk_dict = {
     'mode': 1,
     'Nc': 3,
     'runningCoupling': 1,
-    'size': 1000,
-    'steps': 67,
-    'ds': 0.01,
+    'size': 500,
+    'steps': 115,
+    'ds': 0.007,
     'measureSteps': 20,
     'initMethod': 11,
     'input_wline': "V-NN",
@@ -126,19 +126,21 @@ jimwlk_dict = {
     'kappa4Factor': 1,
     'g': 1.,
     'mjimwlk': 0.2,
-    'L': 30.,
+    'L': 8.,
     'Ny': 100,
     'mu0': 0.28,
     'seed': 0, 
     'simpleLangevin': 1,
     'Fixedmu0Lambdaratio': 1,
-    'Output_V_files': 3,
-    'measureSteps1': 28,
-    'measureSteps2': 66,
-    'measureSteps3': 6000,
+    'Run_first_step': 1,
+    'Output_V_files': 5,
+    'measureSteps1': 25,
+    'measureSteps2': 94,
+    'measureSteps3': 114,
     'measureSteps4': 6000,
     'measureSteps5': 6000,
     'measureSteps6': 6000,
     'measureSteps7': 6000,
 }
+
 
