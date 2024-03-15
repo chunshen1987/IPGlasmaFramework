@@ -490,7 +490,7 @@ cd ..""")
 
         elif collisionType == 10: # RUN JIMWLK 
             # e+p for J/Psi only
-            if analyzeDiffraction == 0:
+            if analyzeDiffraction == 3:
                 script.write("""
 ixp=$4
 #### J/Psi ####
