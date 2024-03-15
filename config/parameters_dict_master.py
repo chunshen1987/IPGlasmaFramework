@@ -128,7 +128,6 @@ jimwlk_dict = {
     'seed': 0, 
     'simpleLangevin': 1,
     'Fixedmu0Lambdaratio': 1,
-    'Run_first_step': 1,
     'Output_V_files': 7,
     'measureSteps1': 20,
     'measureSteps2': 40,
