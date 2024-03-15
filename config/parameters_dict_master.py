@@ -101,7 +101,6 @@ ipglasma_dict = {
     'writeInitialWilsonLines': 0,
     'writeOutputsToHDF5': 0,
     'jz_d': 1,
-    'Run_first_step': 1,
     'DoPol': 0,
 }
 
@@ -129,6 +128,7 @@ jimwlk_dict = {
     'seed': 0, 
     'simpleLangevin': 1,
     'Fixedmu0Lambdaratio': 1,
+    'Run_first_step': 1,
     'Output_V_files': 7,
     'measureSteps1': 20,
     'measureSteps2': 40,
