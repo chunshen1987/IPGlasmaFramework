@@ -602,7 +602,7 @@ def generate_event_folders(initial_condition_type, collisionType,
                                               analyzeDiffraction, Low_cut, High_cut, Q21, Q22, 
                                               maxr, epslion, R_Nuclear, with_photon_kT, OUTPUTAONLY,
                                               wavef_file)
-        link_list = ['build/bin/subnucleondiffraction', 'gauss-boosted.dat', 'gaus-lc.dat'
+        link_list = ['build/bin/subnucleondiffraction', 'gauss-boosted.dat', 'gaus-lc.dat',
                      'gauss-boosted-rho.dat']
         for link_i in link_list:
             subprocess.call("ln -s {0:s} {1:s}".format(
