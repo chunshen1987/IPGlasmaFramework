@@ -13,6 +13,7 @@ control_dict = {
     'initial_state_type': "IPGlasma",  # options: IPGlasma, IPsat
     'walltime': "10:00:00",            # walltime to run
     'save_ipglasma_results': False,    # flag to save IPGlasma results
+    'wavef_file': 1,
 }
 
 

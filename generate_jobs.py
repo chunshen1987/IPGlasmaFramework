@@ -308,9 +308,14 @@ mv run.err $results_folder0/
 def generate_script_subnucleondiffraction(folder_name, collisionType, event_id,
                                           saveSnapshot, analyzeDiffraction, Low_cut = 0.8, High_cut = 1.2, 
                                           Q21 = 0.0, Q22=33., maxr = 0.5, epslion = 0.1, R_Nuclear = 6.37, with_photon_kT = 1,
-                                          OUTPUTAONLY = 1):
+                                          OUTPUTAONLY = 1, wavef_file_option = 1):
     """This function generates script for computing subnucleon diffraction"""
     working_folder = folder_name
+    wavef_model = 'boostedgaussian'
+    wavef_file = 'gauss-boosted.dat'
+    if wavef_file_option == 0:
+        wavef_model = 'gauslc'
+        wavef_file = 'gaus-lc.dat'
 
     script = open(path.join(working_folder, "run_subnucleondiffraction.sh"),
                   "w")
@@ -495,8 +500,14 @@ cd ..""")
 ixp=$4
 #### J/Psi ####
 # Q^2=0.0
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -tstep 0.1 -imag -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}_${ixp}
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -tstep 0.1 -real -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}_${ixp}
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -tstep 0.1 -imag -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {}
+""".format(wavef_model, wavef_file))
+                script.write(""" -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}_${ixp}\n
+""")
+                script.write("""
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -tstep 0.1 -real -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {}
+""".format(wavef_model, wavef_file))
+                script.write(""" -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}_${ixp}\n
 rm -rf $WilsonLineFile
 cd ..
 """)
@@ -505,8 +516,15 @@ cd ..
 ixp=$4
 #### J/Psi ####
 # Q^2=0.0
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 1.5 -tstep 0.1 -imag -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}_${ixp}
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 1.5 -tstep 0.1 -real -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}_${ixp}
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 1.5 -tstep 0.1 -imag -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {}
+""".format(wavef_model, wavef_file))
+                script.write(""" -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}_${ixp}\n
+""")
+                script.write("""
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 1.5 -tstep 0.1 -real -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {}
+""".format(wavef_model, wavef_file))
+                script.write("""
+ -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}_${ixp}\n
 rm -rf $WilsonLineFile
 cd ..
 """)
@@ -517,8 +535,14 @@ cd ..
 ixp=$4
 #### J/Psi ####
 # Q^2=0.0
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.1 -tstep 0.002 -imag -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}_${ixp}
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.1 -tstep 0.002 -real -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}_${ixp}
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.1 -tstep 0.002 -imag -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {}
+""".format(wavef_model, wavef_file))
+                script.write(""" -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}_${ixp}\n
+""")
+                script.write("""
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.1 -tstep 0.002 -real -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {}
+""".format(wavef_model, wavef_file))
+                script.write(""" -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}_${ixp}\n
 rm -rf $WilsonLineFile
 cd ..
 """)
@@ -532,7 +556,7 @@ def generate_event_folders(initial_condition_type, collisionType,
                            analyzeDiffraction, Low_cut, High_cut, Q21, Q22, maxr,
                            epslion, R_Nuclear, with_photon_kT, OUTPUTAONLY, 
                            run_jimwlk, measureSteps1, measureSteps2, measureSteps3, measureSteps4,
-                           Output_V_files, Run_first_step):
+                           Output_V_files, Run_first_step, wavef_file):
     """This function creates the event folder structure"""
     event_folder = path.join(working_folder, 'event_%d' % event_id)
     param_folder = path.join(working_folder, 'model_parameters')
@@ -576,8 +600,9 @@ def generate_event_folders(initial_condition_type, collisionType,
         generate_script_subnucleondiffraction(event_folder, collisionType,
                                               event_id, saveSnapshot,
                                               analyzeDiffraction, Low_cut, High_cut, Q21, Q22, 
-                                              maxr, epslion, R_Nuclear, with_photon_kT, OUTPUTAONLY)
-        link_list = ['build/bin/subnucleondiffraction', 'gauss-boosted.dat',
+                                              maxr, epslion, R_Nuclear, with_photon_kT, OUTPUTAONLY,
+                                              wavef_file)
+        link_list = ['build/bin/subnucleondiffraction', 'gauss-boosted.dat', 'gaus-lc.dat'
                      'gauss-boosted-rho.dat']
         for link_i in link_list:
             subprocess.call("ln -s {0:s} {1:s}".format(
@@ -800,6 +825,7 @@ def main():
         OUTPUTAONLY = parameter_dict.control_dict['OUTPUT_A_ONLY']
         R_Nuclear = parameter_dict.ipglasma_dict['R_WS']
         run_jimwlk = parameter_dict.control_dict['run_jimwlk']
+        wavef_file = parameter_dict.control_dict['wavef_file']
         measureSteps1 = parameter_dict.jimwlk_dict['measureSteps1']
         measureSteps2 = parameter_dict.jimwlk_dict['measureSteps2']
         measureSteps3 = parameter_dict.jimwlk_dict['measureSteps3']
@@ -814,7 +840,7 @@ def main():
                                analyzeDiffraction, Low_cut, High_cut, Q21, Q22, 
                                maxr, epslion, R_Nuclear, with_photon_kT, OUTPUTAONLY, 
                                run_jimwlk, measureSteps1, measureSteps2, measureSteps3, measureSteps4,
-                               Output_V_files, Run_first_step)
+                               Output_V_files, Run_first_step, wavef_file)
         event_id_offset += n_ev
     sys.stdout.write("\n")
     sys.stdout.flush()

@@ -19,6 +19,7 @@ control_dict = {
     'epslion': 0.1,
     'with_photon_kT': 0,  
     'run_jimwlk': 1, # flag to run the jimwlk
+    'wavef_file': 1, # flag to run the jimwlk
     'saveNucleusSnapshot': False,       # flag to save the trace of Wilson Line distribution
 }
 
