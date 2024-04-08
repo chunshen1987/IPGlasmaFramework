@@ -519,8 +519,7 @@ GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $W
 """)
                 script.write("""
 GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 1.5 -tstep 0.1 -real -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {} """.format(wavef_model, wavef_file))
-                script.write("""
- -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}_${ixp}\n
+                script.write(""" -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}_${ixp}\n
 rm -rf $WilsonLineFile
 cd ..
 """)
