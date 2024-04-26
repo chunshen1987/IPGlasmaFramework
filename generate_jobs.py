@@ -316,6 +316,11 @@ def generate_script_subnucleondiffraction(folder_name, collisionType, event_id,
     if wavef_file_option == 0:
         wavef_model = 'gauslc'
         wavef_file = 'gaus-lc.dat'
+    if wavef_file_option == 1:
+        wavef_model = 'boostedgaussian'
+        wavef_file = 'gauss-boosted.dat'
+    if wavef_file_option == 2:
+        wavef_model = 'NRQCD'
 
     script = open(path.join(working_folder, "run_subnucleondiffraction.sh"),
                   "w")
@@ -500,11 +505,11 @@ cd ..""")
 ixp=$4
 #### J/Psi ####
 # Q^2=0.0
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -tstep 0.1 -imag -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {} """.format(wavef_model, wavef_file))
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -tstep 0.1 -imag -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {} -nrqcd_parameters 0.211 0 """.format(wavef_model, wavef_file))
                 script.write(""" -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}_${ixp}\n
 """)
                 script.write("""
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -tstep 0.1 -real -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {} """.format(wavef_model, wavef_file))
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -tstep 0.1 -real -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {} -nrqcd_parameters 0.211 0 """.format(wavef_model, wavef_file))
                 script.write(""" -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}_${ixp}\n
 rm -rf $WilsonLineFile
 cd ..
@@ -514,11 +519,11 @@ cd ..
 ixp=$4
 #### J/Psi ####
 # Q^2=0.0
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 1.5 -tstep 0.1 -imag -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {} """.format(wavef_model, wavef_file))
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 1.5 -tstep 0.1 -imag -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {} -nrqcd_parameters 0.211 0 """.format(wavef_model, wavef_file))
                 script.write(""" -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}_${ixp}\n
 """)
                 script.write("""
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 1.5 -tstep 0.1 -real -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {} """.format(wavef_model, wavef_file))
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 1.5 -tstep 0.1 -real -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {} -nrqcd_parameters 0.211 0 """.format(wavef_model, wavef_file))
                 script.write(""" -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}_${ixp}\n
 rm -rf $WilsonLineFile
 cd ..
@@ -530,11 +535,11 @@ cd ..
 ixp=$4
 #### J/Psi ####
 # Q^2=0.0
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.1 -tstep 0.002 -imag -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {} """.format(wavef_model, wavef_file))
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.1 -tstep 0.002 -imag -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {} -nrqcd_parameters 0.211 0 """.format(wavef_model, wavef_file))
                 script.write(""" -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}_${ixp}\n
 """)
                 script.write("""
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.1 -tstep 0.002 -real -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {} """.format(wavef_model, wavef_file))
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.1 -tstep 0.002 -real -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {} -nrqcd_parameters 0.211 0 """.format(wavef_model, wavef_file))
                 script.write(""" -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}_${ixp}\n
 rm -rf $WilsonLineFile
 cd ..
