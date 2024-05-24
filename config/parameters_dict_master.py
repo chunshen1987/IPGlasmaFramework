@@ -38,6 +38,7 @@ ipglasma_dict = {
     'BG': 4.,
     'BGq': 0.3,
     'BGqVar': 0.0,
+    'omega': 1.0, 
     'dqMin': 0.0,
     'useSmoothNucleus': 0,
     'useConstituentQuarkProton': 0,
