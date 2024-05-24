@@ -42,6 +42,8 @@ RUN yum -y install \
         time \
         vim \
         wget \
+        libboost-all-dev \
+        libgsl-dev \
         && \
     yum clean all
 
