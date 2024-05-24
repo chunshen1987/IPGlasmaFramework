@@ -39,6 +39,7 @@ ipglasma_dict = {
     'm': 0.4,
     'rmax': 1000.,
     'BG': 3.,
+    'omega': 1.0, 
     'BGq': 0.3,
     'runTwoStage': 0,
     'WhichStage': 1,
