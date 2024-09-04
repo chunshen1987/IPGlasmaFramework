@@ -54,7 +54,7 @@ RUN  alternatives --install /usr/local/bin/cmake cmake /usr/bin/cmake3 20 \
 --slave /usr/local/bin/ccmake ccmake /usr/bin/ccmake3 \
 --family cmake
 
-SHELL ["/usr/bin/scl", "enable", "devtoolset-7"]
+#SHELL ["/usr/bin/scl", "enable", "devtoolset-7"]
 
 RUN yum -y install http://springdale.princeton.edu/data/springdale/7/x86_64/os/Computational/gsl25-2.5-3.sdl7.2.x86_64.rpm
 
@@ -117,4 +117,4 @@ RUN cd / && \
 ENV PYTHONIOENCODING utf-8
 WORKDIR ${HOME}/
 
-CMD scl enable devtoolset-7 bash
+#CMD scl enable devtoolset-7 bash
