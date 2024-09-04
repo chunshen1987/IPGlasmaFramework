@@ -514,6 +514,7 @@ GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $W
 rm -rf $WilsonLineFile
 cd ..
 """)
+            #e+p for J/Psi
             if analyzeDiffraction == 1:
                 script.write("""
 ixp=$4
@@ -546,6 +547,25 @@ cd ..
 """)
 
                 script.close()
+                
+            # e+A for J/Psi only
+            if analyzeDiffraction == 3:
+                script.write("""
+ixp=$4
+#### J/Psi ####
+# Q^2=0.0
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.8 -tstep 0.02 -imag -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {} -nrqcd_parameters 0.211 0 """.format(wavef_model, wavef_file))
+                script.write(""" -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}_${ixp}\n
+""")
+                script.write("""
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.8 -tstep 0.02 -real -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {} -nrqcd_parameters 0.211 0 """.format(wavef_model, wavef_file))
+                script.write(""" -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}_${ixp}\n
+rm -rf $WilsonLineFile
+cd ..
+""")
+
+                script.close()
+                
                 
 def generate_event_folders(initial_condition_type, collisionType,
                            package_root_path, code_path, working_folder,
