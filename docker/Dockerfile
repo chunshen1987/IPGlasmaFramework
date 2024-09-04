@@ -1,10 +1,10 @@
-FROM centos:7
-
+#FROM centos:7
+FROM opensciencegrid/software-base:23-el9-release
 MAINTAINER Chun Shen <chunshen@wayne.edu>
 
-RUN yum -y upgrade
+#RUN yum -y upgrade
 
-RUN yum -y install epel-release centos-release-scl
+#RUN yum -y install epel-release centos-release-scl
 
 # osg repo
 RUN yum -y install http://repo.opensciencegrid.org/osg/3.5/osg-3.5-el7-release-latest.rpm
@@ -30,6 +30,7 @@ RUN yum -y install \
         devtoolset-7-gcc \
         devtoolset-7-gcc-c++ \
         devtoolset-7-gcc-gfortran \
+        gsl-devel \
         fftw \
         fftw-devel \
         hdf5-devel \
@@ -70,9 +71,12 @@ RUN yum -y install osg-ca-certs osg-wn-client && \
         rm -f /etc/grid-security/certificates/*.r0
 
 # Install pre-reqs python packages
-RUN pip3 install --upgrade && \
-    pip3 install numpy h5py scipy
+#RUN pip3 install --upgrade && \
+#    pip3 install numpy h5py scipy
 
+RUN python3 -m pip install --upgrade pip && \
+     python3 -m pip install "numpy<2.0" h5py scipy
+    
 ENV HOME /home/
 ENV PATH="${PATH}:/usr/lib64/openmpi/bin:/usr/local/gsl/2.5/x86_64/bin"
 ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib:/usr/local/gsl/2.5/x86_64/lib64"
