@@ -346,14 +346,14 @@ mkdir -p $results_folder
 for Q2 in {Q21}
 do
     GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -maxr {maxr} -epslion {epslion} -OUTPUTAONLY 1 """.format( maxr = maxr, epslion = epslion, Q21 = Q21 ))
-        script.write("""-wavef_file gauss-boosted-rho.dat  -real -Q2 ${Q2} -xp 0.01 -mcintpoints 1e4 > $results_folder/rho_Q2_${Q2}_real_${evid}_${fileid}
+        script.write("""-wavef_file gauss-boosted-rho.dat   -Q2 ${Q2} -xp 0.01 -mcintpoints 1e4 > $results_folder/rho_Q2_${Q2}_real_${evid}_${fileid}
 done""")
         script.write("""
 #### rho ####
 for Q2 in {Q21}
 do
     GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -maxr {maxr} -epslion {epslion} -OUTPUTAONLY 1 """.format( maxr = maxr, epslion = epslion, Q21 = Q21 ))
-        script.write("""-wavef_file gauss-boosted-rho.dat  -imag -Q2 ${Q2} -xp 0.01 -mcintpoints 1e4 > $results_folder/rho_Q2_${Q2}_imag_${evid}_${fileid}
+        script.write("""-wavef_file gauss-boosted-rho.dat   -Q2 ${Q2} -xp 0.01 -mcintpoints 1e4 > $results_folder/rho_Q2_${Q2}_imag_${evid}_${fileid}
 done
 cd ..""")
         script.close()
@@ -377,15 +377,15 @@ cd ..""")
 #### rho ####
 for Q2 in 3.3 6.6 11.5 17.4 33
 do
-    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -wavef_file gauss-boosted-rho.dat -imag -Q2 ${Q2} -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_imag_${evid}_${fileid}
-    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -wavef_file gauss-boosted-rho.dat -real -Q2 ${Q2} -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_real_${evid}_${fileid}
+    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -wavef_file gauss-boosted-rho.dat  -Q2 ${Q2} -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_imag_${evid}_${fileid}
+    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -wavef_file gauss-boosted-rho.dat  -Q2 ${Q2} -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_real_${evid}_${fileid}
 done
 """)
             script.write("""
 #### J/Psi ####
 # Q^2=0.0
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -imag -Q2 0.0 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -real -Q2 0.0 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5  -Q2 0.0 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5  -Q2 0.0 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}
 
 cd ..
 """)
@@ -396,8 +396,8 @@ cd ..
 #### rho ####
 for Q2 in 3.3 33
 do
-    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.5 -wavef_file gauss-boosted-rho.dat -tstep 0.002 -imag -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_imag_${evid}_${fileid}
-    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.5 -wavef_file gauss-boosted-rho.dat -tstep 0.002 -real -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_real_${evid}_${fileid}
+    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.5 -wavef_file gauss-boosted-rho.dat -tstep 0.002  -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_imag_${evid}_${fileid}
+    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.5 -wavef_file gauss-boosted-rho.dat -tstep 0.002  -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_real_${evid}_${fileid}
 done
 """)
             if analyzeDiffraction == 3:
@@ -405,8 +405,8 @@ done
 #### rho ####
 for Q2 in 3.3 6.6 11.5 17.4 33
 do
-    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.5 -wavef_file gauss-boosted-rho.dat -tstep 0.002 -imag -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_imag_${evid}_${fileid}
-    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.5 -wavef_file gauss-boosted-rho.dat -tstep 0.002 -real -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_real_${evid}_${fileid}
+    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.5 -wavef_file gauss-boosted-rho.dat -tstep 0.002  -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_imag_${evid}_${fileid}
+    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.5 -wavef_file gauss-boosted-rho.dat -tstep 0.002  -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_real_${evid}_${fileid}
 done
 """)
 
@@ -414,16 +414,16 @@ done
                 script.write("""
 #### J/Psi ####
 # Q^2=0.0
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.5 -tstep 0.002 -imag -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.5 -tstep 0.002 -real -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.5 -tstep 0.002  -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.5 -tstep 0.002  -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}
 
 """)
             if analyzeDiffraction == 5:
                 script.write("""
 #### J/Psi ####
 # Q^2=0.0
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 1.5 -tstep 0.02 -imag -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 1.5 -tstep 0.02 -real -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 1.5 -tstep 0.02  -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 1.5 -tstep 0.02  -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}
 
 """)
             script.write("""
@@ -437,22 +437,22 @@ cd ..
 for Q2 in {Q21}
 do
     GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -maxr {maxr} -epslion {epslion} -DOUPC 1 -UPC_energy 200. -UPC_Nucleus Au -R_Nuclear {R_Nuclear} -DacayToScalarmeson 1 -DOSoftPhoton 0 -mint 0.00005 -maxt1 0.0036 -maxt2 0.05 -maxt3 0.1 -tstep1 0.0002 -tstep2 0.001 -tstep3 0.01 -Low {low} -High {high} """.format(R_Nuclear = R_Nuclear, Q21 = Q21, maxr = maxr, epslion = epslion, low = Low_cut, high = High_cut)) 
-                script.write("""-wavef_file gauss-boosted-rho.dat -imag -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_imag_${evid}_${fileid}""")
+                script.write("""-wavef_file gauss-boosted-rho.dat  -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_imag_${evid}_${fileid}""")
 
                 script.write("""
     GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -maxr {maxr} -epslion {epslion} -DOUPC 1 -UPC_energy 200. -UPC_Nucleus Au -R_Nuclear {R_Nuclear} -DacayToScalarmeson 1 -DOSoftPhoton 0 -mint 0.00005 -maxt1 0.0036 -maxt2 0.05 -maxt3 0.1 -tstep1 0.0002 -tstep2 0.001 -tstep3 0.01 -Low {low} -High {high} """.format(R_Nuclear = R_Nuclear, maxr = maxr, epslion = epslion, low = Low_cut, high = High_cut)) 
-                script.write("""-wavef_file gauss-boosted-rho.dat -real -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_real_${evid}_${fileid}
+                script.write("""-wavef_file gauss-boosted-rho.dat  -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_real_${evid}_${fileid}
 done""")
 
                 script.write("""
 #### J/Psi ####
 # Q^2=0.0
 GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -maxr {maxr} -DOUPC 1 -UPC_energy 200. -UPC_Nucleus Au -R_Nuclear {R_Nuclear} -DacayToScalarmeson 0 -DOSoftPhoton 0 -mint 0.00005 -maxt1 0.0036 -maxt2 0.05 -maxt3 0.1 -tstep1 0.0002 -tstep2 0.001 -tstep3 0.01 -Low {low} -High {high} """.format(R_Nuclear = R_Nuclear, low = Low_cut, high = High_cut)) 
-                script.write("""-imag -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}""")
+                script.write(""" -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}""")
 
                 script.write("""
 GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -maxr {maxr}  -DOUPC 1 -UPC_energy 200. -UPC_Nucleus Au -R_Nuclear {R_Nuclear} -DacayToScalarmeson 0 -DOSoftPhoton 0 -mint 0.00005 -maxt1 0.0036 -maxt2 0.05 -maxt3 0.1 -tstep1 0.0002 -tstep2 0.001 -tstep3 0.01 -Low {low} -High {high} """.format(R_Nuclear = R_Nuclear, low = Low_cut, high = High_cut)) 
-                script.write("""-real -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}
+                script.write(""" -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}
 cd ..""") 
                 script.close()
             if analyzeDiffraction == 3:
@@ -461,11 +461,11 @@ cd ..""")
 for Q2 in {Q21} 
 do
     GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -maxr {maxr} -epslion {epslion} -DOUPC 1 -UPC_energy 200. -UPC_Nucleus Au -R_Nuclear {R_Nuclear} -DacayToScalarmeson 1 -DOSoftPhoton 0 -mint 0.00005 -maxt1 0.0036 -maxt2 0.05 -maxt3 0.1 -tstep1 0.0002 -tstep2 0.001 -tstep3 0.01 -Low {low} -High {high} """.format(R_Nuclear = R_Nuclear, Q21 = Q21, maxr = maxr, epslion = epslion, low = Low_cut, high = High_cut)) 
-                script.write("""-wavef_file gauss-boosted-rho.dat -imag -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_imag_${evid}_${fileid}""")
+                script.write("""-wavef_file gauss-boosted-rho.dat  -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_imag_${evid}_${fileid}""")
 
                 script.write("""
     GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -maxr {maxr} -epslion {epslion} -DOUPC 1 -UPC_energy 200. -UPC_Nucleus Au -R_Nuclear {R_Nuclear} -DacayToScalarmeson 1 -DOSoftPhoton 0 -mint 0.00005 -maxt1 0.0036 -maxt2 0.05 -maxt3 0.1 -tstep1 0.0002 -tstep2 0.001 -tstep3 0.01 -Low {low} -High {high} """.format(R_Nuclear = R_Nuclear, maxr = maxr, epslion = epslion, low = Low_cut, high = High_cut)) 
-                script.write("""-wavef_file gauss-boosted-rho.dat -real -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_real_${evid}_${fileid}
+                script.write("""-wavef_file gauss-boosted-rho.dat  -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_real_${evid}_${fileid}
 done
 cd ..""")
 
@@ -505,12 +505,8 @@ cd ..""")
 ixp=$4
 #### J/Psi ####
 # Q^2=0.0
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -tstep 0.1 -imag -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {} -nrqcd_parameters 0.211 0 """.format(wavef_model, wavef_file))
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -tstep 0.1  -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {} -nrqcd_parameters 0.211 0 """.format(wavef_model, wavef_file))
                 script.write(""" -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}_${ixp}\n
-""")
-                script.write("""
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -tstep 0.1 -real -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {} -nrqcd_parameters 0.211 0 """.format(wavef_model, wavef_file))
-                script.write(""" -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}_${ixp}\n
 rm -rf $WilsonLineFile
 cd ..
 """)
@@ -520,28 +516,20 @@ cd ..
 ixp=$4
 #### J/Psi ####
 # Q^2=0.0
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 1.5 -tstep 0.1 -imag -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {} -nrqcd_parameters 0.211 0 """.format(wavef_model, wavef_file))
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 1.5 -tstep 0.1  -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {} -nrqcd_parameters 0.211 0 """.format(wavef_model, wavef_file))
                 script.write(""" -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}_${ixp}\n
-""")
-                script.write("""
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 1.5 -tstep 0.1 -real -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {} -nrqcd_parameters 0.211 0 """.format(wavef_model, wavef_file))
-                script.write(""" -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}_${ixp}\n
 rm -rf $WilsonLineFile
 cd ..
 """)
 
             # e+A for J/Psi only
-            if analyzeDiffraction == 2:
+            if analyzeDiffraction == 20:
                 script.write("""
 ixp=$4
 #### J/Psi ####
 # Q^2=0.0
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.1 -tstep 0.002 -imag -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {} -nrqcd_parameters 0.211 0 """.format(wavef_model, wavef_file))
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.1 -tstep 0.002  -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {} -nrqcd_parameters 0.211 0 """.format(wavef_model, wavef_file))
                 script.write(""" -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}_${ixp}\n
-""")
-                script.write("""
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.1 -tstep 0.002 -real -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {} -nrqcd_parameters 0.211 0 """.format(wavef_model, wavef_file))
-                script.write(""" -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}_${ixp}\n
 rm -rf $WilsonLineFile
 cd ..
 """)
@@ -549,17 +537,13 @@ cd ..
                 script.close()
                 
             # e+A for J/Psi only
-            if analyzeDiffraction == 3:
+            if analyzeDiffraction == 30:
                 script.write("""
 ixp=$4
 #### J/Psi ####
 # Q^2=0.0
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.8 -tstep 0.02 -imag -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {} -nrqcd_parameters 0.211 0 """.format(wavef_model, wavef_file))
+GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.8 -tstep 0.02  -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {} -nrqcd_parameters 0.211 0 """.format(wavef_model, wavef_file))
                 script.write(""" -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}_${ixp}\n
-""")
-                script.write("""
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.8 -tstep 0.02 -real -Q2 0.0 -xp 0.001 -wavef {} -wavef_file {} -nrqcd_parameters 0.211 0 """.format(wavef_model, wavef_file))
-                script.write(""" -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}_${ixp}\n
 rm -rf $WilsonLineFile
 cd ..
 """)
