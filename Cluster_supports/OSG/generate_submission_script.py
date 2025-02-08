@@ -70,7 +70,7 @@ on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
 # The below are good base requirements for first testing jobs on OSG,
 # if you don't have a good idea of memory and disk usage.
 request_cpus = 1
-request_memory = 1 GB
+request_memory = 2 GB
 request_disk = 2 GB
 
 # Queue one job with the above specifications.
