@@ -18,7 +18,7 @@ control_dict = {
 
 # IPGlasma
 ipglasma_dict = {
-    'mode': 1,  # run mode
+    'mode': 2,          # run mode (generate Wilson line for nuclei)
     'readMultFromFile': 0,
     'size': 720,  # number of grid points of IP-Glasma computation
     'L': 20.,  # grid size in the transverse plane
@@ -104,7 +104,7 @@ ipglasma_dict = {
     'writeOutputs': 0,
     'writeEvolution': 0,
     'readInitialWilsonLines': 0,
-    'writeInitialWilsonLines': 1,
+    'writeWilsonLines': 1,
     'writeOutputsToHDF5': 0,
     'useJIMWLK': 0,
     'mu0_jimwlk': 0.28,
@@ -175,9 +175,13 @@ def output_parameters_to_files(workfolder="."):
                     parameter_value=parameters_dict[key_name]))
             elif itype == 3:
                 if key_name in ("type", "database_name_pattern"): continue
-                f.write("{parameter_name}  {parameter_value}\n".format(
-                    parameter_name=key_name,
-                    parameter_value=parameters_dict[key_name]))
+                if isinstance(parameters_dict[key_name], list):
+                    varList = [str(var) for var in parameters_dict[key_name]]
+                    f.write(f"{key_name}  {",".join(varList)}\n")
+                else:
+                    f.write("{parameter_name}  {parameter_value}\n".format(
+                        parameter_name=key_name,
+                        parameter_value=parameters_dict[key_name]))
             elif itype == 4:
                 f.write("[{}]\n".format(key_name))
                 for subkey_name in parameters_dict[key_name]:
