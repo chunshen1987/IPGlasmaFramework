@@ -9,8 +9,6 @@ control_dict = {
     'initial_state_type': "IPGlasma",
     'walltime': "10:00:00",             # walltime to run
     'save_ipglasma_results': False,     # flag to save the Wilson lines
-    'analyzeDiffraction': 1,            # 1: JPsi only; 2: JPsi + rho
-    'saveNucleusSnapshot': False,       # flag to save the trace of Wilson Line distribution
 }
 
 
@@ -18,7 +16,7 @@ control_dict = {
 ipglasma_dict = {
     'mode': 2,          # run mode (generate Wilson line for nuclei)
     'L': 5.12,          # grid size in the transverse plane
-    'size': 1024,       # number of grid points of IP-Glasma computation
+    'size': 600,       # number of grid points of IP-Glasma computation
     'm': 0.4,
     'rmax': 1000.,
     'BG': 3.,
@@ -38,7 +36,7 @@ ipglasma_dict = {
     'maxtime': 0.0,
     'useTimeForSeed': 1,
     'LOutput': 5.12,
-    'sizeOutput': 1024,
+    'sizeOutput': 600,
     'writeOutputs': 0,
     'writeWilsonLines': 2,
     'useJIMWLK': 1,
@@ -51,6 +49,18 @@ ipglasma_dict = {
     'Ds_jimwlk': 0.005,
     'Lambda_QCD_jimwlk': 0.040,
     'm_jimwlk': 0.4,
+    'saveSnapshots': 1,
     'xSnapshotList': [0.005, 0.0025, 0.001, 0.0005, 0.0002],
 }
 
+diffraction_dict = {
+    'analyzeDiffraction': 1,                # mode 1: JPsi
+    'saveNucleusSnapshot': False,           # flag to save the trace of Wilson Line distribution
+    "wavef_model": 'boostedgaussian',       # "gauslc"
+    "wavef_file": 'gauss-boosted.dat',      # "gaus-lc.dat"
+    "mcintpoints": 100000,                  # "auto"
+    "mint": 0.0,
+    "maxt": 2.5,
+    "tstep": 0.1,
+    "Q2List": [0.0,],
+}

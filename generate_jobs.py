@@ -212,7 +212,7 @@ do
     cat ${ifile} | sed 's$N/A$0.0$g' | sed 's/Q_s/#Q_s/' > $results_folder/${filename}
     rm -fr ${ifile}
 done
-mv V-* $results_folder/
+mv *V-* $results_folder/
 """)
     if cluster_name != "OSG":
         script.write("""
@@ -223,8 +223,8 @@ mv run.err $results_folder/
     script.close()
 
 
-def generate_script_subnucleondiffraction(folder_name, collisionType, event_id,
-                                          saveSnapshot, analyzeDiffraction):
+def generate_script_subnucleondiffraction(folder_name, event_id,
+                                          diffractionDict):
     """This function generates script for computing subnucleon diffraction"""
     working_folder = folder_name
 
@@ -234,76 +234,56 @@ def generate_script_subnucleondiffraction(folder_name, collisionType, event_id,
     results_folder = 'subnucleondiffraction_results'
     script.write("""#!/bin/bash
 
-results_folder={0:s}
+resultsFolder={0:s}
 evid=$1
-fileid=$2
+fileId=$2
 WilsonLineFile=$3
+xval=$4
 
 
 cd subnucleondiffraction
 
-mkdir -p $results_folder
+mkdir -p $resultsFolder
 
 """.format(results_folder))
 
-    if saveSnapshot:
+    if diffractionDict['saveNucleusSnapshot']:
         script.write("""
-./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -print_nucleus > ${results_folder}/picture_${evid}_${fileid}
+./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -print_nucleus > ${resultsFolder}/picture_${evid}_${fileId}
 
 """)
-    if analyzeDiffraction > 0:
+    if diffractionDict['analyzeDiffraction'] > 0:
         script.write("""
 # run subnucleon diffraction
-((Randum_number=$RANDOM))
-
 """)
 
-        if collisionType == 0:
-            # e+P
-            if analyzeDiffraction == 2:
-                script.write("""
-#### rho ####
-for Q2 in 3.3 6.6 11.5 17.4 33
+    Q2ListStr = " ".join([str(Q2) for Q2 in diffractionDict['Q2List']])
+    script.write("""
+for Q2 in {Q2List}
 do
-    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -wavef_file gauss-boosted-rho.dat -imag -Q2 ${Q2} -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_imag_${evid}_${fileid}
-    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -wavef_file gauss-boosted-rho.dat -real -Q2 ${Q2} -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_real_${evid}_${fileid}
-done
-""")
-            script.write("""
-#### J/Psi ####
-# Q^2=0.0
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -imag -Q2 0.0 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 2.5 -real -Q2 0.0 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}
+    """.format(Q2List=Q2ListStr))
+    script.write(
+        "outputFile=${resultsFolder}/Amp_Q2_${Q2}_${evid}_${fileId}_x_${xval}"
+    )
+    script.write("""
+    ((Randum_number=$RANDOM))
+    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint {mint} -maxt {maxt} -tstep {tstep} -Q2 $Q2 -xp $xval -mcintpoints {mcintpoints} > $outputFile
 
-cd ..
-""")
-        elif collisionType == 1:
-            # e+A
-            if analyzeDiffraction == 2:
-                script.write("""
-#### rho ####
-for Q2 in 3.3 6.6 11.5 17.4 33
-do
-    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.5 -wavef_file gauss-boosted-rho.dat -tstep 0.002 -imag -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_imag_${evid}_${fileid}
-    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.5 -wavef_file gauss-boosted-rho.dat -tstep 0.002 -real -Q2 ${Q2} -xp 0.001 -mcintpoints 1e6 > $results_folder/rho_Q2_${Q2}_real_${evid}_${fileid}
 done
-""")
-            script.write("""
-#### J/Psi ####
-# Q^2=0.0
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.5 -tstep 0.002 -imag -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_imag_${evid}_${fileid}
-GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint 0 -maxt 0.5 -tstep 0.002 -real -Q2 0.0 -xp 0.001 -mcintpoints 1e6 > $results_folder/JPsi_Q2_0_real_${evid}_${fileid}
-
 cd ..
-""")
+""".format(mint=diffractionDict['mint'],
+           maxt=diffractionDict['maxt'],
+           tstep=diffractionDict['tstep'],
+           mcintpoints=diffractionDict['mcintpoints'],)
+    )
     script.close()
 
 
-def generate_event_folders(initial_condition_type, collisionType,
+def generate_event_folders(initial_condition_type,
                            package_root_path, code_path, working_folder,
                            cluster_name, event_id, event_id_offset,
-                           n_ev, n_threads, save_ipglasma_flag, saveSnapshot,
-                           analyzeDiffraction):
+                           n_ev, n_threads, save_ipglasma_flag,
+                           diffractionDict):
     """This function creates the event folder structure"""
     event_folder = path.join(working_folder, 'event_%d' % event_id)
     param_folder = path.join(working_folder, 'model_parameters')
@@ -318,8 +298,7 @@ def generate_event_folders(initial_condition_type, collisionType,
                         path.join(event_folder, 'ipglasma/input'))
         link_list = [
             'qs2Adj_vs_Tp_vs_Y_200.in', 'utilities', 'ipglasma',
-            'carbon_alpha_3.in', 'carbon_plaintext.in', 'oxygen_alpha_3.in',
-            'oxygen_plaintext.in'
+            'nucleusConfigurations',
         ]
         for link_i in link_list:
             subprocess.call("ln -s {0:s} {1:s}".format(
@@ -330,9 +309,8 @@ def generate_event_folders(initial_condition_type, collisionType,
 
         # subnucleondiffraction
         mkdir(path.join(event_folder, 'subnucleondiffraction'))
-        generate_script_subnucleondiffraction(event_folder, collisionType,
-                                              event_id, saveSnapshot,
-                                              analyzeDiffraction)
+        generate_script_subnucleondiffraction(event_folder,
+                                              event_id, diffractionDict)
         link_list = ['build/bin/subnucleondiffraction', 'gauss-boosted.dat',
                      'gauss-boosted-rho.dat']
         for link_i in link_list:
@@ -474,12 +452,8 @@ def main():
                   initial_condition_type))
         exit(1)
 
-    collisionType = 0
     if (parameter_dict.ipglasma_dict['Projectile']
-            == parameter_dict.ipglasma_dict['Target']):
-        if parameter_dict.ipglasma_dict['Projectile'] != "p":
-            collisionType = 1
-    else:
+            != parameter_dict.ipglasma_dict['Target']):
         print("\U0001F6AB  "
                 + "Projectile and Target species are different! Proj: "
                 + parameter_dict.ipglasma_dict['Projectile']
@@ -536,14 +510,12 @@ def main():
         if initial_condition_type in ("IPGlasma"):
             save_ipglasma_flag = (
                     parameter_dict.control_dict['save_ipglasma_results'])
-        saveSnapshot = parameter_dict.control_dict['saveNucleusSnapshot']
-        analyzeDiffraction = parameter_dict.control_dict['analyzeDiffraction']
-        generate_event_folders(initial_condition_type, collisionType,
+        generate_event_folders(initial_condition_type,
                                code_package_path, code_path,
                                working_folder_name, cluster_name,
                                ijob, event_id_offset, n_ev, n_threads,
-                               save_ipglasma_flag, saveSnapshot,
-                               analyzeDiffraction)
+                               save_ipglasma_flag,
+                               parameter_dict.diffraction_dict)
         event_id_offset += n_ev
     sys.stdout.write("\n")
     sys.stdout.flush()

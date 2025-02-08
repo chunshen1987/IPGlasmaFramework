@@ -25,7 +25,7 @@ def get_initial_condition(initial_type, iev, final_results_folder):
     if "IPGlasma" in initial_type:
         run_ipglasma(iev)
         res_path = collect_ipglasma_event(final_results_folder, iev)
-        WilsonLineFileList = glob(path.join(res_path, "V-*"))
+        WilsonLineFileList = glob(path.join(res_path, "*V-*"))
         return(WilsonLineFileList)
     else:
         print("\U0001F6AB  "
@@ -43,10 +43,10 @@ def run_ipglasma(iev):
 def run_subnucleondiffraction(WilsonLineFileList, iev, final_results_folder):
     """This functions run subnucleon diffraction"""
     print("\U0001F3B6  Run subnucleondiffraction ... ")
-    for ifile, filename in enumerate(WilsonLineFileList):
-        call("bash ./run_subnucleondiffraction.sh {} {} {}".format(iev, ifile,
-                                                                   filename),
-             shell=True)
+    for ifile, filenameWithPath in enumerate(WilsonLineFileList):
+        xval = filenameWithPath.split("/")[-1].split("_")[2]
+        call("bash ./run_subnucleondiffraction.sh {} {} {} {}".format(
+                    iev, ifile, filenameWithPath, xval), shell=True)
     res_folder_name = "subnucleondiffraction_results_{}".format(iev)
     res_path = path.join(path.abspath(final_results_folder),
                          res_folder_name)
@@ -111,7 +111,7 @@ def zip_results_into_hdf5(final_results_folder, event_id, para_dict):
             parafile = open(file_path)
             for iline, rawline in enumerate(parafile.readlines()):
                 paraline = rawline.strip('\n')
-                gtemp.attrs.create("{0}".format(iline), np.string_(paraline))
+                gtemp.attrs.create("{0}".format(iline), np.bytes_(paraline))
         else:
             dtemp = np.loadtxt(file_path, encoding='utf-8')
             h5data = gtemp.create_dataset("{0}".format(file_name),
@@ -123,7 +123,7 @@ def zip_results_into_hdf5(final_results_folder, event_id, para_dict):
                 if "#" in header_text:
                     try:
                         h5data.attrs.create("{}".format(iline),
-                                            np.string_(header_text))
+                                            np.bytes_(header_text))
                     except UnicodeEncodeError:
                         continue
             ftemp.close()

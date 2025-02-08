@@ -116,6 +116,8 @@ ipglasma_dict = {
     'Ds_jimwlk': 0.005,
     'Lambda_QCD_jimwlk': 0.040,
     'm_jimwlk': 0.4,
+    'saveSnapshots': 0,
+    'xSnapshotList': [0.005,0.001,0.0005,0.0001,0.00005,0.00001],
 }
 
 
