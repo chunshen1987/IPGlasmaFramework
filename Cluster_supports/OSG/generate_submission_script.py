@@ -3,7 +3,7 @@
 
 
 import sys
-from os import path
+from os import path, makedirs
 import random
 
 FILENAME = "singularity.submit"
