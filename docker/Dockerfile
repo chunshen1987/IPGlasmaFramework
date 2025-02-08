@@ -1,29 +1,31 @@
-FROM opensciencegrid/software-base:23-el9-release
+FROM ubuntu:22.04
 
 MAINTAINER Chun Shen <chunshen@wayne.edu>
 
-RUN yum -y install \
+RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true && \
+    apt-get update && apt-get install -y --no-install-recommends \
         cmake \
-        cmake3 \
-        git \
-        eigen3-devel \
+        cmake-data \
+        curl \
+        g++ \
         gcc \
-        gcc-c++ \
-        gcc-gfortran \
-        gsl-devel \
-        fftw \
-        fftw-devel \
-        hdf5-devel \
-        zlib-devel \
+        gfortran \
+        git \
+        hdf5-tools \
+        libfftw3-dev \
+        libgsl-dev \
+        libhdf5-dev \
+        libz-dev \
         make \
-        openmpi-devel \
+        pkg-config \
         python3 \
         python3-pip \
         time \
         vim \
         wget \
         && \
-    yum clean all
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install pre-reqs python packages
 RUN python3 -m pip install --upgrade pip && \
@@ -38,25 +40,7 @@ RUN cd ${HOME} && \
     ./get_code_packages.sh && \
     ./compile_code_packages.sh
 
-# Cleaning caches to reduce size of image
-RUN yum clean all
-
-# required directories
-RUN for MNTPOINT in \
-        /cvmfs \
-        /hadoop \
-        /hdfs \
-        /lizard \
-        /mnt/hadoop \
-        /mnt/hdfs \
-        /xenon \
-        /scratch \
-        /spt \
-        /stash2 \
-    ; do \
-        mkdir -p $MNTPOINT ; \
-    done
-
 ENV PYTHONIOENCODING utf-8
-WORKDIR ${HOME}/
+WORKDIR ${HOME}/IPGlasmaFramework
 
+CMD /bin/bash
