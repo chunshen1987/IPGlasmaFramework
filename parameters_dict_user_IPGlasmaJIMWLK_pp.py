@@ -16,9 +16,9 @@ control_dict = {
 ipglasma_dict = {
     'mode': 2,          # run mode (generate Wilson line for nuclei)
     'L': 5.12,          # grid size in the transverse plane
-    'size': 600,       # number of grid points of IP-Glasma computation
+    'size': 720,        # number of grid points of IP-Glasma computation
     'LOutput': 5.12,
-    'sizeOutput': 600,
+    'sizeOutput': 720,
     'm': 0.4,
     'rmax': 1000.,
     'BG': 3.,
@@ -37,14 +37,14 @@ ipglasma_dict = {
     'mu0_jimwlk': 0.28,
     'simpleLangevin': 1,
     'alphas_jimwlk': 0,
-    'jimwlk_ic_x': 0.01,
-    'x_projectile_jimwlk': 0.0001,
-    'x_target_jimwlk': 0.0001,
+    'jimwlk_ic_x': 0.01,                        # W = 31.5 GeV (J/Psi, Q^2 = 0)
+    'x_projectile_jimwlk': 3.60813750e-06,      # W = 1632 GeV (J/Psi, Q^2 = 0)
+    'x_target_jimwlk': 3.60813750e-06,          # W = 1632 GeV (J/Psi, Q^2 = 0)
     'Ds_jimwlk': 0.005,
     'Lambda_QCD_jimwlk': 0.040,
     'm_jimwlk': 0.4,
     'saveSnapshots': 1,
-    'xSnapshotList': [0.005, 0.0025, 0.001, 0.0005, 0.0002],
+    'xSnapshotList': [1.70844444e-03, 9.61000000e-04, 1.45392598e-05],  # W = 75, 100, 813 GeV (J/Psi, Q^2 = 0)
     'writeWilsonLines': 2,      # 2: binary
 }
 
