@@ -18,7 +18,7 @@ def print_usage():
 def write_submission_script(para_dict_):
     jobName = "IPG_Diffraction_{}".format(para_dict_["job_id"])
     random_seed = random.SystemRandom().randint(0, 10000000)
-    imagePathHeader = "stash:///osgconnect"
+    imagePathHeader = "osdf://"
     script = open(FILENAME, "w")
     if para_dict_["bayesFlag"]:
         script.write("""universe = vanilla
@@ -54,11 +54,11 @@ transfer_input_files = {0}
     script.write("""
 transfer_output_files = playground/event_0/RESULTS_$(Process).h5
 
-error = ../log/job.$(Cluster).$(Process).error
-output = ../log/job.$(Cluster).$(Process).output
-log = ../log/job.$(Cluster).$(Process).log
+error = log/job.$(Cluster).$(Process).error
+output = log/job.$(Cluster).$(Process).output
+log = log/job.$(Cluster).$(Process).log
 
-+JobDurationCategory = "Long"
+#+JobDurationCategory = "Long"
 
 # Send the job to Held state on failure.
 on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
@@ -66,8 +66,8 @@ on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
 # The below are good base requirements for first testing jobs on OSG,
 # if you don't have a good idea of memory and disk usage.
 request_cpus = 1
-request_memory = 2 GB
-request_disk = 1 GB
+request_memory = 1 GB
+request_disk = 2 GB
 
 # Queue one job with the above specifications.
 queue {0}""".format(para_dict_["n_jobs"]))
@@ -97,11 +97,11 @@ printf "Job running as user: `/usr/bin/id`\\n"
     if para_dict_["bayesFlag"]:
         script.write("""bayesFile=$5
 
-/home/IPGlasmaFramework/generate_jobs.py -w playground -c OSG -par ${parafile} -id ${processId} -n_th 1 -n_ev ${nev} -seed ${seed} -b ${bayesFile}
+/opt/IPGlasmaFramework/generate_jobs.py -w playground -c OSG -par ${parafile} -id ${processId} -n_th 1 -n_ev ${nev} -seed ${seed} -b ${bayesFile}
 """)
     else:
         script.write("""
-/home/IPGlasmaFramework/generate_jobs.py -w playground -c OSG -par ${parafile} -id ${processId} -n_th 1 -n_ev ${nev} -seed ${seed}
+/opt/IPGlasmaFramework/generate_jobs.py -w playground -c OSG -par ${parafile} -id ${processId} -n_th 1 -n_ev ${nev} -seed ${seed}
 """)
 
     script.write("""(
@@ -117,6 +117,9 @@ exit 0
 def main(para_dict_):
     write_submission_script(para_dict_)
     write_job_running_script(para_dict_)
+    logFolderName = "log"
+    if not path.exists(logFolderName):
+        makedirs(logFolderName)
 
 
 if __name__ == "__main__":
