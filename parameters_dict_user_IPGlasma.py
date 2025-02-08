@@ -17,28 +17,22 @@ ipglasma_dict = {
     'mode': 2,          # run mode (generate Wilson line for nuclei)
     'L': 5.12,          # grid size in the transverse plane
     'size': 600,       # number of grid points of IP-Glasma computation
+    'LOutput': 5.12,
+    'sizeOutput': 600,
     'm': 0.4,
     'rmax': 1000.,
     'BG': 3.,
     'BGq': 0.3,
     'useConstituentQuarkProton': 3,   # 0: round proton; 3: fluctuating proton
-    'shiftConstituentQuarkProtonOrigin': 1,
-    'smearQs': 1,
     'smearingWidth': 0.6,
-    'roots': 75.,
-    'SigmaNN': 40.,
-    'Rapidity': 1.7689,
     'QsmuRatio': 0.7,
-    'bmin': 0.,
-    'bmax': 0.,
+    'useFluctuatingx': 0,
+    'roots': 200.,
+    'SigmaNN': 42.,
+    'Rapidity': 0.,
     'Projectile': "p",
     'Target': "p",
-    'maxtime': 0.0,
     'useTimeForSeed': 1,
-    'LOutput': 5.12,
-    'sizeOutput': 600,
-    'writeOutputs': 0,
-    'writeWilsonLines': 2,
     'useJIMWLK': 1,
     'mu0_jimwlk': 0.28,
     'simpleLangevin': 1,
@@ -51,6 +45,7 @@ ipglasma_dict = {
     'm_jimwlk': 0.4,
     'saveSnapshots': 1,
     'xSnapshotList': [0.005, 0.0025, 0.001, 0.0005, 0.0002],
+    'writeWilsonLines': 2,      # 2: binary
 }
 
 diffraction_dict = {
