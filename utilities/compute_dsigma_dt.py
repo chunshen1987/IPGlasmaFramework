@@ -51,25 +51,18 @@ except IndexError:
 hf = h5py.File(data_path, "r")
 event_list = list(hf.keys())
 
-
 realpart = []
 imagpart = []
 t_arr = []; t_arrFlag = True
 for iev, event_name in enumerate(event_list):
     event_id = int(event_name.split("_")[-1])
     event_group = hf.get(event_name)
-    for ifile in range(2):
-        filename = "real_{}_{}".format(event_id, ifile)
-        temp_data1 = event_group.get(filename)
-        temp_data1 = nan_to_num(temp_data1)
+    for ifile, fileName in enumerate(event_group.keys()):
+        temp_data1 = nan_to_num(event_group.get(fileName))
         if temp_data1.shape == (0,): continue
-        filename = "imag_{}_{}".format(event_id, ifile)
-        temp_data2 = event_group.get(filename)
-        temp_data2 = nan_to_num(temp_data2)
-        if temp_data2.shape == (0,): continue
 
         realpart.append(temp_data1[:, 1])
-        imagpart.append(temp_data2[:, 1])
+        imagpart.append(temp_data1[:, 2])
         if t_arrFlag:
             t_arr = temp_data1[:, 0]
             t_arrFlag = False
