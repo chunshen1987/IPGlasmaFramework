@@ -1,12 +1,14 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """This script combine multiple hdf5 data files to one"""
 
 import sys
 from os import path, system, remove
+from shutil import rmtree
 from glob import glob
 import h5py
 import string
 import random
+from numpy import nan_to_num
 
 def randomString(stringLength=1):
     """Generate a random string of fixed length """
@@ -18,7 +20,6 @@ def print_help():
     """This function outpus help messages"""
     print("{0} results_folder".format(sys.argv[0]))
 
-
 def check_an_event_is_good(h5_event):
     """This function checks the given event contains all required files"""
     event_file_list = list(h5_event.keys())
@@ -26,7 +27,6 @@ def check_an_event_is_good(h5_event):
         return True
     else:
         return False
-
 
 def check_events_are_good(h5_filename):
     """This function is a shell to check all the events status in a h5 file"""
@@ -49,7 +49,6 @@ def check_events_are_good(h5_filename):
         print("{} is not good! Ignored~".format(h5_filename))
     return(event_status_all)
 
-
 if len(sys.argv) < 2:
     print_help()
     exit(1)
@@ -62,18 +61,15 @@ RESULTS_PATH = path.abspath(path.join(".", RESULTS_FOLDER))
 EVENT_LIST = glob(path.join(RESULTS_PATH, "*.h5"))
 
 exist_group_keys = []
-if path.exists("{}.h5".format(RESULTS_NAME)):
-    hftemp = h5py.File("{}.h5".format(RESULTS_NAME), "r")
-    exist_group_keys = list(hftemp.keys())
-    hftemp.close()
 
+h5Res = h5py.File("{}.h5".format(RESULTS_NAME), "a")
+exist_group_keys += list(h5Res.keys())
 for ievent, event_path in enumerate(EVENT_LIST):
     print("processing {0} ... ".format(event_path))
-    event_name = event_path.split("/")[-1]
+    event_folder = "/".join(event_path.split("/")[0:-1])
     try:
         hftemp = h5py.File(event_path, "r")
         glist = list(hftemp.keys())
-        hftemp.close()
         if not check_events_are_good(event_path):
             remove(event_path)
             continue
@@ -91,10 +87,10 @@ for ievent, event_path in enumerate(EVENT_LIST):
             if gtemp2 != gtemp:
                 print("Conflict in mergeing {0}, use {1}".format(gtemp, gtemp2))
             exist_group_keys.append(gtemp2)
-            system('h5copy -i {0} -o {1}.h5 -s {2} -d {3}'.format(
-                event_path, RESULTS_NAME, gtemp, gtemp2))
+            h5py.h5o.copy(hftemp.id, gtemp.encode('UTF-8'),
+                          h5Res.id, gtemp2.encode('UTF-8'))
+        hftemp.close()
         remove(event_path)
     except:
-        remove(event_path)
         continue
-
+h5Res.close()
