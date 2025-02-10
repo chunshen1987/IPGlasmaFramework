@@ -68,7 +68,7 @@ for ievent, event_path in enumerate(EVENT_LIST):
     print("processing {0} ... ".format(event_path))
     event_folder = "/".join(event_path.split("/")[0:-1])
     try:
-        hftemp = h5py.File(event_path, "r")
+        hftemp = h5py.File(event_path, "a")
         glist = list(hftemp.keys())
         if not check_events_are_good(event_path):
             remove(event_path)
