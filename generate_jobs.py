@@ -89,7 +89,7 @@ def generate_nersc_mpi_job_script(folder_name, n_nodes, n_threads,
     """This function generates job script for NERSC"""
     working_folder = folder_name
 
-    script = open(path.join(working_folder, "submit_MPI_jobs.pbs"), "w")
+    script = open(path.join(working_folder, "submit_MPI_jobs.script"), "w")
     script.write("""#!/bin/bash -l
 #SBATCH --qos=regular
 #SBATCH -N {0:d}
@@ -121,7 +121,7 @@ def generate_nerscKNL_mpi_job_script(folder_name, n_nodes, n_threads,
     """This function generates job script for NERSC KNL"""
     working_folder = folder_name
 
-    script = open(path.join(working_folder, "submit_MPI_jobs.pbs"), "w")
+    script = open(path.join(working_folder, "submit_MPI_jobs.script"), "w")
     script.write("""#!/bin/bash -l
 #SBATCH --qos=regular
 #SBATCH -N {0:d}
@@ -155,7 +155,7 @@ def generate_full_job_script(cluster_name, folder_name, initial_type,
     event_id = working_folder.split('/')[-1]
     walltime = '100:00:00'
 
-    script = open(path.join(working_folder, "submit_job.pbs"), "w")
+    script = open(path.join(working_folder, "submit_job.script"), "w")
     write_script_header(cluster_name, script, n_threads, event_id, walltime,
                         working_folder)
     if cluster_name != "OSG":
