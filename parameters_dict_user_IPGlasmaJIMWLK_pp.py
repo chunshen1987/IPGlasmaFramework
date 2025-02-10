@@ -23,6 +23,7 @@ ipglasma_dict = {
     'rmax': 1000.,
     'BG': 3.,
     'BGq': 0.3,
+    'omega': 1.0,
     'useConstituentQuarkProton': 3,   # 0: round proton; 3: fluctuating proton
     'smearingWidth': 0.6,
     'QsmuRatio': 0.7,
