@@ -233,12 +233,12 @@ def main():
                         type=int,
                         default=1,
                         help='number of jobs')
-    parser.add_argument('-n_hydro',
-                        '--n_hydro_per_job',
+    parser.add_argument('-n_event',
+                        '--n_event_per_job',
                         metavar='',
                         type=int,
                         default=1,
-                        help='number of hydro events per job to run')
+                        help='number of events per job to run')
     parser.add_argument('-n_th',
                         '--n_threads',
                         metavar='',
@@ -330,7 +330,7 @@ def main():
         generate_event_folders(working_folder_name, cluster_name, i_job,
                                singularityRepoPath, executeScript,
                                parameterFile, args.bayes_file,
-                               i_job*n_hydro_per_job, n_event_per_job,
+                               i_job*n_event_per_job, n_event_per_job,
                                n_threads, seed, wallTime)
     sys.stdout.write("\n")
     sys.stdout.flush()
