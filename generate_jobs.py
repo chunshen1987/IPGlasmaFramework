@@ -265,15 +265,19 @@ do
     script.write(
         "outputFile=${resultsFolder}/Amp_Q2_${Q2}_${evid}_${fileId}_x_${xval}"
     )
+    tlistStr = ""
+    if 'tlist' in diffractionDict.keys():
+        tlistStr = "-tlist " + ",".join([str(t) for t in diffractionDict['tlist']])
     script.write("""
     ((Randum_number=$RANDOM))
-    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint {mint} -maxt {maxt} -tstep {tstep} -Q2 $Q2 -xp $xval -mcintpoints {mcintpoints} > $outputFile
+    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint {mint} -maxt {maxt} -tstep {tstep} {tlist} -Q2 $Q2 -xp $xval -mcintpoints {mcintpoints} > $outputFile
 
 done
 cd ..
 """.format(mint=diffractionDict['mint'],
            maxt=diffractionDict['maxt'],
            tstep=diffractionDict['tstep'],
+           tlist=tlistStr,
            mcintpoints=diffractionDict['mcintpoints'],)
     )
     script.close()

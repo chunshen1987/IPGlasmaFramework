@@ -56,7 +56,8 @@ diffraction_dict = {
     "wavef_file": 'gauss-boosted.dat',      # "gaus-lc.dat"
     "mcintpoints": 100000,                  # "auto"
     "mint": 0.0,
-    "maxt": 2.5,
+    "maxt": 1.0,
     "tstep": 0.1,
+    "tlist": [0.0, 0.001, 0.003, 0.005, 0.008, 0.01, 0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5],
     "Q2List": [0.0,],
 }
