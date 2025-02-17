@@ -7,11 +7,11 @@ name: CI to Docker Hub
 
 on:
   push:
-    branches: [ main, chun/dev ]
+    branches: [ main, chun_dev ]
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
   pull_request:
-    branches: [ main, chun/dev ]
+    branches: [ main, chun_dev ]
 
 env:
   # Use docker.io for Docker Hub if empty
