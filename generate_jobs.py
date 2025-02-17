@@ -252,23 +252,46 @@ mkdir -p $resultsFolder
 ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -print_nucleus > ${resultsFolder}/picture_${evid}_${fileId}
 
 """)
+
+    if diffractionDict['computeTotalCrossSection'] > 0:
+        script.write("""
+# run subnucleon diffraction
+
+""")
+        Q2ListStr = " ".join([str(Q2) for Q2 in diffractionDict['Q2List']])
+        script.write("""
+for Q2 in {Q2List}
+do
+    """.format(Q2List=Q2ListStr))
+        script.write(
+        "outputFile=${resultsFolder}/AmpF_Q2_${Q2}_${evid}_${fileId}_x_${xval}"
+        )
+        script.write("""
+    ((Randum_number=$RANDOM))
+    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -totalcrosssections -Q2 $Q2 -xp $xval -mcintpoints {mcintpoints} > $outputFile
+
+done
+cd ..
+""".format(mcintpoints=diffractionDict['mcintpoints'],)
+        )
+
     if diffractionDict['analyzeDiffraction'] > 0:
         script.write("""
 # run subnucleon diffraction
 """)
 
-    Q2ListStr = " ".join([str(Q2) for Q2 in diffractionDict['Q2List']])
-    script.write("""
+        Q2ListStr = " ".join([str(Q2) for Q2 in diffractionDict['Q2List']])
+        script.write("""
 for Q2 in {Q2List}
 do
     """.format(Q2List=Q2ListStr))
-    script.write(
+        script.write(
         "outputFile=${resultsFolder}/Amp_Q2_${Q2}_${evid}_${fileId}_x_${xval}"
-    )
-    tlistStr = ""
-    if 'tlist' in diffractionDict.keys():
-        tlistStr = "-tlist " + ",".join([str(t) for t in diffractionDict['tlist']])
-    script.write("""
+        )
+        tlistStr = ""
+        if 'tlist' in diffractionDict.keys():
+            tlistStr = "-tlist " + ",".join([str(t) for t in diffractionDict['tlist']])
+        script.write("""
     ((Randum_number=$RANDOM))
     GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint {mint} -maxt {maxt} -tstep {tstep} {tlist} -Q2 $Q2 -xp $xval -mcintpoints {mcintpoints} > $outputFile
 
@@ -279,7 +302,8 @@ cd ..
            tstep=diffractionDict['tstep'],
            tlist=tlistStr,
            mcintpoints=diffractionDict['mcintpoints'],)
-    )
+        )
+
     script.close()
 
 
