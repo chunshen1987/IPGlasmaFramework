@@ -35,7 +35,7 @@ ENV HOME /opt/
 
 # download and compile the IPGlasma framework
 RUN cd ${HOME} && \
-    git clone --depth=1 https://github.com/chunshen1987/IPGlasmaFramework && \
+    git clone --depth=1 https://github.com/chunshen1987/IPGlasmaFramework -b chun/dev && \
     cd IPGlasmaFramework/codes && \
     ./get_code_packages.sh && \
     ./compile_code_packages.sh
