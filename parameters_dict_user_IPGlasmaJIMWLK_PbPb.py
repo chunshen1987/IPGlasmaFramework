@@ -50,12 +50,14 @@ ipglasma_dict = {
 }
 
 diffraction_dict = {
-    'computeTotalCrossSection': 0,
-    'analyzeDiffraction': 1,                # mode 1: JPsi
+    'computeTotalCrossSection': 1,
+    'analyzeDiffraction': 0,                # mode 1: JPsi
     'saveNucleusSnapshot': False,           # flag to save the trace of Wilson Line distribution
     "wavef_model": 'boostedgaussian',       # "gauslc"
     "wavef_file": 'gauss-boosted.dat',      # "gaus-lc.dat"
     "mcintpoints": 100000,                  # "auto"
+    "maxb": 51.,                            # GeV^-1
+    "nbperp": 25,
     "mint": 0.0,
     "maxt": 1.0,
     "tstep": 0.1,

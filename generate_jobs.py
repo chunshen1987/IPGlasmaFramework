@@ -268,11 +268,13 @@ do
         )
         script.write("""
     ((Randum_number=$RANDOM))
-    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -totalcrosssections -Q2 $Q2 -xp $xval -mcintpoints {mcintpoints} > $outputFile
+    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -totalcrosssections -maxb {maxb} -nbperp {nbperp} -Q2 $Q2 -xp $xval -mcintpoints {mcintpoints} > $outputFile
 
 done
 cd ..
-""".format(mcintpoints=diffractionDict['mcintpoints'],)
+""".format(maxb=diffractionDict['maxb'],
+           nbperp=diffractionDict['nbperp'],
+           mcintpoints=diffractionDict['mcintpoints'],)
         )
 
     if diffractionDict['analyzeDiffraction'] > 0:
