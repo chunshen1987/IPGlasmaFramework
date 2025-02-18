@@ -12,5 +12,5 @@ rm -fr ipglasma_code/.git
 rm -fr subnucleondiffraction_code
 #git clone --depth=1 https://github.com/hejajama/subnucleondiffraction subnucleondiffraction_code
 git clone --depth=1 https://github.com/chunshen1987/subnucleondiffraction -b integratedCrossSection subnucleondiffraction_code
-(cd subnucleondiffraction_code; git checkout c6a69733d78ee9e5760ce10c954d953fc420d643)
+(cd subnucleondiffraction_code; git checkout 21451cf1760758768a8ae81f64fd301615e561ec)
 rm -fr subnucleondiffraction_code/.git
