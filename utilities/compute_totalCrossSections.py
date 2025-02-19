@@ -5,6 +5,7 @@ from sys import argv, exit
 from os import path, mkdir
 import h5py
 from scipy import interpolate
+from scipy.integrate import simpson
 import shutil
 
 HBARC = 0.197327053
@@ -26,7 +27,7 @@ for x_i in xList:
     realpart = []
     imagpart = []
     b_arr = np.array([])
-    for iev, event_name in enumerate(event_list[:50]):
+    for iev, event_name in enumerate(event_list):
         event_id = int(event_name.split("_")[-1])
         event_group = hf.get(event_name)
         for ifile, fileName in enumerate(event_group.keys()):
@@ -49,7 +50,7 @@ for x_i in xList:
     # Compute the integrated cross section
     # Perform Jackknife resampling to determine the error
     # Randomly delete 20% of the events and then compute real_mean, imag_mean
-    number_Jackknife = 1000
+    number_Jackknife = 10000
     delete_d_events = int(nev*0.2)
     real_mean_jackknife = []
     imag_mean_jackknife = []
@@ -64,26 +65,23 @@ for x_i in xList:
     for i in range(number_Jackknife):
         coherent_jackknife = (real_mean_jackknife[i, :]**2. 
                               + imag_mean_jackknife[i, :]**2.)*prefactor
-        integral_coherent = np.sum(coherent_jackknife * b_arr) * (b_arr[1] - b_arr[0])
+        #integral_coherent = np.sum(coherent_jackknife * b_arr) * (b_arr[1] - b_arr[0])
+        integral_coherent = simpson(coherent_jackknife*b_arr, x=b_arr)
         integrated_cross_section.append(integral_coherent)
     integrated_cross_section = np.array(integrated_cross_section)
 
     # compute the mean and standard deviation of the integrated cross section
     mean_integrated_cross_section = np.mean(integrated_cross_section)
-    variance_samples = 0.0
-    for i in range(number_Jackknife):
-        variance_samples += (integrated_cross_section[i] 
-                                - mean_integrated_cross_section)**2
-    variance_samples *= ((nev - delete_d_events) 
-                        / (nev * number_Jackknife))
-    integrated_cross_section_err = np.sqrt(variance_samples)
+    variance_samples = np.var(integrated_cross_section)
+    integrated_cross_section_err = np.sqrt(
+        (nev - delete_d_events) / nev * variance_samples)
 
     crossSections.append(mean_integrated_cross_section)
     crossSectionsErr.append(integrated_cross_section_err)
 hf.close()
 
 xList = np.array([float(x_i) for x_i in xList])
-sorted_indices = np.argsort(xList)
+sorted_indices = np.argsort(-xList)
 
 for idx in sorted_indices:
     x_i = xList[idx]
