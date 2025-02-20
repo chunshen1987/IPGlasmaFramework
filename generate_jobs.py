@@ -291,7 +291,7 @@ do
         "outputFile=${resultsFolder}/Amp_Q2_${Q2}_${evid}_${fileId}_x_${xval}"
         )
         tlistStr = ""
-        if 'tlist' in diffractionDict.keys():
+        if 'tlist' in diffractionDict.keys() and diffractionDict['tlist'] != []:
             tlistStr = "-tlist " + ",".join([str(t) for t in diffractionDict['tlist']])
         script.write("""
     ((Randum_number=$RANDOM))
