@@ -110,7 +110,7 @@ printf "Job running as user: `/usr/bin/id`\\n"
 
     script.write("""(
     cd playground/event_0
-    bash submit_job.pbs
+    bash submit_job.script
     mv RESULTS*.h5 RESULTS_${processId}.h5
 )
 exit 0
