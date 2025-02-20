@@ -179,9 +179,10 @@ def output_parameters_to_files(workfolder="."):
             elif itype == 3:
                 if key_name in ("type", "database_name_pattern"): continue
                 if isinstance(parameters_dict[key_name], list):
-                    varStr = ",".join(
+                    if parameters_dict[key_name] != []:
+                        varStr = ",".join(
                             [str(var) for var in parameters_dict[key_name]])
-                    f.write(f"{key_name}  {varStr}\n")
+                        f.write(f"{key_name}  {varStr}\n")
                 else:
                     f.write("{parameter_name}  {parameter_value}\n".format(
                         parameter_name=key_name,
