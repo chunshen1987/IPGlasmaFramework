@@ -13,33 +13,33 @@ control_dict = {
     'initial_state_type': "IPGlasma",  # options: IPGlasma, IPsat
     'walltime': "10:00:00",            # walltime to run
     'save_ipglasma_results': False,    # flag to save IPGlasma results
-    'wavef_file': 1,
 }
 
 
 # IPGlasma
 ipglasma_dict = {
-    'mode': 1,              # run mode
+    'mode': 2,          # run mode (generate Wilson line for nuclei)
     'readMultFromFile': 0,
-    'size': 720,            # number of grid points of IP-Glasma computation
-    'L': 30.,               # grid size in the transverse plane
-    'Nc': 3,                # number of color
-    'm': 0.2,               # infrared cut-off mass (GeV)
-    'rmax': 10.,
+    'size': 720,  # number of grid points of IP-Glasma computation
+    'L': 20.,  # grid size in the transverse plane
+    'Nc': 3,  # number of color
+    'm': 0.2,  # infrared cut-off mass (GeV)
+    'rmax': 1000.,
     'UVdamp': 0.,
     'Jacobianm': 0.35,
-    'g': 1.,                # strong coupling constant
-    'SubNucleonParamType': 0,    # 0: do not use posterior parameter sets
-                                 # 1: use subnucleon parameters from variant Nq posterior distribution
-                                 # 2: use subnucleon parameters from fixed Nq = 3 posterior distribution
-    'SubNucleonParamSet': -1,    # -1: choose a random set from the posterior distribution
-                                 # 0: choose the MAP parameter set
-                                 # positive intergers: choose a fixed set of parameter for sub-nucleonic structure
+    'g': 1.,  # strong coupling constant
+    'SubNucleonParamType': 0,  # 0: do not use posterior parameter sets
+    # 1: use subnucleon parameters from variant Nq posterior distribution
+    # 2: use subnucleon parameters from fixed Nq = 3 posterior distribution
+    'SubNucleonParamSet':
+        -1,  # -1: choose a random set from the posterior distribution
+    # 0: choose the MAP parameter set
+    # positive intergers: choose a fixed set of parameter for sub-nucleonic structure
     'BG': 4.,
     'BGq': 0.3,
     'BGqVar': 0.0,
-    'omega': 1.0, 
-    'dqMin': 0.2582,
+    'dqMin': 0.0,
+    'omega': 1.0,
     'useSmoothNucleus': 0,
     'useConstituentQuarkProton': 0,
     'NqFluc': 0.0,
@@ -47,7 +47,17 @@ ipglasma_dict = {
     'runningCoupling': 0,
     'muZero': 0.3,
     'minimumQs2ST': 0.,
+    'setWSDeformParams': 0,
+    'R_WS': 6.6,
+    'a_WS': 0.52,
+    'dR_np': 0.,
+    'da_np': 0.,
     'beta2': 0.28,
+    'beta3': 0.0,
+    'beta4': 0.0,
+    'gamma': 0.0,
+    'force_dmin_flag': 1,  # flag to force d_min for deformed nuclei
+    'd_min': 0.9,  # fm
     'c': 0.2,
     'g2mu': 0.1,
     'useFatTails': 0,
@@ -77,77 +87,47 @@ ipglasma_dict = {
     'Projectile': "Au",
     'Target': "Au",
     'bmin': 0.,
-    'bmax': 20.,
-    'setWSDeformParams': 0,
-    'R_WS': 6.6,
-    'a_WS': 0.52,
-    'beta2': 0.28,
-    'beta3': 0.0,
-    'beta4': 0.0,
-    'gamma': 0.0,
+    'bmax': 0.,
+    'rotateReactionPlane': 0,
     'lightNucleusOption': 1,
     'useFixedNpart': 0,
     'averageOverThisManyNuclei': 1,
     'SigmaNN': 42.,
     'gaussianWounding': 1,
     'inverseQsForMaxTime': 0,
-    'maxtime': 0.6,
+    'maxtime': 0.4,
     'dtau': 0.1,
     'LOutput': 30,
     'sizeOutput': 512,
+    'computeGluonMultiplicity': 0,
     'etaSizeOutput': 1,
     'detaOutput': 0,
-    'writeOutputs': 5,
+    'writeOutputs': 0,
     'writeEvolution': 0,
     'readInitialWilsonLines': 0,
-    'writeInitialWilsonLines': 0,
+    'writeWilsonLines': 1,
     'writeOutputsToHDF5': 0,
-    'jz_d': 1,
-    'DoPol': 0,
+    'useJIMWLK': 0,
+    'mu0_jimwlk': 0.28,
+    'simpleLangevin': 1,
+    'alphas_jimwlk': 0,
+    'jimwlk_ic_x': 0.01,
+    'x_projectile_jimwlk': 0.001,
+    'x_target_jimwlk': 0.001,
+    'Ds_jimwlk': 0.005,
+    'Lambda_QCD_jimwlk': 0.040,
+    'm_jimwlk': 0.4,
+    'saveSnapshots': 0,
+    'xSnapshotList': [0.005,0.001,0.0005,0.0001,0.00005,0.00001],
 }
 
-# JIMWLK parameters
-jimwlk_dict = {
-    'mode': 1,
-    'Nc': 3,
-    'runningCoupling': 1,
-    'size': 700,
-    'steps': 340,
-    'ds': 0.0004,
-    'measureSteps': 20,
-    'initMethod': 11,
-    'input_wline': "V-NN",
-    'output_dir': "./",
-    'R': 10.,
-    'g2mua': 1.,
-    'Lambda_QCD': 0.09,
-    'kappa4Factor': 1,
-    'g': 1.,
-    'mjimwlk': 0.2,
-    'L': 5.12,
-    'Ny': 100,
-    'mu0': 0.28,
-    'seed': 0, 
-    'simpleLangevin': 1,
-    'Fixedmu0Lambdaratio': 1,
-    'Output_V_files': 7,
-    'measureSteps1': 20,
-    'measureSteps2': 40,
-    'measureSteps3': 6000,
-    'measureSteps4': 6000,
-    'measureSteps5': 6000,
-    'measureSteps6': 6000,
-    'measureSteps7': 6000,
-}
 
 Parameters_list = [
     (ipglasma_dict, "input", 3),
-    (jimwlk_dict, "input", 3),
 ]
 
 path_list = [
     'model_parameters/IPGlasma/',
-    'model_parameters/JIMWLK/',
 ]
 
 
@@ -157,12 +137,10 @@ def update_parameters_dict(par_dict_path, ran_seed):
     sys.path.insert(0, par_diretory)
     print(par_diretory)
     parameters_dict = __import__(par_dict_path.split('.py')[0].split('/')[-1])
-    print(parameters_dict)
     initial_condition_type = (
                     parameters_dict.control_dict['initial_state_type'])
     if initial_condition_type in ("IPGlasma"):
         ipglasma_dict.update(parameters_dict.ipglasma_dict)
-        jimwlk_dict.update(parameters_dict.jimwlk_dict)
 
         # set random seed
         if ran_seed == -1:
@@ -177,8 +155,6 @@ def update_parameters_bayesian(bayes_file):
         key, val = line.split()
         if key in ipglasma_dict.keys():
             ipglasma_dict[key] = float(val)
-        if key in jimwlk_dict.keys():
-            jimwlk_dict[key] = float(val)
 
 
 def output_parameters_to_files(workfolder="."):
@@ -202,9 +178,15 @@ def output_parameters_to_files(workfolder="."):
                     parameter_value=parameters_dict[key_name]))
             elif itype == 3:
                 if key_name in ("type", "database_name_pattern"): continue
-                f.write("{parameter_name}  {parameter_value}\n".format(
-                    parameter_name=key_name,
-                    parameter_value=parameters_dict[key_name]))
+                if isinstance(parameters_dict[key_name], list):
+                    if parameters_dict[key_name] != []:
+                        varStr = ",".join(
+                            [str(var) for var in parameters_dict[key_name]])
+                        f.write(f"{key_name}  {varStr}\n")
+                else:
+                    f.write("{parameter_name}  {parameter_value}\n".format(
+                        parameter_name=key_name,
+                        parameter_value=parameters_dict[key_name]))
             elif itype == 4:
                 f.write("[{}]\n".format(key_name))
                 for subkey_name in parameters_dict[key_name]:

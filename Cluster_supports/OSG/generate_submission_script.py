@@ -3,7 +3,7 @@
 
 
 import sys
-from os import path
+from os import path, makedirs
 import random
 
 FILENAME = "singularity.submit"
@@ -54,26 +54,24 @@ transfer_input_files = {0}
     script.write("""
 transfer_output_files = playground/event_0/RESULTS_$(Process).h5
 
-error = ../log/job.$(Cluster).$(Process).error
-output = ../log/job.$(Cluster).$(Process).output
-log = ../log/job.$(Cluster).$(Process).log
+error = log/job.$(Cluster).$(Process).error
+output = log/job.$(Cluster).$(Process).output
+log = log/job.$(Cluster).$(Process).log
 
 #+JobDurationCategory = "Long"
 max_idle = 1000
 
-# remove the failed jobs
-periodic_remove = (ExitCode == 73)
-
-checkpoint_exit_code = 85
+# auto release hold jobs if they are caused by data transfer issues on OSG
+periodic_release = ((HoldReasonCode == 13 || HoldReasonCode == 26) && (time() - EnteredCurrentStatus) > 1200 )
 
 # Send the job to Held state on failure.
-on_exit_hold = (ExitBySignal == True) || (ExitCode != 0 && ExitCode != 73)
+on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
 
 # The below are good base requirements for first testing jobs on OSG,
 # if you don't have a good idea of memory and disk usage.
 request_cpus = 1
 request_memory = 2 GB
-request_disk = 1 GB
+request_disk = 2 GB
 
 # Queue one job with the above specifications.
 queue {0}""".format(para_dict_["n_jobs"]))
@@ -103,16 +101,16 @@ printf "Job running as user: `/usr/bin/id`\\n"
     if para_dict_["bayesFlag"]:
         script.write("""bayesFile=$5
 
-/home/IPGlasmaFramework/generate_jobs.py -w playground -c OSG -par ${parafile} -id ${processId} -n_th 1 -n_ev ${nev} -seed ${seed} -b ${bayesFile}
+/opt/IPGlasmaFramework/generate_jobs.py -w playground -c OSG -par ${parafile} -id ${processId} -n_th 1 -n_ev ${nev} -seed ${seed} -b ${bayesFile}
 """)
     else:
         script.write("""
-/home/IPGlasmaFramework/generate_jobs.py -w playground -c OSG -par ${parafile} -id ${processId} -n_th 1 -n_ev ${nev} -seed ${seed}
+/opt/IPGlasmaFramework/generate_jobs.py -w playground -c OSG -par ${parafile} -id ${processId} -n_th 1 -n_ev ${nev} -seed ${seed}
 """)
 
     script.write("""(
     cd playground/event_0
-    bash submit_job.pbs
+    bash submit_job.script
     mv RESULTS*.h5 RESULTS_${processId}.h5
 )
 exit 0
@@ -123,6 +121,9 @@ exit 0
 def main(para_dict_):
     write_submission_script(para_dict_)
     write_job_running_script(para_dict_)
+    logFolderName = "log"
+    if not path.exists(logFolderName):
+        makedirs(logFolderName)
 
 
 if __name__ == "__main__":

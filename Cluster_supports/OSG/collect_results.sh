@@ -10,5 +10,6 @@ mkdir -p $runfoldername
     cp $run/*.py ./
     cp $run/*.sh ./
     cp $run/*.submit ./
-    ./combine_multiple_hdf5.py $run
+    cp $run/*parameter* ./
+    ../combine_multiple_hdf5.py $run
 )

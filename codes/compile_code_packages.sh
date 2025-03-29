@@ -55,20 +55,3 @@ status=$?
 if [ $status -ne 0 ]; then
     exit $status
 fi
-
-# compile jimwlk
-echo -e "${Green}compile jimwlk ... ${NC}"
-(
-    cd jimwlk_code
-    mkdir -p build
-    cd build
-    rm -fr *
-    CC=${CCFlag} CXX=${CXXFlag} cmake ..
-    make -j$number_of_cores_to_compile
-)
-status=$?
-if [ $status -ne 0 ]; then
-    exit $status
-fi
-
-

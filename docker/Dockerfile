@@ -1,84 +1,37 @@
-#FROM centos:7
-FROM opensciencegrid/software-base:23-el9-release
+FROM ubuntu:22.04
+
 MAINTAINER Chun Shen <chunshen@wayne.edu>
 
-#RUN yum -y upgrade
-
-#RUN yum -y install epel-release centos-release-scl
-
-# osg repo
-#RUN yum -y install http://repo.opensciencegrid.org/osg/3.5/osg-3.5-el7-release-latest.rpm
-
-## well rounded basic system to support a wide range of user jobs
-#RUN yum -y grouplist \
-#    && yum -y groupinstall "Additional Development" \
-#                           "Compatibility Libraries" \
-#                           "Console Internet Tools" \
-#                           "Development Tools" \
-#                           "Internet Applications" \
-#                           "Networking Tools" \
-#                           "Scientific Support"
-
-RUN yum -y install \
+RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true && \
+    apt-get update && apt-get install -y --no-install-recommends \
         cmake \
-        cmake3 \
-        git \
-        eigen3-devel \
+        cmake-data \
+        curl \
+        g++ \
         gcc \
-        gcc-c++ \
-        gcc-gfortran \
-        gsl-devel \
-        fftw \
-        fftw-devel \
-        hdf5-devel \
-        zlib-devel \
+        gfortran \
+        git \
+        hdf5-tools \
+        libfftw3-dev \
+        libgsl-dev \
+        libhdf5-dev \
+        libz-dev \
         make \
-        openmpi-devel \
+        pkg-config \
         python3 \
         python3-pip \
         time \
         vim \
         wget \
         && \
-    yum clean all
-
-RUN alternatives --install /usr/local/bin/cmake cmake /usr/bin/cmake 10 \
-    --slave /usr/local/bin/ctest ctest /usr/bin/ctest \
-    --slave /usr/local/bin/cpack cpack /usr/bin/cpack \
-    --slave /usr/local/bin/ccmake ccmake /usr/bin/ccmake \
-    --family cmake
-
-RUN  alternatives --install /usr/local/bin/cmake cmake /usr/bin/cmake3 20 \
---slave /usr/local/bin/ctest ctest /usr/bin/ctest3 \
---slave /usr/local/bin/cpack cpack /usr/bin/cpack3 \
---slave /usr/local/bin/ccmake ccmake /usr/bin/ccmake3 \
---family cmake
-
-#SHELL ["/usr/bin/scl", "enable", "devtoolset-7"]
-
-RUN yum -y install http://springdale.princeton.edu/data/springdale/7/x86_64/os/Computational/gsl25-2.5-3.sdl7.2.x86_64.rpm
-
-RUN yum -y install http://springdale.princeton.edu/data/springdale/7/x86_64/os/Computational/gsl25-devel-2.5-3.sdl7.2.x86_64.rpm
-
-# osg
-#RUN yum -y install osg-ca-certs osg-wn-client && \
-#        rm -f /etc/grid-security/certificates/*.r0
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install pre-reqs python packages
-#RUN pip3 install --upgrade && \
-#    pip3 install numpy h5py scipy
-
 RUN python3 -m pip install --upgrade pip && \
-    python3 -m pip install "numpy<2.0" h5py scipy
-    
-ENV HOME /home/
-ENV PATH="${PATH}:/usr/lib64/openmpi/bin:/usr/local/gsl/2.5/x86_64/bin"
-ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib:/usr/local/gsl/2.5/x86_64/lib64"
-ENV GSL_ROOT_DIR="/usr/local/gsl/2.5/x86_64"
+    python3 -m pip install numpy h5py scipy
 
-RUN echo 'export PATH="${PATH}:/usr/lib64/openmpi/bin:/usr/local/gsl/2.5/x86_64/bin"' >> /root/.bashrc
-RUN echo 'export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib:/usr/local/gsl/2.5/x86_64/lib64"' >> /root/.bashrc
-RUN echo 'export GSL_ROOT_DIR="/usr/local/gsl/2.5/x86_64"' >> /root/.bashrc
+ENV HOME /opt/
 
 # download and compile the IPGlasma framework
 RUN cd ${HOME} && \
@@ -87,34 +40,7 @@ RUN cd ${HOME} && \
     ./get_code_packages.sh && \
     ./compile_code_packages.sh
 
-# Cleaning caches to reduce size of image
-RUN yum clean all
-
-# required directories
-RUN for MNTPOINT in \
-        /cvmfs \
-        /hadoop \
-        /hdfs \
-        /lizard \
-        /mnt/hadoop \
-        /mnt/hdfs \
-        /xenon \
-        /scratch \
-        /spt \
-        /stash2 \
-    ; do \
-        mkdir -p $MNTPOINT ; \
-    done
-
-# some extra singularity stuff
-COPY .singularity.d /.singularity.d
-RUN cd / && \
-    ln -s .singularity.d/actions/exec .exec && \
-    ln -s .singularity.d/actions/run .run && \
-    ln -s .singularity.d/actions/test .shell && \
-    ln -s .singularity.d/runscript singularity
-
 ENV PYTHONIOENCODING utf-8
-WORKDIR ${HOME}/
+WORKDIR ${HOME}/IPGlasmaFramework
 
-#CMD scl enable devtoolset-7 bash
+CMD /bin/bash
