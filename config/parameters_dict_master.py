@@ -119,6 +119,8 @@ ipglasma_dict = {
     'm_jimwlk': 0.4,
     'saveSnapshots': 0,
     'xSnapshotList': [0.005,0.001,0.0005,0.0001,0.00005,0.00001],
+    'Use_stringy_proton': 0,
+    'fluxtubeNormalization': 1.0,
 }
 
 

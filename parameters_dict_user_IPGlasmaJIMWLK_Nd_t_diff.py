@@ -42,14 +42,16 @@ ipglasma_dict = {
     'simpleLangevin': 1,
     'alphas_jimwlk': 0,
     'jimwlk_ic_x': 0.01,                        # W = 31 GeV (J/Psi, Q^2 = 0)
-    'x_projectile_jimwlk': 6.18101984e-04,      # W = 124.69 GeV (J/Psi, Q^2 = 0)
-    'x_target_jimwlk': 6.18101984e-04,          # W = 124.69 GeV (J/Psi, Q^2 = 0)
+    'x_projectile_jimwlk': 1.7e-03,      # W = 124.69 GeV (J/Psi, Q^2 = 0)
+    'x_target_jimwlk': 1.7e-03,          # W = 124.69 GeV (J/Psi, Q^2 = 0)
     'Ds_jimwlk': 0.005,
     'Lambda_QCD_jimwlk': 0.040,
     'm_jimwlk': 0.4,
     'saveSnapshots': 0,
     'xSnapshotList': [0.005,0.001],
     'writeWilsonLines': 2,      # 2: binary
+    'Use_stringy_proton': 0,
+    'fluxtubeNormalization': 1.0,
 }
 
 diffraction_dict = {
