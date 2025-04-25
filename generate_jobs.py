@@ -268,13 +268,15 @@ do
         )
         script.write("""
     ((Randum_number=$RANDOM))
-    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -totalcrosssections -maxb {maxb} -nbperp {nbperp} -Q2 $Q2 -xp $xval -mcintpoints {mcintpoints} > $outputFile
+    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -totalcrosssections -maxb {maxb} -nbperp {nbperp} -Q2 $Q2 -xp $xval -wavef {wavef_model} -wavef_file {wavef_file} -mcintpoints {mcintpoints} > $outputFile
 
 done
 cd ..
 """.format(maxb=diffractionDict['maxb'],
            nbperp=diffractionDict['nbperp'],
-           mcintpoints=diffractionDict['mcintpoints'],)
+           mcintpoints=diffractionDict['mcintpoints'],
+           wavef_model=diffractionDict['wavef_model'],
+           wavef_file=diffractionDict['wavef_file'],)
         )
 
     if diffractionDict['analyzeDiffraction'] > 0:
@@ -295,7 +297,7 @@ do
             tlistStr = "-tlist " + ",".join([str(t) for t in diffractionDict['tlist']])
         script.write("""
     ((Randum_number=$RANDOM))
-    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint {mint} -maxt {maxt} -tstep {tstep} {tlist} -Q2 $Q2 -xp $xval -mcintpoints {mcintpoints} > $outputFile
+    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint {mint} -maxt {maxt} -tstep {tstep} {tlist} -Q2 $Q2 -xp $xval -wavef {wavef_model} -wavef_file {wavef_file} -mcintpoints {mcintpoints} > $outputFile
 
 done
 cd ..
@@ -303,7 +305,9 @@ cd ..
            maxt=diffractionDict['maxt'],
            tstep=diffractionDict['tstep'],
            tlist=tlistStr,
-           mcintpoints=diffractionDict['mcintpoints'],)
+           mcintpoints=diffractionDict['mcintpoints'],
+           wavef_model=diffractionDict['wavef_model'],
+           wavef_file=diffractionDict['wavef_file'],)
         )
 
     script.close()
@@ -342,7 +346,7 @@ def generate_event_folders(initial_condition_type,
         generate_script_subnucleondiffraction(event_folder,
                                               event_id, diffractionDict)
         link_list = ['build/bin/subnucleondiffraction', 'gauss-boosted.dat',
-                     'gauss-boosted-rho.dat']
+                     'gauss-boosted-rho.dat', 'gauss-boosted_mzsat.dat', ]
         for link_i in link_list:
             subprocess.call("ln -s {0:s} {1:s}".format(
                 path.abspath(path.join(
