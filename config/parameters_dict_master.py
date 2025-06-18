@@ -67,7 +67,8 @@ ipglasma_dict = {
     'protonAnisotropy': 0,
     'roots': 200.,
     'usePseudoRapidity': 0,
-    'Rapidity': 0.,
+    'RapidityA': 0.,
+    'RapidityB': 0.,
     'useFluctuatingx': 0,
     'xFromThisFactorTimesQs': 1,
     'useNucleus': 1,
@@ -131,7 +132,7 @@ path_list = [
 ]
 
 
-def update_parameters_dict(par_dict_path, ran_seed):
+def update_parameters_dict(par_dict_path, ran_seed) -> None:
     """This function update the parameters dictionaries with user's settings"""
     par_diretory = path.dirname(par_dict_path)
     sys.path.insert(0, par_diretory)
@@ -148,8 +149,13 @@ def update_parameters_dict(par_dict_path, ran_seed):
         else:
             ipglasma_dict['seed'] = ran_seed
 
+        if "Rapidity" in ipglasma_dict:
+            # backward compatibility
+            ipglasma_dict['RapidityA'] = ipglasma_dict['Rapidity']
+            ipglasma_dict['RapidityB'] = ipglasma_dict['Rapidity']
 
-def update_parameters_bayesian(bayes_file):
+
+def update_parameters_bayesian(bayes_file) -> None:
     parfile = open(bayes_file, "r")
     for line in parfile:
         key, val = line.split()
@@ -157,7 +163,7 @@ def update_parameters_bayesian(bayes_file):
             ipglasma_dict[key] = float(val)
 
 
-def output_parameters_to_files(workfolder="."):
+def output_parameters_to_files(workfolder=".") -> None:
     """This function outputs parameters in dictionaries to files"""
     workfolder = path.abspath(workfolder)
     print("\U0001F375  Output input parameter files to {}...".format(
