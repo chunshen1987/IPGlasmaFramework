@@ -4,7 +4,7 @@
 
 # download IPGlasma
 rm -fr ipglasma_code
-git clone --depth=1 https://github.com/chunshen1987/ipglasma -b ipglasma_jimwlk ipglasma_code
+git clone --depth=5 https://github.com/chunshen1987/ipglasma -b ipglasma_jimwlk ipglasma_code
 (cd ipglasma_code; git checkout 7cd9f37a38181fec85b71399ac7b46f233200a97)
 rm -fr ipglasma_code/.git
 
