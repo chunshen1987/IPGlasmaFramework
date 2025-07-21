@@ -11,6 +11,7 @@ git clone --depth=1 https://github.com/chunshen1987/ipglasma -b ipglasma_jimwlk 
 git clone --depth=1 https://github.com/wenbin1501110084/ipglasma -b stingy_proton_jimwlk ipglasma_code
 rm -fr ipglasma_code/.git
 
+
 # download subnucleondiffraction
 rm -fr subnucleondiffraction_code
 #git clone --depth=1 https://github.com/hejajama/subnucleondiffraction subnucleondiffraction_code
