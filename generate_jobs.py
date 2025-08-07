@@ -14,7 +14,7 @@ known_initial_types = [
 ]
 
 support_cluster_list = [
-    'nersc', 'nerscKNL', 'wsugrid', "OSG", "local", "guillimin", "McGill"
+    'nersc', 'nerscKNL', 'wsugrid', "OSG", "local", "guillimin", "McGill", "csc"
 ]
 
 
@@ -62,6 +62,20 @@ def write_script_header(cluster, script, n_threads, event_id, walltime,
 #PBS -o test.log
 #PBS -d {3:s}
 """.format(event_id, n_threads, walltime, working_folder))
+    elif cluster == "csc":
+        script.write("""#!/bin/bash
+#SBATCH --job-name={0:s}
+#SBATCH --account=lappi
+#SBATCH --partition=small
+#SBATCH --time={1:s}
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task={2:d}
+#SBATCH --mem-per-cpu={3:.0f}G
+#SBATCH --output=job.out
+#SBATCH --error=job.err
+
+cd {4:s}
+""".format(event_id, walltime, n_threads, mem/n_threads, working_folder))
     elif cluster == "wsugrid":
         script.write("""#!/usr/bin/env bash
 #SBATCH --job-name {0:s}
