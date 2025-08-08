@@ -264,6 +264,13 @@ def generate_script_subnucleondiffraction(folder_name, event_id,
     script = open(path.join(working_folder, "run_subnucleondiffraction.sh"),
                   "w")
 
+    common_options="""-dipole 1 ipglasma_binary $WilsonLineFile -mcintpoints {mcintpoints} -wavef {wavef_model} -wavef_file {wavef_file} -Q2 $Q2 -xp $xval
+    """.format(
+           mcintpoints=diffractionDict['mcintpoints'],
+           wavef_model=diffractionDict['wavef_model'],
+           wavef_file=diffractionDict['wavef_file']
+           )
+
     results_folder = 'subnucleondiffraction_results'
     script.write("""#!/bin/bash
 
@@ -282,9 +289,9 @@ mkdir -p $resultsFolder
 
     if diffractionDict['saveNucleusSnapshot']:
         script.write("""
-./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -print_nucleus > ${resultsFolder}/picture_${evid}_${fileId}
+./subnucleondiffraction -dipole 1 {common_options} -print_nucleus > ${resultsFolder}/picture_${evid}_${fileId}
 
-""")
+""").format(common_options=common_options)
 
     if diffractionDict['computeTotalCrossSection'] > 0:
         script.write("""
@@ -301,11 +308,12 @@ do
         )
         script.write("""
     ((Randum_number=$RANDOM))
-    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -totalcrosssections -maxb {maxb} -nbperp {nbperp} -Q2 $Q2 -xp $xval -mcintpoints {mcintpoints} > $outputFile
+    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction {options} -totalcrosssections -maxb {maxb} -nbperp {nbperp}  > $outputFile
 
 done
 
-""".format(maxb=diffractionDict['maxb'],
+""".format(options=common_options,
+        maxb=diffractionDict['maxb'],
            nbperp=diffractionDict['nbperp'],
            mcintpoints=diffractionDict['mcintpoints'],)
         )
@@ -328,15 +336,16 @@ do
             tlistStr = "-tlist " + ",".join([str(t) for t in diffractionDict['tlist']])
         script.write("""
     ((Randum_number=$RANDOM))
-    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint {mint} -maxt {maxt} -tstep {tstep} {tlist} -Q2 $Q2 -xp $xval -mcintpoints {mcintpoints} > $outputFile
+    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction {options} -mint {mint} -maxt {maxt} -tstep {tstep} {tlist} > $outputFile
 
 done
 
-""".format(mint=diffractionDict['mint'],
+""".format( options=common_options,
+            mint=diffractionDict['mint'],
            maxt=diffractionDict['maxt'],
            tstep=diffractionDict['tstep'],
            tlist=tlistStr,
-           mcintpoints=diffractionDict['mcintpoints'],)
+           )
         )
 
     script.write("cd ..")
