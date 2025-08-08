@@ -31,6 +31,9 @@ for x_i in xList:
         event_id = int(event_name.split("_")[-1])
         event_group = hf.get(event_name)
         for ifile, fileName in enumerate(event_group.keys()):
+            # Only include the total cross section data
+            if not fileName.startswith("AmpF_"): 
+                continue
             if x_i in fileName:
                 temp_data1 = np.nan_to_num(event_group.get(fileName))
                 if temp_data1.shape == (0,): continue

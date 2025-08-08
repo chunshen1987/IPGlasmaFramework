@@ -61,6 +61,9 @@ for x_i in xList:
         event_id = int(event_name.split("_")[-1])
         event_group = hf.get(event_name)
         for ifile, fileName in enumerate(event_group.keys()):
+            # Only include the differential cross sectoin data
+            if not fileName.startswith("Amp_"): 
+                continue
             if x_i in fileName:
                 temp_data1 = np.nan_to_num(event_group.get(fileName))
                 if temp_data1.shape == (0,): continue
