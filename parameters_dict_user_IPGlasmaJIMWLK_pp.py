@@ -7,7 +7,7 @@
 # control parameters
 control_dict = {
     'initial_state_type': "IPGlasma",
-    'walltime': "10:00:00",             # walltime to run
+    'walltime': "1:00:00",             # walltime to run
     'save_ipglasma_results': False,     # flag to save the Wilson lines
 }
 
@@ -21,12 +21,13 @@ ipglasma_dict = {
     'sizeOutput': 720,
     'm': 0.4,
     'rmax': 1000.,
-    'BG': 3.,
-    'BGq': 0.3,
+    'BG': 3.0,
+    'BGq': 0.0,
     'omega': 1.0,
-    'useConstituentQuarkProton': 3,   # 0: round proton; 3: fluctuating proton
-    'smearingWidth': 0.6,
-    'QsmuRatio': 0.7,
+    'useConstituentQuarkProton': 0,   # 0: round proton; 3: fluctuating proton
+    'smearingWidth': 0.0,
+    'smearQs':0,
+    'QsmuRatio': 0.638,
     'useFluctuatingx': 0,
     'roots': 200.,
     'SigmaNN': 42.,
@@ -54,12 +55,12 @@ diffraction_dict = {
     'analyzeDiffraction': 1,                # mode 1: JPsi
     'saveNucleusSnapshot': False,           # flag to save the trace of Wilson Line distribution
     "wavef_model": 'boostedgaussian',       # "gauslc"
-    "wavef_file": 'gauss-boosted.dat',      # "gaus-lc.dat"
+    "wavef_file": 'gauss-boosted_mzsat.dat',      # "gaus-lc.dat"
     "mcintpoints": 100000,                  # "auto"
     "maxb": 51.,                            # GeV^-1
     "nbperp": 25,
     "mint": 0.0,
-    "maxt": 2.5,
+    "maxt": 1.5,
     "tstep": 0.1,
     "tlist": [0.0, 0.001, 0.003, 0.005, 0.008, 0.01, 0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5],
     "Q2List": [0.0,],
