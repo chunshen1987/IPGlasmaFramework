@@ -166,22 +166,35 @@ wait
 
 def generate_full_job_script(cluster_name, folder_name, initial_type,
                              ev0_id, n_ev, n_threads, ipglasma_flag, python_venv,
-                             walltime):
+                             walltime,array_job=False):
     """This function generates full job script"""
     working_folder = folder_name
     event_id = working_folder.split('/')[-1]
 
-    script = open(path.join(working_folder, "submit_job.script"), "w")
+    script_name = "submit_job.script"
+    if array_job:
+        script_name ="submit_array_job.script"
+
+    script = open(path.join(working_folder, script_name), "w")
     write_script_header(cluster_name, script, n_threads, event_id, walltime,
                         working_folder)
 
     if python_venv != "":
-        script.write(f"source ../../{python_venv}/bin/activate")
+        if array_job==False:
+            script.write(f"source ../../{python_venv}/bin/activate")
+        else:
+            script.write(f"source ../{python_venv}/bin/activate")
 
     if cluster_name != "OSG": 
-        script.write("""
-python3 simulation_driver.py {0:s} {1:d} {2:d} {3:d} {4} > run.log
-""".format(initial_type, ev0_id, n_ev, n_threads, ipglasma_flag))
+        if array_job==False:
+            script.write("""
+    python3 simulation_driver.py {0:s} {1:d} {2:d} {3:d} {4} > run.log
+    """.format(initial_type, ev0_id, n_ev, n_threads, ipglasma_flag))
+        else:
+            # generate array job script
+            script.write("""
+(cd event_${{SLURM_ARRAY_TASK_ID}}; python3 simulation_driver.py {0:s} ${{SLURM_ARRAY_TASK_ID}} {1:d} {2:d} {3} > run.log)
+            """.format(initial_type, n_ev, n_threads, ipglasma_flag))
     else:
         script.write("""
 python3 simulation_driver.py {0:s} {1:d} {2:d} {3:d} {4}
@@ -585,6 +598,10 @@ def main():
         event_id_offset += n_ev
     sys.stdout.write("\n")
     sys.stdout.flush()
+
+    generate_full_job_script(cluster_name, working_folder_name, initial_condition_type,
+                             -1, n_ev, n_threads, save_ipglasma_flag, python_venv,
+                             walltime,array_job=True)
 
     pwd = path.abspath(".")
     script_path = path.join(code_package_path, "utilities")
