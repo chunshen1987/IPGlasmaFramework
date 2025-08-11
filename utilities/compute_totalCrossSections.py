@@ -24,6 +24,12 @@ xList = list(set([x.split("_")[-1] for x in ampList]))
 crossSections = []
 crossSectionsErr = []
 for x_i in xList:
+    try:
+        float(x_i)
+    except (ValueError,TypeError):
+        print("Skip x_i=",x_i)
+        continue
+
     realpart = []
     imagpart = []
     b_arr = np.array([])
@@ -31,6 +37,9 @@ for x_i in xList:
         event_id = int(event_name.split("_")[-1])
         event_group = hf.get(event_name)
         for ifile, fileName in enumerate(event_group.keys()):
+            # Only include the total cross section data
+            if not fileName.startswith("AmpF_"): 
+                continue
             if x_i in fileName:
                 temp_data1 = np.nan_to_num(event_group.get(fileName))
                 if temp_data1.shape == (0,): continue
@@ -39,6 +48,11 @@ for x_i in xList:
                 imagpart.append(temp_data1[:, 2])
                 if len(b_arr) == 0:
                     b_arr = temp_data1[:, 0]
+
+    
+    if len(realpart)==0:
+        print(f"Skip x={x_i} with no data")
+        continue
 
     b_arr = np.array(b_arr)
     realpart = np.array(realpart)
@@ -80,10 +94,21 @@ for x_i in xList:
     crossSectionsErr.append(integrated_cross_section_err)
 hf.close()
 
+def is_number(x_i):
+    try:
+        float(x_i)
+        return True
+    except (ValueError, TypeError):
+        return False
+
+xList = [x_i for x_i in xList if is_number(x_i)]
 xList = np.array([float(x_i) for x_i in xList])
 sorted_indices = np.argsort(-xList)
 
 for idx in sorted_indices:
-    x_i = xList[idx]
-    rel_err = crossSectionsErr[idx]/crossSections[idx]
-    print(f"x = {x_i:.3e}: sigma = {crossSections[idx]:.3e} +/- {crossSectionsErr[idx]:.3e} nb, rel_err = {rel_err:.3e}")
+    try: # in practice this makes sure that idx refers to some actual x value
+        x_i = xList[idx]
+        rel_err = crossSectionsErr[idx]/crossSections[idx]
+        print(f"x = {x_i:.3e}: sigma = {crossSections[idx]:.3e} +/- {crossSectionsErr[idx]:.3e} nb, rel_err = {rel_err:.3e}")
+    except:
+        continue

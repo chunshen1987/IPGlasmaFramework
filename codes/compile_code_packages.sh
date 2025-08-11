@@ -49,7 +49,7 @@ echo -e "${Green}compile subnucleondiffraction ... ${NC}"
     cd build
     rm -fr *
     CC=${CCFlag} CXX=${CXXFlag} cmake ..
-    make -j$number_of_cores_to_compile
+    make -j$number_of_cores_to_compile subnucleondiffraction
 )
 status=$?
 if [ $status -ne 0 ]; then

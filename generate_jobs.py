@@ -2,7 +2,7 @@
 """This script generate all the running jobs."""
 
 import sys
-from os import path, mkdir
+from os import path, mkdir,path
 import shutil
 import subprocess
 import argparse
@@ -14,7 +14,7 @@ known_initial_types = [
 ]
 
 support_cluster_list = [
-    'nersc', 'nerscKNL', 'wsugrid', "OSG", "local", "guillimin", "McGill"
+    'nersc', 'nerscKNL', 'wsugrid', "OSG", "local", "guillimin", "McGill", "csc"
 ]
 
 
@@ -62,6 +62,22 @@ def write_script_header(cluster, script, n_threads, event_id, walltime,
 #PBS -o test.log
 #PBS -d {3:s}
 """.format(event_id, n_threads, walltime, working_folder))
+    elif cluster == "csc":
+        script.write("""#!/bin/bash
+#SBATCH --job-name={0:s}
+#SBATCH --account=lappi
+#SBATCH --partition=small
+#SBATCH --time={1:s}
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task={2:d}
+#SBATCH --mem-per-cpu={3:.0f}G
+#SBATCH --output=job.out
+#SBATCH --error=job.err
+
+module add gsl fftw cmake
+
+cd {4:s}
+""".format(event_id, walltime, n_threads, mem/n_threads, working_folder))
     elif cluster == "wsugrid":
         script.write("""#!/usr/bin/env bash
 #SBATCH --job-name {0:s}
@@ -149,19 +165,34 @@ wait
 
 
 def generate_full_job_script(cluster_name, folder_name, initial_type,
-                             ev0_id, n_ev, n_threads, ipglasma_flag):
+                             ev0_id, n_ev, n_threads, ipglasma_flag, python_venv,
+                             walltime,array_job=False):
     """This function generates full job script"""
     working_folder = folder_name
     event_id = working_folder.split('/')[-1]
-    walltime = '100:00:00'
 
-    script = open(path.join(working_folder, "submit_job.script"), "w")
+    script_name = "submit_job.script"
+    if array_job:
+        script_name ="submit_array_job.script"
+
+    script = open(path.join(working_folder, script_name), "w")
     write_script_header(cluster_name, script, n_threads, event_id, walltime,
                         working_folder)
-    if cluster_name != "OSG":
-        script.write("""
-python3 simulation_driver.py {0:s} {1:d} {2:d} {3:d} {4} > run.log
-""".format(initial_type, ev0_id, n_ev, n_threads, ipglasma_flag))
+
+    if python_venv != "":
+        script.write(f"source {path.abspath(python_venv)}/bin/activate")
+
+
+    if cluster_name != "OSG": 
+        if array_job==False:
+            script.write("""
+    python3 simulation_driver.py {0:s} {1:d} {2:d} {3:d} {4} > run.log
+    """.format(initial_type, ev0_id, n_ev, n_threads, ipglasma_flag))
+        else:
+            # generate array job script
+            script.write("""
+(cd event_${{SLURM_ARRAY_TASK_ID}}; python3 simulation_driver.py {0:s} ${{SLURM_ARRAY_TASK_ID}} {1:d} {2:d} {3} > run.log)
+            """.format(initial_type, n_ev, n_threads, ipglasma_flag))
     else:
         script.write("""
 python3 simulation_driver.py {0:s} {1:d} {2:d} {3:d} {4}
@@ -231,6 +262,12 @@ def generate_script_subnucleondiffraction(folder_name, event_id,
     script = open(path.join(working_folder, "run_subnucleondiffraction.sh"),
                   "w")
 
+    common_options="-dipole 1 ipglasma_binary $WilsonLineFile -mcintpoints {mcintpoints} -wavef {wavef_model} -wavef_file {wavef_file} -Q2 $Q2 -xp $xval".format(
+           mcintpoints=diffractionDict['mcintpoints'],
+           wavef_model=diffractionDict['wavef_model'],
+           wavef_file=diffractionDict['wavef_file']
+           )
+
     results_folder = 'subnucleondiffraction_results'
     script.write("""#!/bin/bash
 
@@ -249,9 +286,9 @@ mkdir -p $resultsFolder
 
     if diffractionDict['saveNucleusSnapshot']:
         script.write("""
-./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -print_nucleus > ${resultsFolder}/picture_${evid}_${fileId}
+./subnucleondiffraction -dipole 1 {common_options} -print_nucleus > ${resultsFolder}/picture_${evid}_${fileId}
 
-""")
+""").format(common_options=common_options)
 
     if diffractionDict['computeTotalCrossSection'] > 0:
         script.write("""
@@ -268,11 +305,12 @@ do
         )
         script.write("""
     ((Randum_number=$RANDOM))
-    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -totalcrosssections -maxb {maxb} -nbperp {nbperp} -Q2 $Q2 -xp $xval -mcintpoints {mcintpoints} > $outputFile
+    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction {options} -totalcrosssections -maxb {maxb} -nbperp {nbperp}  > $outputFile
 
 done
-cd ..
-""".format(maxb=diffractionDict['maxb'],
+
+""".format(options=common_options,
+        maxb=diffractionDict['maxb'],
            nbperp=diffractionDict['nbperp'],
            mcintpoints=diffractionDict['mcintpoints'],)
         )
@@ -295,16 +333,19 @@ do
             tlistStr = "-tlist " + ",".join([str(t) for t in diffractionDict['tlist']])
         script.write("""
     ((Randum_number=$RANDOM))
-    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint {mint} -maxt {maxt} -tstep {tstep} {tlist} -Q2 $Q2 -xp $xval -mcintpoints {mcintpoints} > $outputFile
+    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction {options} -mint {mint} -maxt {maxt} -tstep {tstep} {tlist} > $outputFile
 
 done
-cd ..
-""".format(mint=diffractionDict['mint'],
+
+""".format( options=common_options,
+            mint=diffractionDict['mint'],
            maxt=diffractionDict['maxt'],
            tstep=diffractionDict['tstep'],
            tlist=tlistStr,
-           mcintpoints=diffractionDict['mcintpoints'],)
+           )
         )
+
+    script.write("cd ..")
 
     script.close()
 
@@ -313,7 +354,8 @@ def generate_event_folders(initial_condition_type,
                            package_root_path, code_path, working_folder,
                            cluster_name, event_id, event_id_offset,
                            n_ev, n_threads, save_ipglasma_flag,
-                           diffractionDict):
+                           diffractionDict, python_virtual_environment,
+                           walltime):
     """This function creates the event folder structure"""
     event_folder = path.join(working_folder, 'event_%d' % event_id)
     param_folder = path.join(working_folder, 'model_parameters')
@@ -339,10 +381,17 @@ def generate_event_folders(initial_condition_type,
 
         # subnucleondiffraction
         mkdir(path.join(event_folder, 'subnucleondiffraction'))
+
+        # Check that user specified a valid vector meson wave function
+        if not path.isfile(path.join(
+                    code_path, 'subnucleondiffraction_code/{}'.format(diffractionDict["wavef_file"]))):
+            sys.exit(f"\nWave function file {diffractionDict['wavef_file']} does not exist!")
+
+
         generate_script_subnucleondiffraction(event_folder,
                                               event_id, diffractionDict)
-        link_list = ['build/bin/subnucleondiffraction', 'gauss-boosted.dat',
-                     'gauss-boosted-rho.dat']
+        link_list = ['build/bin/subnucleondiffraction', diffractionDict["wavef_file"]]
+
         for link_i in link_list:
             subprocess.call("ln -s {0:s} {1:s}".format(
                 path.abspath(path.join(
@@ -355,7 +404,8 @@ def generate_event_folders(initial_condition_type,
     generate_full_job_script(cluster_name, event_folder,
                              initial_condition_type,
                              event_id_offset, n_ev, n_threads,
-                             save_ipglasma_flag)
+                             save_ipglasma_flag, python_virtual_environment,
+                             walltime)
 
 
 def create_a_working_folder(workfolder_path):
@@ -433,6 +483,12 @@ def main():
                         type=int,
                         default='-1',
                         help='Random Seed (-1: according to system time)')
+    parser.add_argument('-venv',
+                        '--python_virtual_environment',
+                        metavar='',
+                        type=str,
+                        default='-1',
+                        help='Python virtual environment loaded before running jobs')
     parser.add_argument('--copy', action='store_true')
     parser.add_argument("--continueFlag", action="store_true")
     args = parser.parse_args()
@@ -457,6 +513,7 @@ def main():
         n_threads = args.n_threads
         osg_job_id = args.OSG_process_id
         seed = args.random_seed
+        python_venv = args.python_virtual_environment
     except:
         parser.print_help()
         exit(0)
@@ -522,6 +579,10 @@ def main():
                 working_folder_name, path.abspath(args.par_dict), seed),
             shell=True)
 
+    walltime = '10:00:00'
+    if "walltime" in parameter_dict.control_dict.keys():
+        walltime = parameter_dict.control_dict["walltime"]
+
     toolbar_width = 40
     sys.stdout.write("\U0001F375  Generating {} jobs [{}]".format(
         n_jobs, " "*toolbar_width))
@@ -545,18 +606,21 @@ def main():
                                working_folder_name, cluster_name,
                                ijob, event_id_offset, n_ev, n_threads,
                                save_ipglasma_flag,
-                               parameter_dict.diffraction_dict)
+                               parameter_dict.diffraction_dict,
+                               python_venv, walltime)
         event_id_offset += n_ev
     sys.stdout.write("\n")
     sys.stdout.flush()
+
+    generate_full_job_script(cluster_name, working_folder_name, initial_condition_type,
+                             -1, n_ev, n_threads, save_ipglasma_flag, python_venv,
+                             walltime,array_job=True)
 
     pwd = path.abspath(".")
     script_path = path.join(code_package_path, "utilities")
     shutil.copy(path.join(script_path, 'collect_events.sh'), pwd)
     shutil.copy(path.join(script_path, 'combine_multiple_hdf5.py'), pwd)
-    walltime = '10:00:00'
-    if "walltime" in parameter_dict.control_dict.keys():
-        walltime = parameter_dict.control_dict["walltime"]
+    
     if cluster_name == "nersc":
         shutil.copy(
             path.join(code_package_path,

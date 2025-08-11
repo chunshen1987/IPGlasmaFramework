@@ -54,6 +54,12 @@ ampList = list(hf.get(event_list[0]).keys())
 xList = list(set([x.split("_")[-1] for x in ampList]))
 
 for x_i in xList:
+    try:
+        float(x_i)
+    except (ValueError,TypeError):
+        print("Skip x_i=",x_i)
+        continue
+    
     realpart = []
     imagpart = []
     t_arr = np.array([])
@@ -61,6 +67,9 @@ for x_i in xList:
         event_id = int(event_name.split("_")[-1])
         event_group = hf.get(event_name)
         for ifile, fileName in enumerate(event_group.keys()):
+            # Only include the differential cross sectoin data
+            if not fileName.startswith("Amp_"): 
+                continue
             if x_i in fileName:
                 temp_data1 = np.nan_to_num(event_group.get(fileName))
                 if temp_data1.shape == (0,): continue
@@ -85,7 +94,7 @@ for x_i in xList:
     real_sq_std = np.std(realpart**2., axis=0)
     imag_sq_std = np.std(imagpart**2., axis=0)
 
-    prefactor = 1e7*HBARC*HBARC*1.43/(16*np.pi)
+    prefactor = 1e7*HBARC*HBARC/(16*np.pi)
 
     coherent = (real_mean**2. + imag_mean**2.)*prefactor
     coherent_err = 2.*(np.abs(real_mean)*real_std
