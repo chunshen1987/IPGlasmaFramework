@@ -94,7 +94,7 @@ for x_i in xList:
     real_sq_std = np.std(realpart**2., axis=0)
     imag_sq_std = np.std(imagpart**2., axis=0)
 
-    prefactor = 1e7*HBARC*HBARC*1.43/(16*np.pi)
+    prefactor = 1e7*HBARC*HBARC/(16*np.pi)
 
     coherent = (real_mean**2. + imag_mean**2.)*prefactor
     coherent_err = 2.*(np.abs(real_mean)*real_std
