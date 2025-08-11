@@ -180,10 +180,8 @@ def generate_full_job_script(cluster_name, folder_name, initial_type,
                         working_folder)
 
     if python_venv != "":
-        if array_job==False:
-            script.write(f"source ../../{python_venv}/bin/activate")
-        else:
-            script.write(f"source ../{python_venv}/bin/activate")
+        script.write(f"source {path.abspath(python_venv)}/bin/activate")
+
 
     if cluster_name != "OSG": 
         if array_job==False:
