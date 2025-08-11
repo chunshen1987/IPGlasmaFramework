@@ -2,7 +2,7 @@
 """This script generate all the running jobs."""
 
 import sys
-from os import path, mkdir
+from os import path, mkdir,path
 import shutil
 import subprocess
 import argparse
@@ -264,8 +264,7 @@ def generate_script_subnucleondiffraction(folder_name, event_id,
     script = open(path.join(working_folder, "run_subnucleondiffraction.sh"),
                   "w")
 
-    common_options="""-dipole 1 ipglasma_binary $WilsonLineFile -mcintpoints {mcintpoints} -wavef {wavef_model} -wavef_file {wavef_file} -Q2 $Q2 -xp $xval
-    """.format(
+    common_options="-dipole 1 ipglasma_binary $WilsonLineFile -mcintpoints {mcintpoints} -wavef {wavef_model} -wavef_file {wavef_file} -Q2 $Q2 -xp $xval".format(
            mcintpoints=diffractionDict['mcintpoints'],
            wavef_model=diffractionDict['wavef_model'],
            wavef_file=diffractionDict['wavef_file']
@@ -384,10 +383,17 @@ def generate_event_folders(initial_condition_type,
 
         # subnucleondiffraction
         mkdir(path.join(event_folder, 'subnucleondiffraction'))
+
+        # Check that user specified a valid vector meson wave function
+        if not path.isfile(path.join(
+                    code_path, 'subnucleondiffraction_code/{}'.format(diffractionDict["wavef_file"]))):
+            sys.exit(f"\nWave function file {diffractionDict['wavef_file']} does not exist!")
+
+
         generate_script_subnucleondiffraction(event_folder,
                                               event_id, diffractionDict)
-        link_list = ['build/bin/subnucleondiffraction', 'gauss-boosted.dat',
-                     'gauss-boosted-rho.dat', 'gauss-boosted_mzsat.dat']
+        link_list = ['build/bin/subnucleondiffraction', diffractionDict["wavef_file"]]
+
         for link_i in link_list:
             subprocess.call("ln -s {0:s} {1:s}".format(
                 path.abspath(path.join(

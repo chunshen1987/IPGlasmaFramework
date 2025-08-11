@@ -54,6 +54,12 @@ ampList = list(hf.get(event_list[0]).keys())
 xList = list(set([x.split("_")[-1] for x in ampList]))
 
 for x_i in xList:
+    try:
+        float(x_i)
+    except (ValueError,TypeError):
+        print("Skip x_i=",x_i)
+        continue
+    
     realpart = []
     imagpart = []
     t_arr = np.array([])
