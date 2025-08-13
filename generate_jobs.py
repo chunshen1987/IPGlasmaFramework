@@ -268,13 +268,14 @@ do
         )
         script.write("""
     ((Randum_number=$RANDOM))
-    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -totalcrosssections -maxb {maxb} -nbperp {nbperp} -Q2 $Q2 -xp $xval -wavef {wavef_model} -wavef_file {wavef_file} -mcintpoints {mcintpoints} > $outputFile
+    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -totalcrosssections -maxb {maxb} -nbperp {nbperp} -Q2 $Q2 -xp $xval -Pol {pol} -wavef {wavef_model} -wavef_file {wavef_file} -mcintpoints {mcintpoints} > $outputFile
 
 done
 cd ..
 """.format(maxb=diffractionDict['maxb'],
            nbperp=diffractionDict['nbperp'],
            mcintpoints=diffractionDict['mcintpoints'],
+           pol=diffractionDict['pol'],
            wavef_model=diffractionDict['wavef_model'],
            wavef_file=diffractionDict['wavef_file'],)
         )
@@ -297,7 +298,7 @@ do
             tlistStr = "-tlist " + ",".join([str(t) for t in diffractionDict['tlist']])
         script.write("""
     ((Randum_number=$RANDOM))
-    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint {mint} -maxt {maxt} -tstep {tstep} {tlist} -Q2 $Q2 -xp $xval -wavef {wavef_model} -wavef_file {wavef_file} -mcintpoints {mcintpoints} > $outputFile
+    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction -dipole 1 ipglasma_binary $WilsonLineFile -mint {mint} -maxt {maxt} -tstep {tstep} {tlist} -Q2 $Q2 -xp $xval -Pol {pol} -wavef {wavef_model} -wavef_file {wavef_file} -mcintpoints {mcintpoints} > $outputFile
 
 done
 cd ..
@@ -306,6 +307,7 @@ cd ..
            tstep=diffractionDict['tstep'],
            tlist=tlistStr,
            mcintpoints=diffractionDict['mcintpoints'],
+           pol=diffractionDict['pol'],
            wavef_model=diffractionDict['wavef_model'],
            wavef_file=diffractionDict['wavef_file'],)
         )
