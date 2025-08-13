@@ -4,10 +4,8 @@
 
 # download IPGlasma
 rm -fr ipglasma_code
-"""
-git clone --depth=1 https://github.com/chunshen1987/ipglasma -b ipglasma_jimwlk ipglasma_code
-(cd ipglasma_code; git checkout d1b46fa98d4e39a288bfde887b9d196d648cfc60)
-"""
+#git clone --depth=1 https://github.com/chunshen1987/ipglasma -b ipglasma_jimwlk ipglasma_code
+#(cd ipglasma_code; git checkout d1b46fa98d4e39a288bfde887b9d196d648cfc60)
 git clone --depth=1 https://github.com/wenbin1501110084/ipglasma -b stingy_proton_jimwlk ipglasma_code
 rm -fr ipglasma_code/.git
 
