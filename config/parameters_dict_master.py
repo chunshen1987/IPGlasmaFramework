@@ -91,6 +91,10 @@ ipglasma_dict = {
     'bmax': 0.,
     'rotateReactionPlane': 0,
     'lightNucleusOption': 1,
+    'polariztionProjectile': 0,     # 0: unpolarized; 1: longitudinal polarized; 2: transverse polarized
+    'polariztionTarget': 0,         # 0: unpolarized; 1: longitudinal polarized; 2: transverse polarized
+    'polarizationProjectileJz': 0,
+    'polarizationTargetJz': 0,
     'useFixedNpart': 0,
     'averageOverThisManyNuclei': 1,
     'SigmaNN': 42.,
