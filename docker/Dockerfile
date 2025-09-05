@@ -38,7 +38,9 @@ RUN cd ${HOME} && \
     git clone --depth=1 https://github.com/chunshen1987/IPGlasmaFramework -b main && \
     cd IPGlasmaFramework/codes && \
     ./get_code_packages.sh && \
-    ./compile_code_packages.sh
+    ./compile_code_packages.sh && \
+    cd ../config/arXiv_2507.14087 && \
+    bash download_posteriorChains.sh
 
 ENV PYTHONIOENCODING utf-8
 WORKDIR ${HOME}/IPGlasmaFramework
