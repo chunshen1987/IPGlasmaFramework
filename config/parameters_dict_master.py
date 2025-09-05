@@ -13,6 +13,9 @@ control_dict = {
     'initial_state_type': "IPGlasma",  # options: IPGlasma, IPsat
     'walltime': "10:00:00",            # walltime to run
     'save_ipglasma_results': False,    # flag to save IPGlasma results
+    'usePosteriorParameters': False,   # flag to use posterior parameters
+    'PosteriorChainFilePath': "config/arXiv_2507.14087/Posterior_wK",
+    'PosteriorParamSet': 0,
 }
 
 

@@ -562,6 +562,29 @@ def main():
         code_path = path.join(working_folder_name, "codes")
         shutil.copytree("{}/codes".format(code_package_path), code_path)
 
+    usePosteriorParameters = False
+    paramFile = path.join(working_folder_name, "iEBE_parameters.txt")
+    if 'usePosteriorParameters' in parameter_dict.control_dict.keys():
+        usePosteriorParameters = (
+            parameter_dict.control_dict['usePosteriorParameters'])
+    if usePosteriorParameters:
+        if 'PosteriorChainFilePath' in parameter_dict.control_dict.keys():
+            posteriorChainFilePath = (
+                parameter_dict.control_dict['PosteriorChainFilePath'])
+            setId = parameter_dict.control_dict['PosteriorParamSet']
+            setFlag = 0
+            if setId == -1:
+                if seed == -1:
+                    random.seed(time.time())
+                else:
+                    random.seed(seed)
+                setId = random.randint(0, 1000000)
+            subprocess.call(
+                "(cd {}/{}; python3 parameterGenerator.py {} {} {})".format(
+                    code_package_path, posteriorChainFilePath, setId, setFlag,
+                    paramFile),
+                shell=True)
+
     if args.bayes_file != "":
         args.bayes_file = path.join(path.abspath("."), args.bayes_file)
         subprocess.call("(cd {}/config; ".format(code_package_path)
@@ -571,6 +594,13 @@ def main():
                             args.bayes_file, seed),
                         shell=True)
         shutil.copy(args.bayes_file, working_folder_name)
+    elif usePosteriorParameters:
+        subprocess.call("(cd {}/config; ".format(code_package_path)
+                        + "python3 parameters_dict_master.py "
+                        + "-path {} -par {} -b {} -seed {};)".format(
+                            working_folder_name, path.abspath(args.par_dict),
+                            paramFile, seed),
+                        shell=True)
     else:
         subprocess.call(
             "(cd {}/config; ".format(code_package_path)
