@@ -46,7 +46,7 @@ source $WORK/iEBE-MUSIC/Cluster_supports/Stampede2/bashrc
 module purge
 """)
     else:
-        print("\U0001F6AB  unrecoginzed cluster name :", cluster)
+        print("\U0001F6AB  unrecognized cluster name :", cluster)
         print("Available options: ", support_cluster_list)
         exit(1)
 
@@ -206,7 +206,7 @@ def create_a_working_folder(workfolder_path):
 
 
 def main():
-    """This is the main funciton"""
+    """This is the main function"""
     parser = argparse.ArgumentParser(
         description='\U0000269B Welcome to iEBE-MUSIC package',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)

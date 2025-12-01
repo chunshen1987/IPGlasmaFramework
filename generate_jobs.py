@@ -95,7 +95,7 @@ cd {4:s}
     elif cluster in ("local", "OSG"):
         script.write("#!/bin/bash")
     else:
-        print("\U0001F6AB  unrecoginzed cluster name :", cluster)
+        print("\U0001F6AB  unrecognized cluster name :", cluster)
         print("Available options: ", support_cluster_list)
         exit(1)
 
@@ -310,7 +310,7 @@ do
 done
 
 """.format(options=common_options,
-        maxb=diffractionDict['maxb'],
+           maxb=diffractionDict['maxb'],
            nbperp=diffractionDict['nbperp'],
            mcintpoints=diffractionDict['mcintpoints'],)
         )
@@ -332,8 +332,8 @@ do
         if 'tlist' in diffractionDict.keys() and diffractionDict['tlist'] != []:
             tlistStr = "-tlist " + ",".join([str(t) for t in diffractionDict['tlist']])
         script.write("""
-    ((Randum_number=$RANDOM))
-    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction {options} -mint {mint} -maxt {maxt} -tstep {tstep} {tlist} > $outputFile
+    ((Random_number=$RANDOM))
+    GSL_RNG_SEED=$Random_number ./subnucleondiffraction {options} -mint {mint} -maxt {maxt} -tstep {tstep} {tlist} > $outputFile
 
 done
 
@@ -424,7 +424,7 @@ def create_a_working_folder(workfolder_path):
 
 
 def main():
-    """This is the main funciton"""
+    """This is the main function"""
     parser = argparse.ArgumentParser(
         description='\U0000269B Welcome to the IPGlasmaFramework',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
