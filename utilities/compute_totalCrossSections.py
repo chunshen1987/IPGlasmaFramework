@@ -96,17 +96,19 @@ for k, x_i in enumerate(xList):
     # Randomly delete 20% of the events and then compute real_mean, imag_mean
     number_Jackknife = 10000
     delete_d_events = int(nev*0.2)
-    delete_d_events = 1
     if delete_d_events == 0:
         sys.exit("Not enough events for Jackknife resampling.")
+
     real_mean_jackknife = []
     imag_mean_jackknife = []
     sigma_total_transverse_jackknife = []
+
     for i in range(number_Jackknife):
         idx = np.random.choice(nev, nev - delete_d_events, replace=False)
         real_mean_jackknife.append(np.mean(realpart[idx, :], axis=0))
         imag_mean_jackknife.append(np.mean(imagpart[idx, :], axis=0))
-        sigma_total_transverse_jackknife.append(sigma_total_transverse[idx])
+        sigma_total_transverse_jackknife.append(np.mean(sigma_total_transverse[idx]))
+
     real_mean_jackknife = np.array(real_mean_jackknife)
     imag_mean_jackknife = np.array(imag_mean_jackknife)
     sigma_total_transverse_jackknife = np.array(sigma_total_transverse_jackknife)
@@ -119,24 +121,41 @@ for k, x_i in enumerate(xList):
         integrated_cross_section.append(integral_coherent)
     integrated_cross_section = np.array(integrated_cross_section)
 
-    # compute the mean and standard deviation of the integrated cross section
+    # ---- COHERENT CROSS SECTION FOR EACH JACKKNIFE SAMPLE ----
+
+    integrated_cross_section = []
+    for i in range(number_Jackknife):
+        coherent_jackknife = (real_mean_jackknife[i, :]**2. 
+                              + imag_mean_jackknife[i, :]**2.)*prefactor
+        integral_coherent = simpson(coherent_jackknife*b_arr, x=b_arr)
+        integrated_cross_section.append(integral_coherent)
+
+    integrated_cross_section = np.array(integrated_cross_section)
+
+    # ---- TOTAL & INCOHERENT CROSS SECTIONS ----
+
+    # Coherent mean & jackknife error
     mean_integrated_cross_section = np.mean(integrated_cross_section)
-    variance_samples = np.var(integrated_cross_section)
-    integrated_cross_section_err = np.sqrt(
-        (nev - delete_d_events) / nev * variance_samples)
-    
-    # compute the mean and standard deviation of the total integrated cross section
+    var_integrated = np.var(integrated_cross_section)
+    integrated_cross_section_err = np.sqrt((nev - delete_d_events) / nev * var_integrated)
+
+    # Total mean & jackknife error
     mean_total_integrated_cross_section = np.mean(sigma_total_transverse_jackknife)
-    variance_total_samples = np.var(sigma_total_transverse_jackknife)
-    total_integrated_cross_section_err = np.sqrt(
-        (nev - delete_d_events) / nev * variance_total_samples)
+    var_total = np.var(sigma_total_transverse_jackknife)
+    total_integrated_cross_section_err = np.sqrt((nev - delete_d_events) / nev * var_total)
+
+    # ---- DIRECT COMPUTATION OF INCOHERENT CROSS SECTION ----
+    incoherent_samples = sigma_total_transverse_jackknife - integrated_cross_section
+
+    # Incoherent mean & jackknife error
+    mean_incoherent = np.mean(incoherent_samples)
+    var_incoherent = np.var(incoherent_samples)
+    incoherent_err = np.sqrt((nev - delete_d_events) / nev * var_incoherent)
 
     crossSections.append(mean_integrated_cross_section)
     crossSectionsErr.append(integrated_cross_section_err)
-    incoherentCrossSections.append(
-        mean_total_integrated_cross_section - mean_integrated_cross_section)
-    incoherentCrossSectionsErr.append(
-        np.sqrt(total_integrated_cross_section_err**2 + integrated_cross_section_err**2))
+    incoherentCrossSections.append(mean_incoherent)
+    incoherentCrossSectionsErr.append(incoherent_err)
 hf.close()
 
 def is_number(x_i):
