@@ -58,6 +58,7 @@ diffraction_dict = {
     "mcintpoints": 4000000,                  # "auto"
     "maxb": 51.,                            # GeV^-1
     "nbperp": 50,
+    "ntheta": 64,
     "mint": 0.0,
     "maxt": 2.5,
     "tstep": 0.1,

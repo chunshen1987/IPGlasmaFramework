@@ -305,13 +305,14 @@ do
         )
         script.write("""
     ((Randum_number=$RANDOM))
-    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction {options} -totalcrosssections -maxb {maxb} -nbperp {nbperp}  > $outputFile
+    GSL_RNG_SEED=$Randum_number ./subnucleondiffraction {options} -totalcrosssections -maxb {maxb} -nbperp {nbperp} -ntheta {ntheta} > $outputFile
 
 done
 
 """.format(options=common_options,
            maxb=diffractionDict['maxb'],
            nbperp=diffractionDict['nbperp'],
+           ntheta=diffractionDict['ntheta'],
            mcintpoints=diffractionDict['mcintpoints'],)
         )
 
