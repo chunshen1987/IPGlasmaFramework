@@ -137,12 +137,6 @@ for k, x_i in enumerate(xList):
     F_L_real = np.array(F_L_real)
     F_L_imag = np.array(F_L_imag)
 
-    # Use only one sixth of the statistics for testing
-    F_T_real = F_T_real[::6]
-    F_T_imag = F_T_imag[::6]
-    F_L_real = F_L_real[::6]
-    F_L_imag = F_L_imag[::6]
-
     # Infer the 2D (b, theta) grid from the flattened arrays
     b_arr = np.asarray(b_arr)
     theta_arr = np.asarray(theta_arr)
