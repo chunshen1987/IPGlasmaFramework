@@ -55,10 +55,10 @@ diffraction_dict = {
     'saveNucleusSnapshot': False,           # flag to save the trace of Wilson Line distribution
     "wavef_model": 'boostedgaussian',       # "gauslc"
     "wavef_file": 'gauss-boosted.dat',      # "gaus-lc.dat"
-    "mcintpoints": 4000000,                  # "auto"
-    "maxb": 51.,                            # GeV^-1
-    "nbperp": 50,
-    "ntheta": 64,
+    "mcintpoints": 2000000,                  # "auto"
+    "maxb": 20.,                            # GeV^-1
+    "nbperp": 40,
+    "ntheta": 32,
     "mint": 0.0,
     "maxt": 2.5,
     "tstep": 0.1,
