@@ -59,6 +59,7 @@ diffraction_dict = {
     "mcintpoints": 100000,                  # "auto"
     "maxb": 51.,                            # GeV^-1
     "nbperp": 25,
+    "ntheta": 32,                           # theta grid of the total cross section; not in the published setup, which predates it
     # t values [GeV^2]: tlist if it is given, otherwise mint to maxt (inclusive) in steps of tstep
     "mint": 0.0,
     "maxt": 1.0,
