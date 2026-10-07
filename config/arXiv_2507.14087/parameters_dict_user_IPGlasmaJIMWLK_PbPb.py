@@ -23,32 +23,30 @@ ipglasma_dict = {
     'LOutput': 18.,
     'sizeOutput': 720,
     'm': 0.4,
-    'rmax': 1000.,
     'BG': 3.,
     'BGq': 0.3,
     'omega': 1.0,
-    'useConstituentQuarkProton': 3,   # 0: round proton; 3: fluctuating proton
+    'nucleonModel': "hotspots",   # gaussian: round proton; hotspots: fluctuating proton
+    'Nq': 3,                        # number of hot spots
     'smearingWidth': 0.6,
-    'QsmuRatio': 0.7,
-    'useFluctuatingx': 0,
-    'roots': 200.,
-    'SigmaNN': 42.,
-    'Rapidity': 0.,
-    'Projectile': "Pb",
-    'Target': "Pb",
-    'useTimeForSeed': 1,
+    'QsMuRatio': 0.7,
+    'useFluctuatingX': 0,
+    'sqrtS': 200.,
+    'sigmaNN': 42.,
+    'projectile': "Pb",
+    'target': "Pb",
+    'useRandomSeed': 1,
     'useJIMWLK': 1,
-    'mu0_jimwlk': 0.28,
-    'simpleLangevin': 1,
-    'alphas_jimwlk': 0,
-    'jimwlk_ic_x': 0.01,                        # W = 31 GeV (J/Psi, Q^2 = 0)
-    'x_projectile_jimwlk': 1.45374716e-05,      # W = 813.05 GeV (J/Psi, Q^2 = 0)
-    'x_target_jimwlk': 1.45374716e-05,          # W = 813.05 GeV (J/Psi, Q^2 = 0)
-    'Ds_jimwlk': 0.005,
-    'Lambda_QCD_jimwlk': 0.040,
-    'm_jimwlk': 0.4,
-    'saveSnapshots': 1,
-    'xSnapshotList': [4.56139851e-03, 6.18101984e-04, 6.51719835e-05],  # W = 45.9, 124.69, 384 GeV (J/Psi, Q^2 = 0)
+    'jimwlkMu0': 0.28,
+    'jimwlkAlphaS': 0,
+    'jimwlkInitialX': 0.01,                        # W = 31 GeV (J/Psi, Q^2 = 0)
+    'projectileX': 1.45374716e-05,      # W = 813.05 GeV (J/Psi, Q^2 = 0)
+    'targetX': 1.45374716e-05,          # W = 813.05 GeV (J/Psi, Q^2 = 0)
+    'jimwlkDs': 0.005,
+    'jimwlkLambdaQCD': 0.040,
+    'jimwlkMass': 0.4,
+    'jimwlkSaveSnapshots': 1,
+    'jimwlkXSnapshotList': [4.56139851e-03, 6.18101984e-04, 6.51719835e-05],  # W = 45.9, 124.69, 384 GeV (J/Psi, Q^2 = 0)
     'writeWilsonLines': 2,      # 2: binary
 }
 

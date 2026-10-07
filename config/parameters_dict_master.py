@@ -19,114 +19,109 @@ control_dict = {
 }
 
 
-# IPGlasma
+# IPGlasma (input keys of IP-Glasma 2.0, in the order of its parameter table;
+# keys whose feature is switched off are accepted and ignored by IP-Glasma)
 ipglasma_dict = {
     'mode': 2,          # run mode (generate Wilson line for nuclei)
-    'readMultFromFile': 0,
     'size': 720,  # number of grid points of IP-Glasma computation
     'L': 20.,  # grid size in the transverse plane
-    'Nc': 3,  # number of color
-    'm': 0.2,  # infrared cut-off mass (GeV)
-    'rmax': 1000.,
-    'UVdamp': 0.,
-    'Jacobianm': 0.35,
+    'Ny': 50,
+    'sqrtS': 200.,
     'g': 1.,  # strong coupling constant
-    'SubNucleonParamType': 0,  # 0: do not use posterior parameter sets
-    # 1: use subnucleon parameters from variant Nq posterior distribution
-    # 2: use subnucleon parameters from fixed Nq = 3 posterior distribution
-    'SubNucleonParamSet':
-        -1,  # -1: choose a random set from the posterior distribution
-    # 0: choose the MAP parameter set
-    # positive intergers: choose a fixed set of parameter for sub-nucleonic structure
-    'BG': 4.,
-    'BGq': 0.3,
-    'BGqVar': 0.0,
-    'dqMin': 0.0,
-    'omega': 1.0,
+    'maxTime': 0.0,
+    'inverseQsForMaxTime': 0,
+    'seed': 3,
+    'useSeedList': 0,
+    'useRandomSeed': 0,
+    'projectile': "Au",
+    'target': "Au",
+    'sigmaNN': 42.,
+    'bMin': 0.,
+    'bMax': 0.,
+    'sampleBFromLinearDistribution': 1,
+    'rotateReactionPlane': 0,
+    'useNucleus': 1,
     'useSmoothNucleus': 0,
-    'useConstituentQuarkProton': 0,
-    'NqFluc': 0.0,
-    'shiftConstituentQuarkProtonOrigin': 1,
-    'runningCoupling': 0,
-    'muZero': 0.3,
-    'minimumQs2ST': 0.,
-    'setWSDeformParams': 0,
-    'R_WS': 6.6,
-    'a_WS': 0.52,
-    'dR_np': 0.,
-    'da_np': 0.,
+    'useFixedNpart': 0,
+    'nucleiToAverage': 1,
+    'gaussianWounding': 1,
+    'nucleonPositionsFromFile': 0,
+    'lightNucleusOption': 1,
+    'polarizationProjectile': 0,    # 0: unpolarized; 1: longitudinal polarized; 2: transverse polarized
+    'polarizationTarget': 0,        # 0: unpolarized; 1: longitudinal polarized; 2: transverse polarized
+    'polarizationProjectileJz': 0,
+    'polarizationTargetJz': 0,
+    'useInputWSParams': 0,
+    'radiusWS': 6.6,
+    'diffusenessWS': 0.52,
     'beta2': 0.28,
     'beta3': 0.0,
     'beta4': 0.0,
     'gamma': 0.0,
-    'force_dmin_flag': 1,  # flag to force d_min for deformed nuclei
-    'd_min': 0.9,  # fm
-    'c': 0.2,
-    'g2mu': 0.1,
-    'useFatTails': 0,
-    'tDistNu': 3,
+    'deltaRnp': 0.,
+    'deltaAnp': 0.,
+    'forceDMin': 1,  # flag to force dMin for deformed nuclei
+    'dMin': 0.9,  # fm
+    'nucleonModel': "gaussian",     # gaussian, hotspots or strings
+    'subNucleonParamType': 0,  # 0: do not use posterior parameter sets
+    # 1: use subnucleon parameters from variant Nq posterior distribution
+    # 2: use subnucleon parameters from fixed Nq = 3 posterior distribution
+    'subNucleonParamSet':
+        -1,  # -1: choose a random set from the posterior distribution
+    # 0: choose the MAP parameter set
+    # positive intergers: choose a fixed set of parameter for sub-nucleonic structure
+    'm': 0.2,  # infrared cut-off mass (GeV)
+    'BG': 4.,
+    'protonAnisotropy': 0,
+    'BGq': 0.3,
+    'BGqVar': 0.0,
+    'dqMin': 0.0,
+    'omega': 1.0,
+    'Nq': 3,                        # number of hot spots (nucleonModel hotspots)
+    'NqFluc': 0.0,
+    'shiftConstituentQuarkProtonOrigin': 1,
+    'QsMuRatio': 0.8,
     'smearQs': 1,
     'smearingWidth': 0.6,
-    'protonAnisotropy': 0,
-    'roots': 200.,
+    'UVDamp': 0.,
+    'minimumQs2ST': 0,
+    'nucleusQsTableFileName': "qs2Adj_vs_Tp_vs_Y_240.in",
+    'rapidity': 0.,                 # rapidity of the gluon and hadron spectra
     'usePseudoRapidity': 0,
-    'RapidityA': 0.,
-    'RapidityB': 0.,
-    'useFluctuatingx': 0,
-    'xFromThisFactorTimesQs': 1,
-    'useNucleus': 1,
-    'useGaussian': 0,
-    'nucleonPositionsFromFile': 0,
-    'NucleusQsTableFileName': "qs2Adj_vs_Tp_vs_Y_200.in",
-    'QsmuRatio': 0.8,
-    'samplebFromLinearDistribution': 1,
-    'runWith0Min1Avg2MaxQs': 2,
-    'runWithThisFactorTimesQs': 0.5,
+    'jacobianMass': 0.35,
+    'useFluctuatingX': 0,
+    'projectileX': 0.01,            # Bjorken x of the projectile (final x with JIMWLK)
+    'targetX': 0.01,                # Bjorken x of the target (final x with JIMWLK)
+    'xQsFactor': 1,
+    'runningCoupling': 0,
+    'mu0': 0.3,
+    'c': 0.2,
+    'runWithQs': 2,
+    'runningCouplingQsFactor': 0.5,
     'runWithLocalQs': 0,
-    'runWithkt': 0,
-    'Ny': 50,
-    'useSeedList': 0,
-    'seed': 3,
-    'useTimeForSeed': 0,
-    'Projectile': "Au",
-    'Target': "Au",
-    'bmin': 0.,
-    'bmax': 0.,
-    'rotateReactionPlane': 0,
-    'lightNucleusOption': 1,
-    'polariztionProjectile': 0,     # 0: unpolarized; 1: longitudinal polarized; 2: transverse polarized
-    'polariztionTarget': 0,         # 0: unpolarized; 1: longitudinal polarized; 2: transverse polarized
-    'polarizationProjectileJz': 0,
-    'polarizationTargetJz': 0,
-    'useFixedNpart': 0,
-    'averageOverThisManyNuclei': 1,
-    'SigmaNN': 42.,
-    'gaussianWounding': 1,
-    'inverseQsForMaxTime': 0,
-    'maxtime': 0.0,
-    'dtau': 0.1,
+    'runWithKt': 0,
+    'computeGluonMultiplicity': 0,
+    'computeEccentricities': 0,
+    'writeHydro': 0,
+    'writeJazma': 0,
+    'writeTmunu': 0,
+    'writeOutputsToHDF5': 0,
     'LOutput': 30,
     'sizeOutput': 512,
-    'computeGluonMultiplicity': 0,
     'etaSizeOutput': 1,
-    'detaOutput': 0,
-    'writeOutputs': 0,
-    'writeEvolution': 0,
-    'readInitialWilsonLines': 0,
+    'dEtaOutput': 0,
     'writeWilsonLines': 1,
-    'writeOutputsToHDF5': 0,
+    'writeWilsonLineGeometry': 0,   # only needed to read the Wilson lines back in
+    'readInitialWilsonLines': 0,
     'useJIMWLK': 0,
-    'mu0_jimwlk': 0.28,
-    'simpleLangevin': 1,
-    'alphas_jimwlk': 0,
-    'jimwlk_ic_x': 0.01,
-    'x_projectile_jimwlk': 0.001,
-    'x_target_jimwlk': 0.001,
-    'Ds_jimwlk': 0.005,
-    'Lambda_QCD_jimwlk': 0.040,
-    'm_jimwlk': 0.4,
-    'saveSnapshots': 0,
-    'xSnapshotList': [0.005,0.001,0.0005,0.0001,0.00005,0.00001],
+    'jimwlkMu0': 0.28,
+    'jimwlkLambdaQCD': 0.040,
+    'jimwlkMass': 0.4,
+    'jimwlkAlphaS': 0,
+    'jimwlkDs': 0.005,
+    'jimwlkInitialX': 0.01,
+    'jimwlkSaveSnapshots': 0,
+    'jimwlkXSnapshotList': [0.005,0.001,0.0005,0.0001,0.00005,0.00001],
 }
 
 
@@ -152,14 +147,9 @@ def update_parameters_dict(par_dict_path, ran_seed) -> None:
 
         # set random seed
         if ran_seed == -1:
-            ipglasma_dict['useTimeForSeed'] = 1
+            ipglasma_dict['useRandomSeed'] = 1
         else:
             ipglasma_dict['seed'] = ran_seed
-
-        if "Rapidity" in ipglasma_dict:
-            # backward compatibility
-            ipglasma_dict['RapidityA'] = ipglasma_dict['Rapidity']
-            ipglasma_dict['RapidityB'] = ipglasma_dict['Rapidity']
 
 
 def update_parameters_bayesian(bayes_file) -> None:

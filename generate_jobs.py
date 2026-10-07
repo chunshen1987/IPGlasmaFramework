@@ -540,13 +540,13 @@ def main():
                   initial_condition_type))
         exit(1)
 
-    if (parameter_dict.ipglasma_dict['Projectile']
-            != parameter_dict.ipglasma_dict['Target']):
+    if (parameter_dict.ipglasma_dict['projectile']
+            != parameter_dict.ipglasma_dict['target']):
         print("\U0001F6AB  "
                 + "Projectile and Target species are different! Proj: "
-                + parameter_dict.ipglasma_dict['Projectile']
+                + parameter_dict.ipglasma_dict['projectile']
                 + ", target : "
-                + parameter_dict.ipglasma_dict['Target']
+                + parameter_dict.ipglasma_dict['target']
         )
         exit(1)
 
