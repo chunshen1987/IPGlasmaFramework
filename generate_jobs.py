@@ -265,7 +265,8 @@ def generate_script_subnucleondiffraction(folder_name, event_id,
     script = open(path.join(working_folder, "run_subnucleondiffraction.sh"),
                   "w")
 
-    common_options="-dipole 1 ipglasma_binary $WilsonLineFile -mcintpoints {mcintpoints} -wavef {wavef_model} -wavef_file {wavef_file} -Q2 $Q2 -xp $xval".format(
+    # the 0 is the lattice step, which only text Wilson-line files need
+    common_options="-dipole 1 ipglasma_binary $WilsonLineFile 0 -mcintpoints {mcintpoints} -wavef {wavef_model} -wavef_file {wavef_file} -Q2 $Q2 -xp $xval".format(
            mcintpoints=diffractionDict['mcintpoints'],
            wavef_model=diffractionDict['wavef_model'],
            wavef_file=diffractionDict['wavef_file']
