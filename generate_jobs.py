@@ -255,7 +255,7 @@ mv run.err $results_folder/
 
 
 def generate_script_subnucleondiffraction(folder_name, event_id,
-                                          diffractionDict):
+                                          diffractionDict, nthreads):
     """This function generates script for computing subnucleon diffraction"""
     working_folder = folder_name
 
@@ -283,6 +283,12 @@ cd subnucleondiffraction
 mkdir -p $resultsFolder
 
 """.format(results_folder))
+
+    if nthreads > 0:
+        # the -totalcrosssections mode is parallelized with OpenMP
+        script.write("""export OMP_NUM_THREADS={0:d}
+
+""".format(nthreads))
 
     if diffractionDict['saveNucleusSnapshot']:
         script.write("""
@@ -390,7 +396,8 @@ def generate_event_folders(initial_condition_type,
 
 
         generate_script_subnucleondiffraction(event_folder,
-                                              event_id, diffractionDict)
+                                              event_id, diffractionDict,
+                                              n_threads)
         link_list = ['build/bin/subnucleondiffraction', diffractionDict["wavef_file"]]
 
         for link_i in link_list:
