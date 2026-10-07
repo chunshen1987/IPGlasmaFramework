@@ -152,12 +152,41 @@ def update_parameters_dict(par_dict_path, ran_seed) -> None:
             ipglasma_dict['seed'] = ran_seed
 
 
+# Posterior parameter files (written by parameterGenerator.py, or passed to
+# generate_jobs.py with -b) may use the names of IP-Glasma before 2.0
+posterior_key_names = {
+    'QsmuRatio': 'QsMuRatio',
+    'm_jimwlk': 'jimwlkMass',
+    'Lambda_QCD_jimwlk': 'jimwlkLambdaQCD',
+    'UVdamp': 'UVDamp',
+    'useConstituentQuarkProton': 'Nq',
+}
+
+# Values in the posterior parameter files that are not IP-Glasma parameters
+posterior_non_ipglasma_keys = ('Kfactor',)
+
+
 def update_parameters_bayesian(bayes_file) -> None:
-    parfile = open(bayes_file, "r")
-    for line in parfile:
-        key, val = line.split()
-        if key in ipglasma_dict.keys():
+    unknown_keys = []
+    with open(bayes_file, "r") as parfile:
+        for line in parfile:
+            if line.strip() == "":
+                continue
+            key, val = line.split()
+            if key in posterior_non_ipglasma_keys:
+                continue
+            key = posterior_key_names.get(key, key)
+            if key not in ipglasma_dict:
+                unknown_keys.append(key)
+                continue
             ipglasma_dict[key] = float(val)
+            if key == 'Nq':
+                # useConstituentQuarkProton 0 meant round (Gaussian) nucleons
+                ipglasma_dict['nucleonModel'] = (
+                    "hotspots" if float(val) > 0 else "gaussian")
+    if unknown_keys:
+        sys.exit("\U0001F6AB  Unknown parameters in {}: {}".format(
+            bayes_file, ", ".join(unknown_keys)))
 
 
 def output_parameters_to_files(workfolder=".") -> None:

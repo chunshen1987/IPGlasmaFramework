@@ -588,7 +588,7 @@ def main():
 
     if args.bayes_file != "":
         args.bayes_file = path.join(path.abspath("."), args.bayes_file)
-        subprocess.call("(cd {}/config; ".format(code_package_path)
+        status = subprocess.call("(cd {}/config; ".format(code_package_path)
                         + "python3 parameters_dict_master.py "
                         + "-path {} -par {} -b {} -seed {};)".format(
                             working_folder_name, path.abspath(args.par_dict),
@@ -596,19 +596,23 @@ def main():
                         shell=True)
         shutil.copy(args.bayes_file, working_folder_name)
     elif usePosteriorParameters:
-        subprocess.call("(cd {}/config; ".format(code_package_path)
+        status = subprocess.call("(cd {}/config; ".format(code_package_path)
                         + "python3 parameters_dict_master.py "
                         + "-path {} -par {} -b {} -seed {};)".format(
                             working_folder_name, path.abspath(args.par_dict),
                             paramFile, seed),
                         shell=True)
     else:
-        subprocess.call(
+        status = subprocess.call(
             "(cd {}/config; ".format(code_package_path)
             + "python3 parameters_dict_master.py "
             + "-path {} -par {} -seed {};)".format(
                 working_folder_name, path.abspath(args.par_dict), seed),
             shell=True)
+    if status != 0:
+        print("\U0001F6AB  Writing the model parameter files failed, "
+              + "see the message above")
+        exit(status)
 
     walltime = '10:00:00'
     if "walltime" in parameter_dict.control_dict.keys():
