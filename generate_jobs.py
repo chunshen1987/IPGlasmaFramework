@@ -492,7 +492,12 @@ def main():
                         metavar='',
                         type=int,
                         default='-1',
-                        help='Random Seed (-1: according to system time)')
+                        help='IP-Glasma seed (-1: IP-Glasma draws one). All jobs '
+                             'use the same input file, so a fixed seed only '
+                             'takes effect with useRandomSeed 0 and then '
+                             'repeats the same event; the shipped parameter '
+                             'dictionaries set useRandomSeed 1. Also seeds '
+                             'the choice of a random posterior parameter set')
     parser.add_argument('-venv',
                         '--python_virtual_environment',
                         metavar='',
