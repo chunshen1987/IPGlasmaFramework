@@ -335,20 +335,22 @@ do
         script.write(
         "outputFile=${resultsFolder}/Amp_Q2_${Q2}_${evid}_${fileId}_x_${xval}"
         )
-        tlistStr = ""
-        if 'tlist' in diffractionDict.keys() and diffractionDict['tlist'] != []:
-            tlistStr = "-tlist " + ",".join([str(t) for t in diffractionDict['tlist']])
+        # the t values: tlist if it is given, otherwise the grid from mint
+        # to maxt (inclusive) in steps of tstep
+        if diffractionDict.get('tlist'):
+            tgridStr = "-tlist " + ",".join([str(t) for t in diffractionDict['tlist']])
+        else:
+            tgridStr = "-mint {} -maxt {} -tstep {}".format(
+                diffractionDict['mint'], diffractionDict['maxt'],
+                diffractionDict['tstep'])
         script.write("""
     ((Random_number=$RANDOM))
-    GSL_RNG_SEED=$Random_number ./subnucleondiffraction {options} -mint {mint} -maxt {maxt} -tstep {tstep} {tlist} > $outputFile
+    GSL_RNG_SEED=$Random_number ./subnucleondiffraction {options} {tgrid} > $outputFile
 
 done
 
 """.format( options=common_options,
-            mint=diffractionDict['mint'],
-           maxt=diffractionDict['maxt'],
-           tstep=diffractionDict['tstep'],
-           tlist=tlistStr,
+            tgrid=tgridStr,
            )
         )
 

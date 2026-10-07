@@ -60,6 +60,7 @@ diffraction_dict = {
     "mcintpoints": 100000,                  # "auto"
     "maxb": 51.,                            # GeV^-1
     "nbperp": 25,
+    # t values [GeV^2]: tlist if it is given, otherwise mint to maxt (inclusive) in steps of tstep
     "mint": 0.0,
     "maxt": 2.5,
     "tstep": 0.1,
