@@ -292,9 +292,9 @@ mkdir -p $resultsFolder
 
     if diffractionDict['saveNucleusSnapshot']:
         script.write("""
-./subnucleondiffraction -dipole 1 {common_options} -print_nucleus > ${resultsFolder}/picture_${evid}_${fileId}
+./subnucleondiffraction {common_options} -print_nucleus > ${{resultsFolder}}/picture_${{evid}}_${{fileId}}_x_${{xval}}
 
-""").format(common_options=common_options)
+""".format(common_options=common_options))
 
     if diffractionDict['computeTotalCrossSection'] > 0:
         script.write("""
