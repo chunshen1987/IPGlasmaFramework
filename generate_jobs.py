@@ -95,7 +95,7 @@ cd {4:s}
 cd {4:s}
 """.format(event_id, n_threads, mem, walltime, working_folder))
     elif cluster in ("local", "OSG"):
-        script.write("#!/bin/bash")
+        script.write("#!/bin/bash\n")
     else:
         print("\U0001F6AB  unrecognized cluster name :", cluster)
         print("Available options: ", support_cluster_list)
@@ -181,8 +181,9 @@ def generate_full_job_script(cluster_name, folder_name, initial_type,
     write_script_header(cluster_name, script, n_threads, event_id, walltime,
                         working_folder)
 
-    if python_venv != "":
-        script.write(f"source {path.abspath(python_venv)}/bin/activate")
+    # "-1" was the default meaning "no virtual environment"
+    if python_venv not in ("", "-1"):
+        script.write(f"source {path.abspath(python_venv)}/bin/activate\n")
 
 
     if cluster_name != "OSG": 
@@ -504,7 +505,7 @@ def main():
                         '--python_virtual_environment',
                         metavar='',
                         type=str,
-                        default='-1',
+                        default='',
                         help='Python virtual environment loaded before running jobs')
     parser.add_argument('--copy', action='store_true')
     parser.add_argument("--continueFlag", action="store_true")
