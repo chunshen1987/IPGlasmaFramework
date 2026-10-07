@@ -13,7 +13,7 @@ rm -fr ipglasma_code/.git
 rm -fr subnucleondiffraction_code
 #git clone --depth=1 https://github.com/hejajama/subnucleondiffraction subnucleondiffraction_code
 git clone --depth=5 https://github.com/chunshen1987/subnucleondiffraction -b roch/devel subnucleondiffraction_code
-(cd subnucleondiffraction_code; git checkout 6439bc8b6a291b66e7bbe70fd0e88aaba45276f2)
+(cd subnucleondiffraction_code; git checkout bfd879b4d5c1d3c57b46a12f3058de27a18eb03d)
 rm -fr subnucleondiffraction_code/.git
 
 # download nucleus configurations for IP-Glasma

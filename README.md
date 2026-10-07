@@ -15,7 +15,7 @@ The individual code package that are included in this framework are as follows,
 
 The run time is proportional to `mcintpoints`, and the total cross section mode dominates it.
 
-Note: before subnucleondiffraction commit `0eb59bc` (`roch/devel`), the value was ignored, and every run used 1e5 points.
+Note: subnucleondiffraction versions before commit `bf2aa4d` ignored the value, so every run with them used 1e5 points.
 
 ### Accuracy
 
@@ -35,7 +35,7 @@ How the numbers were obtained:
 - One Wilson line per case, 720² lattice: L = 5.12 fm for p and 18 fm for Pb, with the IP-Glasma settings of `parameters_dict_user_IPGlasmaJIMWLK_pp.py` / `_PbPb.py`.
 - Boosted Gaussian J/ψ wave function, Q² = 0.
 - Total cross section grid points at b ≤ 20 GeV⁻¹ (p) and b ≤ 60 GeV⁻¹ (Pb), θ = 0 and π.
-- Code versions: IP-Glasma `f793db6`, subnucleondiffraction `6439bc8`.
+- Code versions: IP-Glasma `f793db6`, subnucleondiffraction `bfd879b`.
 
 ### Cost
 
