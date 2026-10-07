@@ -243,7 +243,7 @@ do
     cat ${ifile} | sed 's$N/A$0.0$g' | sed 's/Q_s/#Q_s/' > $results_folder/${filename}
     rm -fr ${ifile}
 done
-mv *V-* $results_folder/
+mv WilsonLine_x_* $results_folder/
 """)
     if cluster_name != "OSG":
         script.write("""
@@ -370,7 +370,7 @@ def generate_event_folders(initial_condition_type,
         shutil.copyfile(path.join(param_folder, 'IPGlasma/input'),
                         path.join(event_folder, 'ipglasma/input'))
         link_list = [
-            'qs2Adj_vs_Tp_vs_Y_200.in', 'utilities', 'ipglasma',
+            'qs2Adj_vs_Tp_vs_Y_240.in', 'utilities', 'ipglasma',
             'nucleusConfigurations',
         ]
         for link_i in link_list:

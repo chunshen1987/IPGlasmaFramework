@@ -25,7 +25,7 @@ def get_initial_condition(initial_type, iev, final_results_folder):
     if "IPGlasma" in initial_type:
         run_ipglasma(iev)
         res_path = collect_ipglasma_event(final_results_folder, iev)
-        WilsonLineFileList = glob(path.join(res_path, "*V-*"))
+        WilsonLineFileList = glob(path.join(res_path, "WilsonLine_x_*"))
         return(WilsonLineFileList)
     else:
         print("\U0001F6AB  "
