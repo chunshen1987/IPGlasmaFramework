@@ -22,7 +22,7 @@ control_dict = {
 # IPGlasma (input keys of IP-Glasma 2.0, in the order of its parameter table;
 # keys whose feature is switched off are accepted and ignored by IP-Glasma)
 ipglasma_dict = {
-    'mode': 2,          # run mode (generate Wilson line for nuclei)
+    'runEvolution': 0,  # 0: only build (and JIMWLK-evolve) and write the Wilson lines
     'size': 720,  # number of grid points of IP-Glasma computation
     'L': 20.,  # grid size in the transverse plane
     'Ny': 50,
@@ -30,9 +30,8 @@ ipglasma_dict = {
     'g': 1.,  # strong coupling constant
     'maxTime': 0.0,
     'inverseQsForMaxTime': 0,
-    'seed': 3,
+    'seed': 0,          # set by generate_jobs.py -seed; -1 draws a random seed
     'useSeedList': 0,
-    'useRandomSeed': 0,
     'projectile': "Au",
     'target': "Au",
     'sigmaNN': 42.,
@@ -146,8 +145,10 @@ def update_parameters_dict(par_dict_path, ran_seed) -> None:
         ipglasma_dict.update(parameters_dict.ipglasma_dict)
 
         # set random seed
-        if ran_seed == -1:
-            ipglasma_dict['useRandomSeed'] = 1
+        # random seed (-1) unless one is given and the user dictionary
+        # does not ask for a random seed
+        if ran_seed == -1 or ipglasma_dict['seed'] == -1:
+            ipglasma_dict['seed'] = -1
         else:
             ipglasma_dict['seed'] = ran_seed
 

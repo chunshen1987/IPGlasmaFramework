@@ -17,7 +17,7 @@ control_dict = {
 
 # IPGlasma
 ipglasma_dict = {
-    'mode': 2,          # run mode (generate Wilson line for nuclei)
+    'runEvolution': 0,  # 0: only build (and JIMWLK-evolve) and write the Wilson lines
     'L': 18.,           # grid size in the transverse plane
     'size': 720,        # number of grid points of IP-Glasma computation
     'LOutput': 18.,
@@ -35,7 +35,7 @@ ipglasma_dict = {
     'sigmaNN': 42.,
     'projectile': "Pb",
     'target': "Pb",
-    'useRandomSeed': 1,
+    'seed': -1,         # -1: IP-Glasma draws a random seed
     'useJIMWLK': 1,
     'jimwlkMu0': 0.28,
     'jimwlkAlphaS': 0,

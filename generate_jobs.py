@@ -497,11 +497,11 @@ def main():
                         type=int,
                         default='-1',
                         help='IP-Glasma seed (-1: IP-Glasma draws one). All jobs '
-                             'use the same input file, so a fixed seed only '
-                             'takes effect with useRandomSeed 0 and then '
-                             'repeats the same event; the shipped parameter '
-                             'dictionaries set useRandomSeed 1. Also seeds '
-                             'the choice of a random posterior parameter set')
+                             'use the same input file, so a fixed seed repeats '
+                             'the same event; it is only used if the parameter '
+                             'dictionary does not set seed -1, as the shipped '
+                             'ones do. Also seeds the choice of a random '
+                             'posterior parameter set')
     parser.add_argument('-venv',
                         '--python_virtual_environment',
                         metavar='',
