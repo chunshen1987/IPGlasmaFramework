@@ -2,6 +2,8 @@
 """This script generate all the running jobs."""
 
 import sys
+import random
+import time
 from os import path, mkdir,path
 import shutil
 import subprocess
@@ -93,7 +95,7 @@ cd {4:s}
 cd {4:s}
 """.format(event_id, n_threads, mem, walltime, working_folder))
     elif cluster in ("local", "OSG"):
-        script.write("#!/bin/bash")
+        script.write("#!/bin/bash\n")
     else:
         print("\U0001F6AB  unrecognized cluster name :", cluster)
         print("Available options: ", support_cluster_list)
@@ -179,8 +181,9 @@ def generate_full_job_script(cluster_name, folder_name, initial_type,
     write_script_header(cluster_name, script, n_threads, event_id, walltime,
                         working_folder)
 
-    if python_venv != "":
-        script.write(f"source {path.abspath(python_venv)}/bin/activate")
+    # "-1" was the default meaning "no virtual environment"
+    if python_venv not in ("", "-1"):
+        script.write(f"source {path.abspath(python_venv)}/bin/activate\n")
 
 
     if cluster_name != "OSG": 
@@ -243,7 +246,7 @@ do
     cat ${ifile} | sed 's$N/A$0.0$g' | sed 's/Q_s/#Q_s/' > $results_folder/${filename}
     rm -fr ${ifile}
 done
-mv *V-* $results_folder/
+mv WilsonLine_x_* $results_folder/
 """)
     if cluster_name != "OSG":
         script.write("""
@@ -255,14 +258,15 @@ mv run.err $results_folder/
 
 
 def generate_script_subnucleondiffraction(folder_name, event_id,
-                                          diffractionDict):
+                                          diffractionDict, nthreads):
     """This function generates script for computing subnucleon diffraction"""
     working_folder = folder_name
 
     script = open(path.join(working_folder, "run_subnucleondiffraction.sh"),
                   "w")
 
-    common_options="-dipole 1 ipglasma_binary $WilsonLineFile -mcintpoints {mcintpoints} -wavef {wavef_model} -wavef_file {wavef_file} -Q2 $Q2 -xp $xval".format(
+    # the 0 is the lattice step, which only text Wilson-line files need
+    common_options="-dipole 1 ipglasma_binary $WilsonLineFile 0 -mcintpoints {mcintpoints} -wavef {wavef_model} -wavef_file {wavef_file} -Q2 $Q2 -xp $xval".format(
            mcintpoints=diffractionDict['mcintpoints'],
            wavef_model=diffractionDict['wavef_model'],
            wavef_file=diffractionDict['wavef_file']
@@ -284,11 +288,17 @@ mkdir -p $resultsFolder
 
 """.format(results_folder))
 
+    if nthreads > 0:
+        # the -totalcrosssections mode is parallelized with OpenMP
+        script.write("""export OMP_NUM_THREADS={0:d}
+
+""".format(nthreads))
+
     if diffractionDict['saveNucleusSnapshot']:
         script.write("""
-./subnucleondiffraction -dipole 1 {common_options} -print_nucleus > ${resultsFolder}/picture_${evid}_${fileId}
+./subnucleondiffraction {common_options} -print_nucleus > ${{resultsFolder}}/picture_${{evid}}_${{fileId}}_x_${{xval}}
 
-""").format(common_options=common_options)
+""".format(common_options=common_options))
 
     if diffractionDict['computeTotalCrossSection'] > 0:
         script.write("""
@@ -329,20 +339,22 @@ do
         script.write(
         "outputFile=${resultsFolder}/Amp_Q2_${Q2}_${evid}_${fileId}_x_${xval}"
         )
-        tlistStr = ""
-        if 'tlist' in diffractionDict.keys() and diffractionDict['tlist'] != []:
-            tlistStr = "-tlist " + ",".join([str(t) for t in diffractionDict['tlist']])
+        # the t values: tlist if it is given, otherwise the grid from mint
+        # to maxt (inclusive) in steps of tstep
+        if diffractionDict.get('tlist'):
+            tgridStr = "-tlist " + ",".join([str(t) for t in diffractionDict['tlist']])
+        else:
+            tgridStr = "-mint {} -maxt {} -tstep {}".format(
+                diffractionDict['mint'], diffractionDict['maxt'],
+                diffractionDict['tstep'])
         script.write("""
     ((Random_number=$RANDOM))
-    GSL_RNG_SEED=$Random_number ./subnucleondiffraction {options} -mint {mint} -maxt {maxt} -tstep {tstep} {tlist} > $outputFile
+    GSL_RNG_SEED=$Random_number ./subnucleondiffraction {options} {tgrid} > $outputFile
 
 done
 
 """.format( options=common_options,
-            mint=diffractionDict['mint'],
-           maxt=diffractionDict['maxt'],
-           tstep=diffractionDict['tstep'],
-           tlist=tlistStr,
+            tgrid=tgridStr,
            )
         )
 
@@ -370,7 +382,7 @@ def generate_event_folders(initial_condition_type,
         shutil.copyfile(path.join(param_folder, 'IPGlasma/input'),
                         path.join(event_folder, 'ipglasma/input'))
         link_list = [
-            'qs2Adj_vs_Tp_vs_Y_200.in', 'utilities', 'ipglasma',
+            'qs2Adj_vs_Tp_vs_Y_240.in', 'utilities', 'ipglasma',
             'nucleusConfigurations',
         ]
         for link_i in link_list:
@@ -390,7 +402,8 @@ def generate_event_folders(initial_condition_type,
 
 
         generate_script_subnucleondiffraction(event_folder,
-                                              event_id, diffractionDict)
+                                              event_id, diffractionDict,
+                                              n_threads)
         link_list = ['build/bin/subnucleondiffraction', diffractionDict["wavef_file"]]
 
         for link_i in link_list:
@@ -483,12 +496,17 @@ def main():
                         metavar='',
                         type=int,
                         default='-1',
-                        help='Random Seed (-1: according to system time)')
+                        help='IP-Glasma seed (-1: IP-Glasma draws one). All jobs '
+                             'use the same input file, so a fixed seed repeats '
+                             'the same event; it is only used if the parameter '
+                             'dictionary does not set seed -1, as the shipped '
+                             'ones do. Also seeds the choice of a random '
+                             'posterior parameter set')
     parser.add_argument('-venv',
                         '--python_virtual_environment',
                         metavar='',
                         type=str,
-                        default='-1',
+                        default='',
                         help='Python virtual environment loaded before running jobs')
     parser.add_argument('--copy', action='store_true')
     parser.add_argument("--continueFlag", action="store_true")
@@ -540,13 +558,13 @@ def main():
                   initial_condition_type))
         exit(1)
 
-    if (parameter_dict.ipglasma_dict['Projectile']
-            != parameter_dict.ipglasma_dict['Target']):
+    if (parameter_dict.ipglasma_dict['projectile']
+            != parameter_dict.ipglasma_dict['target']):
         print("\U0001F6AB  "
                 + "Projectile and Target species are different! Proj: "
-                + parameter_dict.ipglasma_dict['Projectile']
+                + parameter_dict.ipglasma_dict['projectile']
                 + ", target : "
-                + parameter_dict.ipglasma_dict['Target']
+                + parameter_dict.ipglasma_dict['target']
         )
         exit(1)
 
@@ -588,7 +606,7 @@ def main():
 
     if args.bayes_file != "":
         args.bayes_file = path.join(path.abspath("."), args.bayes_file)
-        subprocess.call("(cd {}/config; ".format(code_package_path)
+        status = subprocess.call("(cd {}/config; ".format(code_package_path)
                         + "python3 parameters_dict_master.py "
                         + "-path {} -par {} -b {} -seed {};)".format(
                             working_folder_name, path.abspath(args.par_dict),
@@ -596,19 +614,23 @@ def main():
                         shell=True)
         shutil.copy(args.bayes_file, working_folder_name)
     elif usePosteriorParameters:
-        subprocess.call("(cd {}/config; ".format(code_package_path)
+        status = subprocess.call("(cd {}/config; ".format(code_package_path)
                         + "python3 parameters_dict_master.py "
                         + "-path {} -par {} -b {} -seed {};)".format(
                             working_folder_name, path.abspath(args.par_dict),
                             paramFile, seed),
                         shell=True)
     else:
-        subprocess.call(
+        status = subprocess.call(
             "(cd {}/config; ".format(code_package_path)
             + "python3 parameters_dict_master.py "
             + "-path {} -par {} -seed {};)".format(
                 working_folder_name, path.abspath(args.par_dict), seed),
             shell=True)
+    if status != 0:
+        print("\U0001F6AB  Writing the model parameter files failed, "
+              + "see the message above")
+        exit(status)
 
     walltime = '10:00:00'
     if "walltime" in parameter_dict.control_dict.keys():

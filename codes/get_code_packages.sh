@@ -4,15 +4,15 @@
 
 # download IPGlasma
 rm -fr ipglasma_code
-git clone --depth=5 https://github.com/chunshen1987/ipglasma -b ipglasma_jimwlk ipglasma_code
-(cd ipglasma_code; git checkout 0789f71e8bc1f65b7995c2533379d17c04fba0c1)
+#git clone --depth=5 https://github.com/chunshen1987/ipglasma -b ipglasma_jimwlk ipglasma_code
+git clone --depth=5 https://github.com/schenke/ipglasma -b devel ipglasma_code
+(cd ipglasma_code; git checkout 96e79d92b219de64153315760b1d24ad6ca50935)
 rm -fr ipglasma_code/.git
 
 # download subnucleondiffraction
 rm -fr subnucleondiffraction_code
-#git clone --depth=1 https://github.com/hejajama/subnucleondiffraction subnucleondiffraction_code
-git clone --depth=1 https://github.com/chunshen1987/subnucleondiffraction subnucleondiffraction_code
-(cd subnucleondiffraction_code; git checkout c405a0a5c7b098781be2cd928131ac854dbb44ca)
+git clone --depth=5 https://github.com/hejajama/subnucleondiffraction -b master subnucleondiffraction_code
+(cd subnucleondiffraction_code; git checkout 1cc1fed59c1124042c225076a48fa4209a8e3b95)
 rm -fr subnucleondiffraction_code/.git
 
 # download nucleus configurations for IP-Glasma
