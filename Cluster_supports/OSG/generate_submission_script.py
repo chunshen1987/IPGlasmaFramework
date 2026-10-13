@@ -67,11 +67,12 @@ periodic_release = ((HoldReasonCode == 13 || HoldReasonCode == 26) && (time() - 
 # Send the job to Held state on failure.
 on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
 
-# The below are good base requirements for first testing jobs on OSG,
-# if you don't have a good idea of memory and disk usage.
+# IP-Glasma with JIMWLK peaks at about 3.8 GB of memory for size 1024
+# (2 GB for size 720), and a size-1024 event with three snapshots writes
+# 1.5 GB of Wilson lines.
 request_cpus = 1
-request_memory = 2 GB
-request_disk = 2 GB
+request_memory = 5 GB
+request_disk = 4 GB
 
 # Queue one job with the above specifications.
 queue {0}""".format(para_dict_["n_jobs"]))
