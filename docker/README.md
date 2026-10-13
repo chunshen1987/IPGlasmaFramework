@@ -15,7 +15,7 @@ This builds the `main` branch. To build another branch, e.g. `devel`, pass it as
 	docker build --build-arg BRANCH=devel -t chunshen1987/ipglasmaframework:devel .
 ```
 
-The GitHub workflow publishes an image for every push to `main`, `chun_dev` and `devel`, tagged with the branch name.
+The GitHub workflow publishes an image for every push to `main` and `devel`, tagged with the branch name.
 
 ### 2. Run IPGlasmaFramework
 The docker container has ready compiled all the software packages for IPGlasmaFramework.
