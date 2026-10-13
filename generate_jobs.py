@@ -23,7 +23,8 @@ support_cluster_list = [
 def write_script_header(cluster, script, n_threads, event_id, walltime,
                         working_folder):
     """This function write the header of the job submission script"""
-    mem = 4*n_threads
+    # at least 5 GB: IP-Glasma with JIMWLK peaks at about 3.8 GB for size 1024
+    mem = max(5, 4*n_threads)
     if cluster == "nersc":
         script.write("""#!/bin/bash -l
 #SBATCH -p shared
