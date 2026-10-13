@@ -107,8 +107,6 @@ ipglasma_dict = {
     'writeOutputsToHDF5': 0,
     'LOutput': 30,
     'sizeOutput': 512,
-    'etaSizeOutput': 1,
-    'dEtaOutput': 0,
     'writeWilsonLines': 2,          # 2: binary, which run_subnucleondiffraction.sh reads (1: text)
     'writeWilsonLineGeometry': 0,   # only needed to read the Wilson lines back in
     'readInitialWilsonLines': 0,
