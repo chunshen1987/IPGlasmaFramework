@@ -9,6 +9,14 @@ We can build a docker image for the IPGlasmaFramework package using the followin
 	docker build -t chunshen1987/ipglasmaframework:latest .
 ```
 
+This builds the `main` branch. To build another branch, e.g. `devel`, pass it as a build argument:
+
+```
+	docker build --build-arg BRANCH=devel -t chunshen1987/ipglasmaframework:devel .
+```
+
+The GitHub workflow publishes an image for every push to `main`, `chun_dev` and `devel`, tagged with the branch name.
+
 ### 2. Run IPGlasmaFramework
 The docker container has ready compiled all the software packages for IPGlasmaFramework.
 
