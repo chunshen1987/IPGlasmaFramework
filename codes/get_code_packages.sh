@@ -6,7 +6,7 @@
 rm -fr ipglasma_code
 #git clone --depth=5 https://github.com/chunshen1987/ipglasma -b ipglasma_jimwlk ipglasma_code
 git clone --depth=5 https://github.com/schenke/ipglasma -b devel ipglasma_code
-(cd ipglasma_code; git checkout 96e79d92b219de64153315760b1d24ad6ca50935)
+(cd ipglasma_code; git checkout 5b729ce377f768f078e3126f43a3ae6ebc565c16)
 rm -fr ipglasma_code/.git
 
 # download subnucleondiffraction
