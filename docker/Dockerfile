@@ -33,9 +33,12 @@ RUN python3 -m pip install --upgrade pip && \
 
 ENV HOME /opt/
 
+# branch of the IPGlasmaFramework to build (the workflow passes the pushed branch)
+ARG BRANCH=main
+
 # download and compile the IPGlasma framework
 RUN cd ${HOME} && \
-    git clone --depth=1 https://github.com/chunshen1987/IPGlasmaFramework -b main && \
+    git clone --depth=1 https://github.com/chunshen1987/IPGlasmaFramework -b ${BRANCH} && \
     cd IPGlasmaFramework/codes && \
     ./get_code_packages.sh && \
     ./compile_code_packages.sh && \
