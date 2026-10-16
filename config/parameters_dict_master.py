@@ -171,7 +171,7 @@ posterior_key_names = {
 # Values in the posterior parameter files that are not IP-Glasma parameters
 posterior_non_ipglasma_keys = ('Kfactor',)
 
-# Subnucleon parameters each nucleonModel reads in IP-Glasma 96e79d9
+# Subnucleon parameters each nucleonModel reads in IP-Glasma 5b729ce
 # (src/ParameterTable.cpp); the others are ignored without a message
 nucleon_model_parameters = {
     'gaussian': ('BG', 'protonAnisotropy', 'smearQs', 'smearingWidth'),
