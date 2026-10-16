@@ -131,6 +131,11 @@ path_list = [
 ]
 
 
+# Parameters set by the user dictionary or by a parameter file (not by the
+# defaults above), with where they were set
+explicit_parameters = {}
+
+
 def update_parameters_dict(par_dict_path, ran_seed) -> None:
     """This function update the parameters dictionaries with user's settings"""
     par_diretory = path.dirname(par_dict_path)
@@ -141,6 +146,8 @@ def update_parameters_dict(par_dict_path, ran_seed) -> None:
                     parameters_dict.control_dict['initial_state_type'])
     if initial_condition_type in ("IPGlasma"):
         ipglasma_dict.update(parameters_dict.ipglasma_dict)
+        for key in parameters_dict.ipglasma_dict:
+            explicit_parameters[key] = "the user dictionary"
 
         # set random seed
         # random seed (-1) unless one is given and the user dictionary
@@ -164,6 +171,78 @@ posterior_key_names = {
 # Values in the posterior parameter files that are not IP-Glasma parameters
 posterior_non_ipglasma_keys = ('Kfactor',)
 
+# Subnucleon parameters each nucleonModel reads in IP-Glasma 96e79d9
+# (src/ParameterTable.cpp); the others are ignored without a message
+nucleon_model_parameters = {
+    'gaussian': ('BG', 'protonAnisotropy', 'smearQs', 'smearingWidth'),
+    'hotspots': ('BG', 'BGq', 'BGqVar', 'dqMin', 'omega', 'Nq', 'NqFluc',
+                 'shiftConstituentQuarkProtonOrigin', 'smearQs',
+                 'smearingWidth'),
+    'strings': ('BG', 'BGq', 'BGqVar', 'dqMin', 'omega',
+                'shiftConstituentQuarkProtonOrigin', 'smearQs',
+                'smearingWidth'),
+}
+subnucleon_parameters = sorted(
+    set().union(*nucleon_model_parameters.values()))
+
+# With subNucleonParamType != 0, IP-Glasma replaces these values with a
+# posterior set at run time (Parameters::setParamsWithPosteriorParameterSet)
+# and sets BGqVar and NqFluc to 0
+posterior_replaced_parameters = (
+    'm', 'BG', 'BGq', 'smearingWidth', 'Nq', 'QsMuRatio', 'dqMin')
+posterior_zeroed_parameters = ('BGqVar', 'NqFluc')
+
+
+def check_nucleon_model() -> str:
+    """Returns the nucleonModel to write; stops if IP-Glasma does not know
+    it."""
+    model = ipglasma_dict['nucleonModel']
+    if model not in nucleon_model_parameters:
+        sys.exit("\U0001F6AB  Unknown nucleonModel {}: use gaussian, "
+                 "hotspots or strings.".format(model))
+    return model
+
+
+def check_nq_from_parameter_file(nq, bayes_file) -> bool:
+    """Checks the number of hot spots Nq of a parameter file against the
+    nucleonModel of the user dictionary (or the default), which a parameter
+    file never changes. Returns whether Nq is to be set; stops on a
+    conflict."""
+    model = check_nucleon_model()
+    if model == "hotspots" and nq > 0:
+        return True
+    if model == "strings" and nq == 3:
+        # IP-Glasma does not read Nq with strings: always three hot spots
+        return True
+    if model == "gaussian" and nq <= 0:
+        return False
+
+    if explicit_parameters.get('nucleonModel') == "the user dictionary":
+        model_origin = "set in the user dictionary"
+    else:
+        model_origin = ("the default of parameters_dict_master.py, since the "
+                        "user dictionary does not set it")
+    if model == "gaussian":
+        conflict = ("the parameter file describes {:g} hot spots, but "
+                    "gaussian nucleons have none".format(nq))
+    elif nq <= 0:
+        conflict = ("Nq {:g} (useConstituentQuarkProton 0 before IP-Glasma "
+                    "2.0) describes round Gaussian nucleons, but {} nucleons "
+                    "have hot spots".format(nq, model))
+    else:
+        conflict = ("strings nucleons always have 3 hot spots, but the "
+                    "parameter file asks for {:g}".format(nq))
+    message = (
+        "\U0001F6AB  Nq {:g} in the parameter file {} does not fit "
+        "nucleonModel {} ({}): {}.\n".format(nq, bayes_file, model,
+                                             model_origin, conflict)
+        + "    Set 'nucleonModel' in the ipglasma_dict of the user "
+        "dictionary to the model you intend (gaussian, hotspots or "
+        "strings). Parameter files no longer choose the nucleon model: "
+        "before, Nq > 0 in a parameter file switched to hotspots, and "
+        "Nq <= 0 to gaussian, whatever the user dictionary said.")
+    sys.exit(message)
+
 
 def update_parameters_bayesian(bayes_file) -> None:
     unknown_keys = []
@@ -175,17 +254,65 @@ def update_parameters_bayesian(bayes_file) -> None:
             if key in posterior_non_ipglasma_keys:
                 continue
             key = posterior_key_names.get(key, key)
+            if key == 'nucleonModel':
+                sys.exit("\U0001F6AB  The parameter file {} sets "
+                         "nucleonModel. Choose the nucleon model in the "
+                         "user dictionary instead.".format(bayes_file))
             if key not in ipglasma_dict:
                 unknown_keys.append(key)
                 continue
+            if key == 'Nq' and not check_nq_from_parameter_file(
+                    float(val), bayes_file):
+                continue
             ipglasma_dict[key] = float(val)
-            if key == 'Nq':
-                # useConstituentQuarkProton 0 meant round (Gaussian) nucleons
-                ipglasma_dict['nucleonModel'] = (
-                    "hotspots" if float(val) > 0 else "gaussian")
+            explicit_parameters[key] = "the parameter file"
     if unknown_keys:
         sys.exit("\U0001F6AB  Unknown parameters in {}: {}".format(
             bayes_file, ", ".join(unknown_keys)))
+
+
+def warn_about_subnucleon_parameters() -> None:
+    """Warns about subnucleon parameters that the user dictionary or the
+    parameter file set, but that IP-Glasma does not use: the chosen
+    nucleonModel does not read them, or a posterior set replaces them."""
+    model = check_nucleon_model()
+    for key in subnucleon_parameters:
+        if key not in explicit_parameters:
+            continue
+        if key in nucleon_model_parameters[model]:
+            continue
+        if model == "strings" and key == 'Nq' and ipglasma_dict[key] == 3:
+            continue
+        print("\u26A0\uFE0F  {} {} is set in {}, but nucleonModel {} does "
+              "not read it".format(key, ipglasma_dict[key],
+                                   explicit_parameters[key], model))
+
+    if ipglasma_dict['subNucleonParamType'] != 0:
+        replaced = [key for key in posterior_replaced_parameters
+                    if key in explicit_parameters]
+        zeroed = [key for key in posterior_zeroed_parameters
+                  if key in explicit_parameters]
+        if replaced or zeroed:
+            message = ("\u26A0\uFE0F  subNucleonParamType {}: IP-Glasma "
+                       "uses a posterior parameter set".format(
+                           ipglasma_dict['subNucleonParamType']))
+            if replaced:
+                message += ", which replaces the values of {}".format(
+                    ", ".join(replaced))
+            if zeroed:
+                message += "{} sets {} to 0".format(
+                    ", and" if replaced else ", which",
+                    ", ".join(zeroed))
+            print(message)
+
+
+def print_nucleon_model() -> None:
+    """Prints the nucleon model that is written to the input file, with the
+    subnucleon parameters it reads."""
+    model = check_nucleon_model()
+    print("\U0001F535  nucleonModel {}: {}".format(
+        model, ", ".join("{} {}".format(key, ipglasma_dict[key])
+                         for key in nucleon_model_parameters[model])))
 
 
 def output_parameters_to_files(workfolder=".") -> None:
@@ -252,4 +379,6 @@ if __name__ == "__main__":
     update_parameters_dict(path.abspath(args.par_dict), args.random_seed)
     if args.bayes_file != "":
         update_parameters_bayesian(args.bayes_file)
+    warn_about_subnucleon_parameters()
+    print_nucleon_model()
     output_parameters_to_files(args.path)
