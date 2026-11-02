@@ -18,7 +18,7 @@ get_pinned() {
 # download IPGlasma (devel branch)
 #git clone --depth=5 https://github.com/chunshen1987/ipglasma -b ipglasma_jimwlk ipglasma_code
 get_pinned https://github.com/schenke/ipglasma \
-    50c14a4630e0b4dceed5679dac09d270a999183b ipglasma_code
+    1f1f4aeb43af1800c5ec77894471ef9cbab17871 ipglasma_code
 
 # download subnucleondiffraction (master branch)
 get_pinned https://github.com/hejajama/subnucleondiffraction \
