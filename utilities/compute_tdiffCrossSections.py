@@ -168,8 +168,9 @@ for Q2 in Q2List:
                     continue
 
                 # rows: t, Re F_T, Im F_T, Re F_L, Im F_L (a file with one t
-                # value is read as a single row)
-                data = np.atleast_2d(np.nan_to_num(event_group.get(fileName)))
+                # value is read as a single row); NaN and inf are kept, so the
+                # filters below drop the event
+                data = np.atleast_2d(np.asarray(event_group.get(fileName)))
                 if data.shape[1] < 5:
                     continue
 
@@ -213,7 +214,9 @@ for Q2 in Q2List:
             total_abs2 = (
                 (F_T_real**2 + F_T_imag**2) + (F_L_real**2 + F_L_imag**2)
             )
-            event_scale = np.nanmax(total_abs2, axis=1)
+            # An event with a NaN or inf gets a non-finite scale, which the
+            # filter drops and leaves out of its median.
+            event_scale = np.max(total_abs2, axis=1)
             keep_mask = _robust_mad_log_filter(event_scale, zmax=OUTLIER_ZMAX)
 
         # Always drop events that produced NaNs/Infs anywhere
