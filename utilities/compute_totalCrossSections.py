@@ -201,7 +201,8 @@ for Q2 in Q2List:
                 m = AMPF_NAME.match(fileName)
                 if not m or m.group(1) != Q2 or m.group(2) != x_i:
                     continue
-                data = np.nan_to_num(event_group.get(fileName))
+                # NaN and inf are kept, so the filters below drop the event
+                data = np.asarray(event_group.get(fileName))
                 if data.ndim != 2 or data.shape[1] < 6:
                     continue
 
@@ -250,7 +251,9 @@ for Q2 in Q2List:
             total_abs2 = (
                 (F_T_real**2 + F_T_imag**2) + (F_L_real**2 + F_L_imag**2)
             )
-            event_scale = np.nanmax(total_abs2, axis=1)
+            # An event with a NaN or inf gets a non-finite scale, which the
+            # filter drops and leaves out of its median.
+            event_scale = np.max(total_abs2, axis=1)
             keep_mask = _robust_mad_log_filter(event_scale, zmax=OUTLIER_ZMAX)
 
         # Precompute θ-integrated total |F|^2 vs b if needed by endpoint/shape filters.
