@@ -115,6 +115,7 @@ ipglasma_dict = {
     'jimwlkLambdaQCD': 0.040,
     'jimwlkMass': 0.4,
     'jimwlkAlphaS': 0,
+    'jimwlkRunningCoupling': 1,  # with jimwlkAlphaS 0: 1 square root, 2 noise
     'jimwlkDs': 0.005,
     'jimwlkInitialX': 0.01,
     'jimwlkSaveSnapshots': 0,
