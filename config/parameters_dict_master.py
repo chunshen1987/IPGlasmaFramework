@@ -48,8 +48,8 @@ ipglasma_dict = {
     'lightNucleusOption': 1,
     'polarizationProjectile': 0,    # 0: unpolarized; 1: longitudinal polarized; 2: transverse polarized
     'polarizationTarget': 0,        # 0: unpolarized; 1: longitudinal polarized; 2: transverse polarized
-    'polarizationProjectileJz': 0,
-    'polarizationTargetJz': 0,
+    'polarizationProjectileJz': 0.,
+    'polarizationTargetJz': 0.,
     'useInputWSParams': 0,
     'radiusWS': 6.6,
     'diffusenessWS': 0.52,
@@ -71,19 +71,19 @@ ipglasma_dict = {
     # positive intergers: choose a fixed set of parameter for sub-nucleonic structure
     'm': 0.2,  # infrared cut-off mass (GeV)
     'BG': 4.,
-    'protonAnisotropy': 0,
+    'protonAnisotropy': 0.,
     'BGq': 0.3,
     'BGqVar': 0.0,
     'dqMin': 0.0,
     'omega': 1.0,
-    'Nq': 3,                        # number of hot spots (nucleonModel hotspots)
+    'Nq': 3.,                       # number of hot spots (nucleonModel hotspots)
     'NqFluc': 0.0,
     'shiftConstituentQuarkProtonOrigin': 1,
     'QsMuRatio': 0.8,
     'smearQs': 1,
     'smearingWidth': 0.6,
     'UVDamp': 0.,
-    'minimumQs2ST': 0,
+    'minimumQs2ST': 0.,
     'nucleusQsTableFileName': "qs2Adj_vs_Tp_vs_Y_240.in",
     'rapidity': 0.,                 # rapidity of the gluon and hadron spectra
     'usePseudoRapidity': 0,
@@ -91,7 +91,7 @@ ipglasma_dict = {
     'useFluctuatingX': 0,
     'projectileX': 0.01,            # Bjorken x of the projectile (final x with JIMWLK)
     'targetX': 0.01,                # Bjorken x of the target (final x with JIMWLK)
-    'xQsFactor': 1,
+    'xQsFactor': 1.,
     'runningCoupling': 0,
     'mu0': 0.3,
     'c': 0.2,
@@ -105,7 +105,7 @@ ipglasma_dict = {
     'writeJazma': 0,
     'writeTmunu': 0,
     'writeOutputsToHDF5': 0,
-    'LOutput': 30,
+    'LOutput': 30.,
     'sizeOutput': 512,
     'writeWilsonLines': 2,          # 2: binary, which run_subnucleondiffraction.sh reads (1: text)
     'writeWilsonLineGeometry': 0,   # only needed to read the Wilson lines back in
@@ -114,7 +114,7 @@ ipglasma_dict = {
     'jimwlkMu0': 0.28,
     'jimwlkLambdaQCD': 0.040,
     'jimwlkMass': 0.4,
-    'jimwlkAlphaS': 0,
+    'jimwlkAlphaS': 0.,
     'jimwlkRunningCoupling': 1,  # with jimwlkAlphaS 0: 1 square root, 2 noise
     'jimwlkDs': 0.005,
     'jimwlkInitialX': 0.01,
@@ -135,6 +135,12 @@ path_list = [
 # Parameters set by the user dictionary or by a parameter file (not by the
 # defaults above), with where they were set
 explicit_parameters = {}
+
+# IP-Glasma parameters with integer values (from the defaults above, before a
+# user dictionary changes them); the other defaults are floats, as in
+# IP-Glasma
+ipglasma_integer_keys = [
+    key for key, val in ipglasma_dict.items() if isinstance(val, int)]
 
 
 def update_parameters_dict(par_dict_path, ran_seed) -> None:
@@ -265,7 +271,14 @@ def update_parameters_bayesian(bayes_file) -> None:
             if key == 'Nq' and not check_nq_from_parameter_file(
                     float(val), bayes_file):
                 continue
-            ipglasma_dict[key] = float(val)
+            if key in ipglasma_integer_keys:
+                # IP-Glasma rejects 2.0 for an integer
+                if not float(val).is_integer():
+                    sys.exit("\U0001F6AB  {} {} in the parameter file {} must "
+                             "be an integer.".format(key, val, bayes_file))
+                ipglasma_dict[key] = int(float(val))
+            else:
+                ipglasma_dict[key] = float(val)
             explicit_parameters[key] = "the parameter file"
     if unknown_keys:
         sys.exit("\U0001F6AB  Unknown parameters in {}: {}".format(
