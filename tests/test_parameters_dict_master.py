@@ -197,6 +197,17 @@ def test_posterior_file_columns_after_comments(tmp_path):
         "m, QsMuRatio", "", "0.1, 0.6"])
     assert master.posterior_file_parameters(posterior_file) == [
         'm', 'QsMuRatio']
+    # the tables of IP-Glasma 8b3b201: comment lines, then the names without
+    # a #, and a MAP set with weight 0
+    posterior_file = write_posterior_file(tmp_path, [
+        "# Posterior samples from H. Mantysaari, B. Schenke, C. Shen and "
+        "W. Zhao,",
+        "# The first line is the MAP parametrization",
+        "m [GeV], BG [GeV^{-2}], QsMuRatio, Nq, NqFluc,weight",
+        "0.246, 4.45, 0.747, 3, 0, 0",
+        "0.193, 4.537, 0.808, 3, 0, 1"])
+    assert master.posterior_file_parameters(posterior_file) == [
+        'm', 'BG', 'QsMuRatio', 'Nq', 'NqFluc']
 
 
 def test_posterior_file_not_found(tmp_path, capsys):
@@ -217,21 +228,24 @@ def test_old_posterior_keys_in_the_user_dictionary_stop(tmp_path):
 
 def test_old_posterior_keys_in_a_parameter_file(tmp_path):
     load_user_dict(tmp_path, {'nucleonModel': "hotspots",
-                              'posteriorFile': "tables/posterior_Nq3.csv"})
+                              'posteriorFile':
+                              "tables/posterior_jpsi_2202.01998_Nq_3.csv"})
     master.update_parameters_bayesian(
         write_parameter_file(tmp_path, ["subNucleonParamSet  3"]))
     assert master.ipglasma_dict['posteriorSet'] == 3
     with pytest.raises(SystemExit) as error:
         master.update_parameters_bayesian(
             write_parameter_file(tmp_path, ["subNucleonParamType  2"]))
-    assert "2: tables/posterior_Nq3.csv" in str(error.value)
+    assert "2: tables/posterior_jpsi_2202.01998_Nq_3.csv" in str(
+        error.value)
 
 
 def test_text_parameter_in_a_parameter_file_stops(tmp_path):
     load_user_dict(tmp_path, {'nucleonModel': "hotspots"})
     with pytest.raises(SystemExit) as error:
         master.update_parameters_bayesian(write_parameter_file(
-            tmp_path, ["posteriorFile  tables/posterior.csv"]))
+            tmp_path,
+            ["posteriorFile  tables/posterior_jpsi_2202.01998_Nq_free.csv"]))
     assert "text parameter" in str(error.value)
 
 
