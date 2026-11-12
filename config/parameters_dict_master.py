@@ -68,8 +68,9 @@ ipglasma_dict = {
     # event, e.g. tables/posterior_Nq3.csv (needs nucleonModel hotspots and
     # smearQs 1); none: no posterior
     'posteriorFile': "none",
-    'posteriorSet': -1,  # set of the posterior file; -1: a random set every
-    # event, 0: the MAP set of the tables of IP-Glasma
+    'posteriorSet': -1,  # set of the posterior file, counted from 0; -1: a
+    # random set every event, 0: the MAP set (row 0 of the tables of
+    # IP-Glasma)
     'm': 0.2,  # infrared cut-off mass (GeV)
     'BG': 4.,
     'protonAnisotropy': 0.,
