@@ -65,8 +65,8 @@ ipglasma_dict = {
     'nucleonModel': "gaussian",     # gaussian, hotspots or strings
     # posterior parameter sets of IP-Glasma (CSV table whose header names the
     # input keys of its columns), which replace those parameters every
-    # event, e.g. tables/posterior_Nq3.csv (needs nucleonModel hotspots and
-    # smearQs 1); none: no posterior
+    # event, e.g. tables/posterior_jpsi_2202.01998_Nq_3.csv (needs
+    # nucleonModel hotspots and smearQs 1); none: no posterior
     'posteriorFile': "none",
     'posteriorSet': -1,  # set of the posterior file, counted from 0; -1: a
     # random set every event, 0: the MAP set (row 0 of the tables of
@@ -201,9 +201,10 @@ posterior_key_names = {
 
 # IP-Glasma parameters that were replaced, with what replaced them: since
 # 5b1a4c6, posteriorFile names the table of the posterior parameter sets
-posterior_file_hint = ("posteriorFile (0: none, 1: tables/posterior.csv, "
-                       "2: tables/posterior_Nq3.csv, "
-                       "4: tables/posterior5020_Nq3.csv)")
+posterior_file_hint = (
+    "posteriorFile (0: none, 1: tables/posterior_jpsi_2202.01998_Nq_free.csv, "
+    "2: tables/posterior_jpsi_2202.01998_Nq_3.csv, "
+    "4: tables/posterior5020_Nq3.csv)")
 ipglasma_replaced_keys = {
     'SubNucleonParamType': posterior_file_hint,
     'subNucleonParamType': posterior_file_hint,
