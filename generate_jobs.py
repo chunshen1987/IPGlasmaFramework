@@ -382,9 +382,10 @@ def generate_event_folders(initial_condition_type,
         mkdir(path.join(event_folder, 'ipglasma'))
         shutil.copyfile(path.join(param_folder, 'IPGlasma/input'),
                         path.join(event_folder, 'ipglasma/input'))
+        # tables: the posterior parameter sets (posteriorFile)
         link_list = [
             'qs2Adj_vs_Tp_vs_Y_240.in', 'utilities', 'ipglasma',
-            'nucleusConfigurations',
+            'nucleusConfigurations', 'tables',
         ]
         for link_i in link_list:
             subprocess.call("ln -s {0:s} {1:s}".format(

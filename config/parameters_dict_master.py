@@ -5,6 +5,7 @@
 
 from os import path, makedirs
 import sys
+import re
 import shutil
 import argparse
 
@@ -62,13 +63,13 @@ ipglasma_dict = {
     'forceDMin': 1,  # flag to force dMin for deformed nuclei
     'dMin': 0.9,  # fm
     'nucleonModel': "gaussian",     # gaussian, hotspots or strings
-    'subNucleonParamType': 0,  # 0: do not use posterior parameter sets
-    # 1: use subnucleon parameters from variant Nq posterior distribution
-    # 2: use subnucleon parameters from fixed Nq = 3 posterior distribution
-    'subNucleonParamSet':
-        -1,  # -1: choose a random set from the posterior distribution
-    # 0: choose the MAP parameter set
-    # positive intergers: choose a fixed set of parameter for sub-nucleonic structure
+    # posterior parameter sets of IP-Glasma (CSV table whose header names the
+    # input keys of its columns), which replace those parameters every
+    # event, e.g. tables/posterior_Nq3.csv (needs nucleonModel hotspots and
+    # smearQs 1); none: no posterior
+    'posteriorFile': "none",
+    'posteriorSet': -1,  # set of the posterior file; -1: a random set every
+    # event, 0: the MAP set of the tables of IP-Glasma
     'm': 0.2,  # infrared cut-off mass (GeV)
     'BG': 4.,
     'protonAnisotropy': 0.,
@@ -141,6 +142,13 @@ explicit_parameters = {}
 # IP-Glasma
 ipglasma_integer_keys = [
     key for key, val in ipglasma_dict.items() if isinstance(val, int)]
+# and with text values (e.g. posteriorFile), which parameter files cannot set
+ipglasma_text_keys = [
+    key for key, val in ipglasma_dict.items() if isinstance(val, str)]
+
+# the folder of the code packages, where IP-Glasma runs from
+code_path = path.join(path.dirname(path.dirname(path.abspath(__file__))),
+                      "codes")
 
 
 def update_parameters_dict(par_dict_path, ran_seed) -> None:
@@ -152,6 +160,19 @@ def update_parameters_dict(par_dict_path, ran_seed) -> None:
     initial_condition_type = (
                     parameters_dict.control_dict['initial_state_type'])
     if initial_condition_type in ("IPGlasma"):
+        # IP-Glasma rejects its old names, but only when a job runs
+        old_names = []
+        for key in parameters_dict.ipglasma_dict:
+            if key in ipglasma_replaced_keys:
+                old_names.append("{} (replaced by {})".format(
+                    key, ipglasma_replaced_keys[key]))
+            elif key in posterior_key_names:
+                old_names.append("{} (renamed to {})".format(
+                    key, posterior_key_names[key]))
+        if old_names:
+            sys.exit("\U0001F6AB  ipglasma_dict of {} uses old names of "
+                     "IP-Glasma parameters: {}.".format(
+                         par_dict_path, "; ".join(old_names)))
         ipglasma_dict.update(parameters_dict.ipglasma_dict)
         for key in parameters_dict.ipglasma_dict:
             explicit_parameters[key] = "the user dictionary"
@@ -173,6 +194,18 @@ posterior_key_names = {
     'Lambda_QCD_jimwlk': 'jimwlkLambdaQCD',
     'UVdamp': 'UVDamp',
     'useConstituentQuarkProton': 'Nq',
+    'SubNucleonParamSet': 'posteriorSet',
+    'subNucleonParamSet': 'posteriorSet',
+}
+
+# IP-Glasma parameters that were replaced, with what replaced them: since
+# 5b1a4c6, posteriorFile names the table of the posterior parameter sets
+posterior_file_hint = ("posteriorFile (0: none, 1: tables/posterior.csv, "
+                       "2: tables/posterior_Nq3.csv, "
+                       "4: tables/posterior5020_Nq3.csv)")
+ipglasma_replaced_keys = {
+    'SubNucleonParamType': posterior_file_hint,
+    'subNucleonParamType': posterior_file_hint,
 }
 
 # Values in the posterior parameter files that are not IP-Glasma parameters
@@ -192,12 +225,31 @@ nucleon_model_parameters = {
 subnucleon_parameters = sorted(
     set().union(*nucleon_model_parameters.values()))
 
-# With subNucleonParamType != 0, IP-Glasma replaces these values with a
-# posterior set at run time (Parameters::setParamsWithPosteriorParameterSet)
-# and sets BGqVar and NqFluc to 0
-posterior_replaced_parameters = (
-    'm', 'BG', 'BGq', 'smearingWidth', 'Nq', 'QsMuRatio', 'dqMin')
-posterior_zeroed_parameters = ('BGqVar', 'NqFluc')
+def posterior_file_parameters(posterior_file):
+    """The input keys of the columns of an IP-Glasma posterior file, which
+    replace those parameters every event: the names in the line before the
+    first set, after an optional # and without the units in brackets, and
+    without the column weight. None if the file is not found; IP-Glasma reads
+    a relative path from its run folder, which links ipglasma_code/tables."""
+    file_path = posterior_file
+    if not path.isabs(file_path):
+        file_path = path.join(code_path, "ipglasma_code", posterior_file)
+    if not path.isfile(file_path):
+        return None
+    header = ""
+    with open(file_path, "r") as table:
+        for line in table:
+            text = line.strip()
+            if text == "":
+                continue
+            try:
+                float(text.split(",")[0])
+                break
+            except ValueError:
+                header = text
+    names = [re.sub(r"\[.*?\]", "", name).strip()
+             for name in header.lstrip("#").split(",")]
+    return [name for name in names if name not in ("", "weight")]
 
 
 def check_nucleon_model() -> str:
@@ -260,6 +312,11 @@ def update_parameters_bayesian(bayes_file) -> None:
             key, val = line.split()
             if key in posterior_non_ipglasma_keys:
                 continue
+            if key in ipglasma_replaced_keys:
+                sys.exit("\U0001F6AB  {} in the parameter file {} is no "
+                         "longer a parameter of IP-Glasma. Use {} in the user "
+                         "dictionary instead.".format(
+                             key, bayes_file, ipglasma_replaced_keys[key]))
             key = posterior_key_names.get(key, key)
             if key == 'nucleonModel':
                 sys.exit("\U0001F6AB  The parameter file {} sets "
@@ -268,6 +325,10 @@ def update_parameters_bayesian(bayes_file) -> None:
             if key not in ipglasma_dict:
                 unknown_keys.append(key)
                 continue
+            if key in ipglasma_text_keys:
+                sys.exit("\U0001F6AB  {} in the parameter file {} is a text "
+                         "parameter, which a parameter file cannot set: set "
+                         "it in the user dictionary.".format(key, bayes_file))
             if key == 'Nq' and not check_nq_from_parameter_file(
                     float(val), bayes_file):
                 continue
@@ -301,23 +362,20 @@ def warn_about_subnucleon_parameters() -> None:
               "not read it".format(key, ipglasma_dict[key],
                                    explicit_parameters[key], model))
 
-    if ipglasma_dict['subNucleonParamType'] != 0:
-        replaced = [key for key in posterior_replaced_parameters
-                    if key in explicit_parameters]
-        zeroed = [key for key in posterior_zeroed_parameters
-                  if key in explicit_parameters]
-        if replaced or zeroed:
-            message = ("\u26A0\uFE0F  subNucleonParamType {}: IP-Glasma "
-                       "uses a posterior parameter set".format(
-                           ipglasma_dict['subNucleonParamType']))
-            if replaced:
-                message += ", which replaces the values of {}".format(
-                    ", ".join(replaced))
-            if zeroed:
-                message += "{} sets {} to 0".format(
-                    ", and" if replaced else ", which",
-                    ", ".join(zeroed))
-            print(message)
+    posterior_file = ipglasma_dict['posteriorFile']
+    if posterior_file != "none":
+        columns = posterior_file_parameters(posterior_file)
+        if columns is None:
+            print("\u26A0\uFE0F  posteriorFile {}: not found in {}, so the "
+                  "parameters it replaces are not known here; IP-Glasma "
+                  "names them when it starts".format(
+                      posterior_file, path.join(code_path, "ipglasma_code")))
+            return
+        replaced = [key for key in columns if key in explicit_parameters]
+        if replaced:
+            print("\u26A0\uFE0F  posteriorFile {}: IP-Glasma replaces the "
+                  "values of {} with those of a posterior parameter set every "
+                  "event".format(posterior_file, ", ".join(replaced)))
 
 
 def print_nucleon_model() -> None:

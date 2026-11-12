@@ -159,17 +159,80 @@ def test_master_defaults_give_no_warning(tmp_path, capsys):
     assert capsys.readouterr().out == ""
 
 
+def write_posterior_file(tmp_path, lines):
+    posterior_file = tmp_path / "posterior.csv"
+    posterior_file.write_text("".join(line + "\n" for line in lines))
+    return str(posterior_file)
+
+
 def test_warning_for_values_a_posterior_set_replaces(tmp_path, capsys):
+    # the header of the tables of IP-Glasma 5b1a4c6
+    posterior_file = write_posterior_file(tmp_path, [
+        "# m [GeV], BG [GeV^{-2}], BGq [GeV^{-2}], smearingWidth, QsMuRatio, "
+        "dqMin [fm], Nq, BGqVar [GeV^{-4}], NqFluc",
+        "0.246, 4.45,  0.346, 0.563, 0.747, 0.254, 3, 0, 0"])
     load_user_dict(tmp_path, {'nucleonModel': "hotspots",
-                              'subNucleonParamType': 2, 'BGqVar': 0.1})
+                              'posteriorFile': posterior_file,
+                              'BGqVar': 0.1})
     master.update_parameters_bayesian(
         write_parameter_file(tmp_path, ["BG  3.5", "Nq  3.0"]))
     capsys.readouterr()
     master.warn_about_subnucleon_parameters()
     output = capsys.readouterr().out
-    assert "subNucleonParamType 2" in output
-    assert "replaces the values of BG, Nq" in output
-    assert "sets BGqVar to 0" in output
+    assert "posteriorFile {}".format(posterior_file) in output
+    assert "replaces the values of BG, Nq, BGqVar" in output
+
+
+def test_posterior_file_columns_after_comments(tmp_path):
+    # the J/psi tables: comment lines, the names after a #, a weight column
+    posterior_file = write_posterior_file(tmp_path, [
+        "# Posterior of the global fit to exclusive J/psi production",
+        "#",
+        "# m [GeV], BG [GeV^-2], jimwlkMass [GeV], weight",
+        "0.1, 4.0, 0.3, 0.002"])
+    assert master.posterior_file_parameters(posterior_file) == [
+        'm', 'BG', 'jimwlkMass']
+    # names without a #
+    posterior_file = write_posterior_file(tmp_path, [
+        "m, QsMuRatio", "", "0.1, 0.6"])
+    assert master.posterior_file_parameters(posterior_file) == [
+        'm', 'QsMuRatio']
+
+
+def test_posterior_file_not_found(tmp_path, capsys):
+    load_user_dict(tmp_path, {'nucleonModel': "hotspots",
+                              'posteriorFile': "tables/no_such_file.csv"})
+    capsys.readouterr()
+    master.warn_about_subnucleon_parameters()
+    assert "not found" in capsys.readouterr().out
+
+
+def test_old_posterior_keys_in_the_user_dictionary_stop(tmp_path):
+    with pytest.raises(SystemExit) as error:
+        load_user_dict(tmp_path, {'nucleonModel': "hotspots",
+                                  'subNucleonParamType': 2})
+    assert "subNucleonParamType (replaced by posteriorFile" in str(
+        error.value)
+
+
+def test_old_posterior_keys_in_a_parameter_file(tmp_path):
+    load_user_dict(tmp_path, {'nucleonModel': "hotspots",
+                              'posteriorFile': "tables/posterior_Nq3.csv"})
+    master.update_parameters_bayesian(
+        write_parameter_file(tmp_path, ["subNucleonParamSet  3"]))
+    assert master.ipglasma_dict['posteriorSet'] == 3
+    with pytest.raises(SystemExit) as error:
+        master.update_parameters_bayesian(
+            write_parameter_file(tmp_path, ["subNucleonParamType  2"]))
+    assert "2: tables/posterior_Nq3.csv" in str(error.value)
+
+
+def test_text_parameter_in_a_parameter_file_stops(tmp_path):
+    load_user_dict(tmp_path, {'nucleonModel': "hotspots"})
+    with pytest.raises(SystemExit) as error:
+        master.update_parameters_bayesian(write_parameter_file(
+            tmp_path, ["posteriorFile  tables/posterior.csv"]))
+    assert "text parameter" in str(error.value)
 
 
 def test_printed_model_line(tmp_path, capsys):
