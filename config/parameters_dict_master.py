@@ -81,6 +81,10 @@ ipglasma_dict = {
     'Nq': 3.,                       # number of hot spots (nucleonModel hotspots)
     'NqFluc': 0.0,
     'shiftConstituentQuarkProtonOrigin': 1,
+    # nucleonModel strings: density (k + 1) t^k of the hot spots along
+    # their strings, from the junction (t = 0) to the ends (t = 1), k > -1;
+    # 0: uniform, > 0: towards the ends, < 0: towards the junction
+    'stringHotSpotPower': 0.,
     'QsMuRatio': 0.8,
     'smearQs': 1,
     'smearingWidth': 0.6,
@@ -213,7 +217,7 @@ ipglasma_replaced_keys = {
 # Values in the posterior parameter files that are not IP-Glasma parameters
 posterior_non_ipglasma_keys = ('Kfactor',)
 
-# Subnucleon parameters each nucleonModel reads in IP-Glasma 1f1f4ae
+# Subnucleon parameters each nucleonModel reads in IP-Glasma d3088aa
 # (src/ParameterTable.cpp); the others are ignored without a message
 nucleon_model_parameters = {
     'gaussian': ('BG', 'protonAnisotropy', 'smearQs', 'smearingWidth'),
@@ -222,7 +226,7 @@ nucleon_model_parameters = {
                  'smearingWidth'),
     'strings': ('BG', 'BGq', 'BGqVar', 'dqMin', 'omega',
                 'shiftConstituentQuarkProtonOrigin', 'smearQs',
-                'smearingWidth'),
+                'smearingWidth', 'stringHotSpotPower'),
 }
 subnucleon_parameters = sorted(
     set().union(*nucleon_model_parameters.values()))
