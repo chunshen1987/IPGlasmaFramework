@@ -151,6 +151,29 @@ def test_no_warning_for_strings_with_nq_3(tmp_path, capsys):
     assert "does not read" not in capsys.readouterr().out
 
 
+def test_string_hot_spot_power_with_strings(tmp_path, capsys):
+    # IP-Glasma d3088aa reads stringHotSpotPower with nucleonModel strings
+    load_user_dict(tmp_path, {'nucleonModel': "strings"})
+    master.update_parameters_bayesian(
+        write_parameter_file(tmp_path, ["stringHotSpotPower  1.5"]))
+    capsys.readouterr()
+    master.warn_about_subnucleon_parameters()
+    master.print_nucleon_model()
+    output = capsys.readouterr().out
+    assert "does not read" not in output
+    assert "stringHotSpotPower 1.5" in output
+
+
+def test_string_hot_spot_power_without_strings(tmp_path, capsys):
+    load_user_dict(tmp_path, {'nucleonModel': "hotspots"})
+    master.update_parameters_bayesian(
+        write_parameter_file(tmp_path, ["stringHotSpotPower  1.5"]))
+    capsys.readouterr()
+    master.warn_about_subnucleon_parameters()
+    assert ("stringHotSpotPower 1.5 is set in the parameter file"
+            in capsys.readouterr().out)
+
+
 def test_master_defaults_give_no_warning(tmp_path, capsys):
     # the defaults contain every parameter; only explicit ones count
     load_user_dict(tmp_path, {'nucleonModel': "gaussian"})
